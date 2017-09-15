@@ -16,6 +16,7 @@ Requirements
 * Game generates maze for each level
 
   * Must create a psuedo-random maze of Pac-Dots?
+    (Are there certain qualities that must be present in each generated maze?)
   * Must generate another maze upon the completion of the previous level
     (when all Pac-Dots are eaten)
 
@@ -32,7 +33,9 @@ Requirements
   * Player must be given choice to play another game
 
     * If player plays again, the entire history of game scores
-      should be displayed upon termination
+      should be displayed upon termination?
+      (Does this mean to display the history after every game
+      or after the user decides to stop playing?)
 
 * Four ghosts try to catch PacMan
 
