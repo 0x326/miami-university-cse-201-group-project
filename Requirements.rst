@@ -78,6 +78,7 @@ Requirements
 
     * PacMan's mouth is oriented towards the direction of movement
 
+  * Displays score for current game
   * Early quit option
   * "Color must be consistent with requirements"?
   * Design must be easily navigable and self-explanatory
