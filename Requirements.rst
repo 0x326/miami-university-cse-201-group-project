@@ -15,7 +15,10 @@ Requirements
 * PacMan must have one life
 * Game generates maze for each level
 
-  * Must create a psuedo-random maze of Pac-Dots, but the starting board for ghosts have to be fixed
+  * Must create a psuedo-random maze of Pac-Dots
+
+    * The starting location of the ghosts and PacMan are fixed
+
   * Must generate another maze upon the completion of the previous level
     (when all Pac-Dots are eaten)
 
@@ -32,9 +35,8 @@ Requirements
   * Player must be given choice to play another game
 
     * If player plays again, the entire history of game scores
-      should be displayed upon termination, in other words once
-      the user decides not to play again, game displays scores
-      
+      should be displayed after the user states his intention of
+      playing no more.
 
 * Four ghosts try to catch PacMan
 
@@ -79,8 +81,14 @@ Requirements
 
   * Displays score for current game
   * Early quit option
-  * Color must be consistent with requirements, so same as original pac-man game. 
-    (black baground, blue walls, yellow pac-man, ghosts etc...)
+  * Color must be consistent with the original PacMan game
+
+    * Black background
+    * Blue walls
+    * Yellow PacMan
+    * Colored ghosts
+    * etc.
+
   * Design must be easily navigable and self-explanatory
 
     * Button names must be intuitive
