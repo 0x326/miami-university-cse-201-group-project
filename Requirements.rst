@@ -1,6 +1,9 @@
 Requirements
 ============
 
+General Requirements
+--------------------
+
 * Java implementation with Swing library
 * Put deliverables in Google Drive folder
 
@@ -11,6 +14,9 @@ Requirements
 
   * Such knowledge must be demonstrated during status reports
     and project presentations
+
+Gameplay Requirements
+---------------------
 
 * PacMan must have one life
 * Game generates maze for each level
@@ -58,10 +64,10 @@ Requirements
   * Provides PacMan with the temporary ability to consume ghosts.
   * Ghosts:
 
-    * Turn deep blue
+    * Change color
     * Reverse direction
     * Usually move more slowly
-    * Flash white before reverting to normal state
+    * Flash before reverting to normal state
     * Remain in this state for a variable amount of time
 
       * Depends on level
@@ -72,6 +78,16 @@ Requirements
 
   * When ghost is eaten, it is returned to the center box
     where it is regenerated with normal properties
+
+Game Presenation Requirements
+-----------------------------
+
+* During power pellets
+
+  * Ghosts turn deep blue
+  * Flash white before reverting to normal state
+Interface Requirements
+----------------------
 
 * Intuitive UI
 
@@ -94,6 +110,9 @@ Requirements
     * Button names must be intuitive
 
 .. For more info on UI, see https://medium.com/@erikdkennedy/7-rules-for-creating-gorgeous-ui-part-1-559d4e805cda
+
+Notes
+-----
 
 * Game does not implement the following features
 
