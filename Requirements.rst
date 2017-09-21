@@ -82,10 +82,32 @@ Gameplay Requirements
 Game Presenation Requirements
 -----------------------------
 
+* Game does not start with 'READY!' message and does not wait to begin
+* Blinky starts outside ghost spawning box like he does in the arcade
 * During power pellets
 
-  * Ghosts turn deep blue
-  * Flash white before reverting to normal state
+  * Ghosts turn to a lighter color (**not deep blue**)
+  * Flash between lighter color and original color
+    (**not between white and deep blue**)
+    before reverting to normal state
+  * When a ghost is consumed, its body does not become colorless
+    and it does not rush back to the spawning box.
+    Instead, it teleports directly to the box
+
+* Ghost spawning box does not have an exit gate, rather, an opening.
+* Ghosts leaving spawning box leave one-at-a-time
+  and released over an undefined interval
+* Alternation between, at least, two frames where PacMan's mouth is open
+  and where PacMan's mouth is closed
+* The rate at which items blink and at which PacMan's mouth opens and closes
+  is constant throughout the level and at higher levels
+* Dying animation for PacMan is not required
+* When PacMan consumes a ghost, a score is not displayed
+  where the ghost once was
+* The game does not pause when ghosts are eaten
+* Ghosts should be slightly faster than PacMan
+* When beating a level, the map does not blink
+
 Interface Requirements
 ----------------------
 
