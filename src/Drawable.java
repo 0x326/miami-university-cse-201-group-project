@@ -10,7 +10,7 @@ import java.util.Collection;
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public interface Entity {
+public interface Drawable {
     /**
      * Draw this object on the graphic at the given location.
      *

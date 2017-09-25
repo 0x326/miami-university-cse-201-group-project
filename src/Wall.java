@@ -6,5 +6,5 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class Wall implements Entity {
+public class Wall implements Drawable {
 }

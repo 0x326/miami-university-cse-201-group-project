@@ -6,5 +6,5 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class PowerPellet implements Entity {
+public class PowerPellet implements Drawable {
 }

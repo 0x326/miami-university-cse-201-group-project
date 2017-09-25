@@ -40,7 +40,7 @@ Meeting Notes
     * Changes internal behavior when alerted a power pellet
       is consumed
 
-  #. ``Entity`` interface
+  #. ``Drawable`` interface
 
     * ``MakeDecision``: Returns movement direction
 

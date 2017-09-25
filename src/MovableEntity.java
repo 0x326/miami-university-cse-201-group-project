@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public interface MovableEntity extends Entity {
+public interface MovableEntity extends Drawable {
     /**
      * Gets the current logical location of this MovableEntity.
      *

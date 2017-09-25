@@ -6,5 +6,5 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class Pellet implements Entity {
+public class Pellet implements Drawable {
 }
