@@ -6,13 +6,13 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public abstract class Ghost implements MovableEntity {
     private enum VulnerabilityState {
         VULNERABLE,
         VULNERABLE_BLINKING,
         DANGEROUS
     }
 
+public abstract class Ghost extends MovableEntity {
     private VulnerabilityState state = VulnerabilityState.DANGEROUS;
 
     /**

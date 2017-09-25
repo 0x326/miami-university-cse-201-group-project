@@ -6,5 +6,5 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class PacMan implements MovableEntity {
+public class PacMan extends MovableEntity {
 }

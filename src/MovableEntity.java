@@ -1,4 +1,6 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Collection;
 
 /**
  * Course: CSE 201 A
@@ -8,13 +10,13 @@ import java.awt.geom.Point2D;
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public interface MovableEntity extends Drawable {
+public abstract class MovableEntity implements Drawable {
     /**
      * Gets the current logical location of this MovableEntity.
      *
      * @return The current location
      */
-    Point2D.Double getLogicalLocation();
+    public abstract Point2D.Double getLogicalLocation();
 
     /**
      * Gives this MovableEntity a chance to move.
@@ -24,5 +26,21 @@ public interface MovableEntity extends Drawable {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    void move(double timePassed);
+    public void move(double timePassed, Drawable[][] map) {
+
+    }
+
+    /**
+     * Draw this object on the graphic at the given location.
+     *
+     * @param board               The graphic to draw on
+     * @param location            The location at which to draw
+     * @param maxSize             The maximum size of the image.
+     *                            The image drawn should be proportional to mazSize to support scaling.
+     * @param neighboringEntities A collection of adjacent entities.
+     */
+    @Override
+    public void draw(Graphics board, Point2D.Double location, double maxSize, Collection<Drawable> neighboringEntities) {
+
+    }
 }
