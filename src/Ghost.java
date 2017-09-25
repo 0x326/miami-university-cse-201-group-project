@@ -6,12 +6,6 @@
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-    private enum VulnerabilityState {
-        VULNERABLE,
-        VULNERABLE_BLINKING,
-        DANGEROUS
-    }
-
 public abstract class Ghost extends MovableEntity {
     private VulnerabilityState state = VulnerabilityState.DANGEROUS;
 
@@ -36,8 +30,7 @@ public abstract class Ghost extends MovableEntity {
     public void startWarning() {
         if (state == VulnerabilityState.VULNERABLE) {
             state = VulnerabilityState.VULNERABLE_BLINKING;
-        }
-        else {
+        } else {
             throw new RuntimeException();
         }
     }
@@ -47,5 +40,11 @@ public abstract class Ghost extends MovableEntity {
      */
     public void makeDangerous() {
         state = VulnerabilityState.DANGEROUS;
+    }
+
+    private enum VulnerabilityState {
+        VULNERABLE,
+        VULNERABLE_BLINKING,
+        DANGEROUS
     }
 }
