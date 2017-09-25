@@ -7,6 +7,8 @@ public class PacManMain extends JFrame {
      * @param args Commandline arguments
      */
     public static void main(String[] args) {
-
+        JFrame window = new PacManMain();
+        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        window.setVisible(true);
     }
 }
