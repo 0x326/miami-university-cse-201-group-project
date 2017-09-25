@@ -1,3 +1,7 @@
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.Collection;
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -7,4 +11,17 @@
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 public class Pellet implements Drawable {
+    /**
+     * Draw this object on the graphic at the given location.
+     *
+     * @param board               The graphic to draw on
+     * @param location            The location at which to draw
+     * @param maxSize             The maximum size of the image.
+     *                            The image drawn should be proportional to mazSize to support scaling.
+     * @param neighboringEntities A collection of adjacent entities.
+     */
+    @Override
+    public void draw(Graphics board, Point2D.Double location, double maxSize, Collection<Drawable> neighboringEntities) {
+
+    }
 }
