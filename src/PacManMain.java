@@ -1,5 +1,9 @@
 import javax.swing.*;
 
+interface LambdaFunction {
+    void call();
+}
+
 public class PacManMain extends JFrame {
     /**
      * Instantiates a this PacManMain object and starts the Pac-Man UI.

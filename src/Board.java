@@ -13,10 +13,11 @@ public class Board extends JPanel {
      * Starts the game.  The game is finished when the callback is called.
      *
      * @param callback A lambda function to call when the game has ended.
-     *                 TODO: Upgrade parameter type
      */
-    public void startGame(Object callback) {
+    public void startGame(LambdaFunction callback) {
 
+        // Game has ended
+        callback.call();
     }
 
     /**
