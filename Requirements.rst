@@ -106,7 +106,7 @@ Game Presentation Requirements
   where the ghost once was
 * The game does not pause when ghosts are eaten
 * Ghosts should be slightly faster than PacMan
-* When beating a level, the map does not blink
+* After beating a level, the map does not blink like the arcade version
 * Power pellets do not blink
 
 Interface Requirements
