@@ -58,3 +58,10 @@ Meeting Notes
 * Laurel will work on the game display
 * Gauthier will work on the keyboard interface
 * John will work on incorporating the ``Timer`` class
+
+10/3/17
+-------
+
+Tried to meet with professor: office hours not filled.
+We did walk past the department chair and he said not to
+worry about the requirements since we'll have to revisit them anyway.
