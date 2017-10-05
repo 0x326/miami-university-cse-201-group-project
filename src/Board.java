@@ -51,6 +51,7 @@ public class Board extends JPanel {
         return 0;
     }
 
+    // TODO: Add time-since-last-update-parameter
     private void updateGameState() {
         // TODO: Move Pac-Man
         // TODO: Move ghosts
