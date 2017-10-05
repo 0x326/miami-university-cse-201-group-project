@@ -9,6 +9,15 @@ import javax.swing.*;
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 public class Board extends JPanel {
+    private Drawable[][] stationaryEntities;
+    private PacMan pacMan;
+    private Ghost[] ghosts;
+
+    public Board(int gameTickLength) {
+        pacMan = new PacMan();
+        ghosts = new Ghost[]{new Blinky(), new Clyde(), new Inky(), new Pinky()};
+    }
+
     /**
      * Starts the game.  The game is finished when the callback is called.
      *
