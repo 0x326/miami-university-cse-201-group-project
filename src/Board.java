@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Point2D;
 
 /**
  * Course: CSE 201 A
@@ -17,8 +18,15 @@ public class Board extends JPanel {
     private Timer gameTimer;
 
     public Board(int gameTickLength) {
-        pacMan = new PacMan();
-        ghosts = new Ghost[]{new Blinky(), new Clyde(), new Inky(), new Pinky()};
+        stationaryEntities = new Drawable[27][31];  // 27 X 31 board
+        // TODO: Populate board
+        pacMan = new PacMan(new Point2D.Double(1, 1));
+        ghosts = new Ghost[]{
+            new Blinky(new Point2D.Double(14, 19)),
+            new Inky(new Point2D.Double(10, 16)),
+            new Pinky(new Point2D.Double(14, 16)),
+            new Clyde(new Point2D.Double(18, 16))
+        };
 
         gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
     }
