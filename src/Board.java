@@ -15,9 +15,9 @@ public class Board extends JPanel {
     private PacMan pacMan;
     private Ghost[] ghosts;
 
-    private Timer gameTimer;
+    private Timer gameTimer = null;
 
-    public Board(int gameTickLength) {
+    public Board() {
         stationaryEntities = new Drawable[27][31];  // 27 X 31 board
         // TODO: Populate board
         pacMan = new PacMan(new Point2D.Double(1, 1));
@@ -28,15 +28,16 @@ public class Board extends JPanel {
             new Clyde(new Point2D.Double(18, 16))
         };
 
-        gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
     }
 
     /**
      * Starts the game.  The game is finished when the callback is called.
      *
+     * @param gameTickLength The length of each game tick
      * @param callback A lambda function to call when the game has ended.
      */
-    public void startGame(LambdaFunction callback) {
+    public void startGame(int gameTickLength, LambdaFunction callback) {
+        gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
 
         // Game has ended
         callback.call();
