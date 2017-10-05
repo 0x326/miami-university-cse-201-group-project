@@ -16,6 +16,7 @@ public class Board extends JPanel {
     private Ghost[] ghosts;
 
     private Timer gameTimer = null;
+    private LambdaFunction gameEndCallback;
 
     public Board() {
         stationaryEntities = new Drawable[27][31];  // 27 X 31 board
@@ -37,10 +38,8 @@ public class Board extends JPanel {
      * @param callback A lambda function to call when the game has ended.
      */
     public void startGame(int gameTickLength, LambdaFunction callback) {
+        gameEndCallback = callback;
         gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
-
-        // Game has ended
-        callback.call();
     }
 
     /**
@@ -57,5 +56,10 @@ public class Board extends JPanel {
         // TODO: Move ghosts
         // Repaint board
         repaint();
+
+        if (false) { // TODO: Replace with 'when game has ended'
+            gameTimer.stop();
+            gameEndCallback.call();
+        }
     }
 }
