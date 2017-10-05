@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Course: CSE 201 A
@@ -13,9 +14,13 @@ public class Board extends JPanel {
     private PacMan pacMan;
     private Ghost[] ghosts;
 
+    private Timer gameTimer;
+
     public Board(int gameTickLength) {
         pacMan = new PacMan();
         ghosts = new Ghost[]{new Blinky(), new Clyde(), new Inky(), new Pinky()};
+
+        gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
     }
 
     /**
@@ -36,5 +41,12 @@ public class Board extends JPanel {
      */
     public int getScore() {
         return 0;
+    }
+
+    private void updateGameState() {
+        // TODO: Move Pac-Man
+        // TODO: Move ghosts
+        // Repaint board
+        repaint();
     }
 }
