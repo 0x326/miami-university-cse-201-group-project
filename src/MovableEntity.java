@@ -27,7 +27,9 @@ public abstract class MovableEntity implements Drawable {
      *
      * @return The current location
      */
-    public abstract Point2D.Double getLogicalLocation();
+    public Point2D.Double getLogicalLocation() {
+        return logicalLocation;
+    }
 
     /**
      * Gives this MovableEntity a chance to move.
