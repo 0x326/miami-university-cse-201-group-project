@@ -9,6 +9,16 @@ import java.awt.geom.Point2D;
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 public class PacMan extends MovableEntity {
+
+    /**
+     * Creates a MovableEntity
+     *
+     * @param initialLocation The starting location of this entity.
+     */
+    public PacMan(Point2D.Double initialLocation) {
+        super(initialLocation);
+    }
+
     /**
      * Gets the current logical location of this MovableEntity.
      *

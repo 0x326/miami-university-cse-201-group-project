@@ -10,6 +10,15 @@ import java.awt.geom.Point2D;
  */
 public class Inky extends Ghost {
     /**
+     * Creates a MovableEntity
+     *
+     * @param initialLocation The starting location of this entity.
+     */
+    public Inky(Point2D.Double initialLocation) {
+        super(initialLocation);
+    }
+
+    /**
      * Gets the current logical location of this MovableEntity.
      *
      * @return The current location

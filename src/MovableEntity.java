@@ -11,12 +11,25 @@ import java.util.Collection;
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 public abstract class MovableEntity implements Drawable {
+
+    private Point2D.Double logicalLocation;
+
+    /**
+     * Creates a MovableEntity
+     * @param initialLocation The starting location of this entity.
+     */
+    public MovableEntity(Point2D.Double initialLocation) {
+        logicalLocation = initialLocation;
+    }
+
     /**
      * Gets the current logical location of this MovableEntity.
      *
      * @return The current location
      */
-    public abstract Point2D.Double getLogicalLocation();
+    public Point2D.Double getLogicalLocation() {
+        return logicalLocation;
+    }
 
     /**
      * Gives this MovableEntity a chance to move.

@@ -1,3 +1,5 @@
+import java.awt.geom.Point2D;
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -8,6 +10,15 @@
  */
 public abstract class Ghost extends MovableEntity {
     private VulnerabilityState state = VulnerabilityState.DANGEROUS;
+
+    /**
+     * Creates a MovableEntity
+     *
+     * @param initialLocation The starting location of this entity.
+     */
+    public Ghost(Point2D.Double initialLocation) {
+        super(initialLocation);
+    }
 
     /**
      * @return Whether this Ghost is vulnerable
