@@ -24,7 +24,7 @@ class Clyde extends Ghost {
      * @return The current location
      */
     getLogicalLocation(): [number, number] {
-        return null;
+        return [0, 0];
     }
 }
 
