@@ -1,3 +1,5 @@
+import Drawable from './Drawable';
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -16,7 +18,7 @@ class Wall implements Drawable {
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
      */
-    draw(board: Graphics, location: Point2D.Double, maxSize: double, neighboringEntities: Collection<Drawable>): void {
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void {
 
     }
 }

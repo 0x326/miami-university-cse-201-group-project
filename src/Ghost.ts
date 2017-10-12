@@ -1,3 +1,5 @@
+import MovableEntity from './MovableEntity';
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -14,7 +16,7 @@ abstract class Ghost extends MovableEntity {
      *
      * @param initialLocation The starting location of this entity.
      */
-    constructor(initialLocation: Point2D.Double) {
+    constructor(initialLocation: [number, number]) {
         super(initialLocation);
     }
 
@@ -22,14 +24,14 @@ abstract class Ghost extends MovableEntity {
      * @return Whether this Ghost is vulnerable
      */
     isVunerable(): boolean {
-        return state != VulnerabilityState.DANGEROUS;
+        return this.state != VulnerabilityState.DANGEROUS;
     }
 
     /**
      * Makes this Ghost vulnerable
      */
     makeVulnerable(): void {
-        state = VulnerabilityState.VULNERABLE;
+        this.state = VulnerabilityState.VULNERABLE;
     }
 
     /**
@@ -37,10 +39,10 @@ abstract class Ghost extends MovableEntity {
      * If this method is called when the ghost is not vulnerable, an exception will be thrown.
      */
     startWarning(): void {
-        if (state == VulnerabilityState.VULNERABLE) {
-            state = VulnerabilityState.VULNERABLE_BLINKING;
+        if (this.state == VulnerabilityState.VULNERABLE) {
+            this.state = VulnerabilityState.VULNERABLE_BLINKING;
         } else {
-            throw new RuntimeException();
+            throw new Error();
         }
     }
 
@@ -48,14 +50,15 @@ abstract class Ghost extends MovableEntity {
      * Removes this Ghost from its vulnerable state.
      */
     makeDangerous(): void {
-        state = VulnerabilityState.DANGEROUS;
+        this.state = VulnerabilityState.DANGEROUS;
     }
 
-    private enum VulnerabilityState {
-        VULNERABLE,
-        VULNERABLE_BLINKING,
-        DANGEROUS
-    }
+}
+
+enum VulnerabilityState {
+    VULNERABLE,
+    VULNERABLE_BLINKING,
+    DANGEROUS
 }
 
 export default Ghost;

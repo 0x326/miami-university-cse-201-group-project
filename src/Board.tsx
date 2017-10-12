@@ -1,4 +1,11 @@
 import * as React from 'react';
+import PacMan from './PacMan';
+import Ghost from './Ghost';
+import Blinky from './Blinky';
+import Inky from './Inky';
+import Pinky from './Pinky';
+import Clyde from './Clyde';
+import Drawable from './Drawable';
 
 /**
  * Course: CSE 201 A
@@ -13,19 +20,18 @@ class Board extends React.Component {
     pacMan: PacMan;
     ghosts: Ghost[];
 
-    gameTimer: Timer;
-    gameEndCallback: LambdaFunction;
+    gameEndCallback: () => void;
 
     constructor() {
         super();
-        stationaryEntities = new Drawable[27][31];  // 27 X 31 board
+        this.stationaryEntities = new Drawable[27][31];  // 27 X 31 board
         // TODO: Populate board
-        pacMan = new PacMan(new Point2D.Double(1, 1));
-        ghosts = new Ghost[]{
-            new Blinky(new Point2D.Double(14, 19)),
-            new Inky(new Point2D.Double(10, 16)),
-            new Pinky(new Point2D.Double(14, 16)),
-            new Clyde(new Point2D.Double(18, 16))
+        this.pacMan = new PacMan([1, 1]);
+        this.ghosts = new Ghost[]{
+            new Blinky([14, 19]),
+            new Inky([10, 16]),
+            new Pinky([14, 16]),
+            new Clyde([18, 16])
         };
 
     }
@@ -36,9 +42,9 @@ class Board extends React.Component {
      * @param gameTickLength The length of each game tick
      * @param callback A lambda function to call when the game has ended.
      */
-    startGame(int gameTickLength, LambdaFunction callback): void {
-        gameEndCallback = callback;
-        gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
+    startGame(gameTickLength: number, callback: () => void): void {
+        this.gameEndCallback = callback;
+        window.requestAnimationFrame(this.updateGameState)
     }
 
     /**
@@ -46,7 +52,7 @@ class Board extends React.Component {
      *
      * @return The score of the game
      */
-    getScore(): int {
+    getScore(): number {
         return 0;
     }
 
@@ -58,9 +64,9 @@ class Board extends React.Component {
         repaint();
 
         if (false) { // TODO: Replace with 'when game has ended'
-            gameTimer.stop();
-            gameEndCallback.call();
+            this.gameEndCallback();
         }
+        window.requestAnimationFrame(this.updateGameState)
     }
 }
 

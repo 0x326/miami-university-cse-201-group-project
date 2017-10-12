@@ -1,3 +1,5 @@
+import Ghost from './Ghost';
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -12,7 +14,7 @@ class Clyde extends Ghost {
      *
      * @param initialLocation The starting location of this entity.
      */
-    constructor(initialLocation: Point2D.Double) {
+    constructor(initialLocation: [number, number]) {
         super(initialLocation);
     }
 
@@ -21,7 +23,7 @@ class Clyde extends Ghost {
      *
      * @return The current location
      */
-    getLogicalLocation(): Point2D.Double {
+    getLogicalLocation(): [number, number] {
         return null;
     }
 }

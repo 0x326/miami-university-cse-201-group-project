@@ -1,3 +1,5 @@
+import Drawable from './Drawable';
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -8,14 +10,14 @@
  */
 abstract class MovableEntity implements Drawable {
 
-    logicalLocation: Point2D.Double;
+    logicalLocation: [number, number];
 
     /**
      * Creates a MovableEntity
      * @param initialLocation The starting location of this entity.
      */
-    constructor(initialLocation: Point2D.Double) {
-        logicalLocation = initialLocation;
+    constructor(initialLocation: [number, number]) {
+        this.logicalLocation = initialLocation;
     }
 
     /**
@@ -23,8 +25,8 @@ abstract class MovableEntity implements Drawable {
      *
      * @return The current location
      */
-    getLogicalLocation(): Point2D.Double {
-        return logicalLocation;
+    getLogicalLocation(): [number, number] {
+        return this.logicalLocation;
     }
 
     /**
@@ -35,7 +37,7 @@ abstract class MovableEntity implements Drawable {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    move(timePassed: double, map: Drawable[][]): void {
+    move(timePassed: number, map: Drawable[][]): void {
 
     }
 
@@ -48,7 +50,7 @@ abstract class MovableEntity implements Drawable {
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
      */
-    draw(board: Graphics, location: Point2D.Double, maxSize: double, neighboringEntities: Collection<Drawable>) {
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]) {
 
     }
 }

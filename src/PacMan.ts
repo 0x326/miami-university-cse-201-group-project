@@ -1,7 +1,9 @@
+import MovableEntity from './MovableEntity';
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
- * 
+ * <p>
  * CSE 201 Project
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
@@ -13,7 +15,7 @@ class PacMan extends MovableEntity {
      *
      * @param initialLocation The starting location of this entity.
      */
-    constructor(initialLocation: Point2D.Double) {
+    constructor(initialLocation: [number, number]) {
         super(initialLocation);
     }
 
@@ -22,7 +24,7 @@ class PacMan extends MovableEntity {
      *
      * @return The current location
      */
-    getLogicalLocation(): Point2D.Double {
+    getLogicalLocation(): [number, number] {
         return null;
     }
 }

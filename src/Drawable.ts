@@ -17,7 +17,7 @@ interface Drawable {
      * @param neighboringEntities A collection of adjacent entities.
      *                            Use this if the image depends on its surroundings
      */
-    draw(board: Graphics, location: Point2D.Double, maxSize: double, neighboringEntities: Collection<Drawable>): void;
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void;
 }
 
 export default Drawable;
