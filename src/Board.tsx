@@ -6,6 +6,7 @@ import Inky from './Inky';
 import Pinky from './Pinky';
 import Clyde from './Clyde';
 import Drawable from './Drawable';
+import {createMultiDimensionalArray} from './lib';
 
 /**
  * Course: CSE 201 A
@@ -24,15 +25,15 @@ class Board extends React.Component {
 
     constructor() {
         super();
-        this.stationaryEntities = new Drawable[27][31];  // 27 X 31 board
+        this.stationaryEntities = createMultiDimensionalArray([27, 31], (position) => null) // 27 X 31 board
         // TODO: Populate board
         this.pacMan = new PacMan([1, 1]);
-        this.ghosts = new Ghost[]{
+        this.ghosts = [
             new Blinky([14, 19]),
             new Inky([10, 16]),
             new Pinky([14, 16]),
             new Clyde([18, 16])
-        };
+        ];
 
     }
 
