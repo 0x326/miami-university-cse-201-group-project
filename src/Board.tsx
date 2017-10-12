@@ -1,6 +1,4 @@
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.geom.Point2D;
+import * as React from 'react';
 
 /**
  * Course: CSE 201 A
@@ -10,15 +8,16 @@ import java.awt.geom.Point2D;
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class Board extends JPanel {
-    private Drawable[][] stationaryEntities;
-    private PacMan pacMan;
-    private Ghost[] ghosts;
+class Board extends React.Component {
+    stationaryEntities: Drawable[][];
+    pacMan: PacMan;
+    ghosts: Ghost[];
 
-    private Timer gameTimer = null;
-    private LambdaFunction gameEndCallback;
+    gameTimer: Timer;
+    gameEndCallback: LambdaFunction;
 
-    public Board() {
+    constructor() {
+        super();
         stationaryEntities = new Drawable[27][31];  // 27 X 31 board
         // TODO: Populate board
         pacMan = new PacMan(new Point2D.Double(1, 1));
@@ -37,7 +36,7 @@ public class Board extends JPanel {
      * @param gameTickLength The length of each game tick
      * @param callback A lambda function to call when the game has ended.
      */
-    public void startGame(int gameTickLength, LambdaFunction callback) {
+    startGame(int gameTickLength, LambdaFunction callback): void {
         gameEndCallback = callback;
         gameTimer = new Timer(gameTickLength, (ActionEvent evt) -> updateGameState());
     }
@@ -47,12 +46,12 @@ public class Board extends JPanel {
      *
      * @return The score of the game
      */
-    public int getScore() {
+    getScore(): int {
         return 0;
     }
 
     // TODO: Add time-since-last-update-parameter
-    private void updateGameState() {
+    updateGameState(): void {
         // TODO: Move Pac-Man
         // TODO: Move ghosts
         // Repaint board
@@ -64,3 +63,5 @@ public class Board extends JPanel {
         }
     }
 }
+
+export default Board;
