@@ -21,6 +21,7 @@ class Board extends React.Component {
     pacMan: PacMan;
     ghosts: Ghost[];
 
+    gameFinished: boolean = false;
     gameEndCallback: () => void;
 
     constructor() {
@@ -61,10 +62,10 @@ class Board extends React.Component {
     updateGameState(): void {
         // TODO: Move Pac-Man
         // TODO: Move ghosts
-        // Repaint board
-        repaint();
+        // TODO: Repaint board
+        // TODO: Determine when the game has ended
 
-        if (false) { // TODO: Replace with 'when game has ended'
+        if (this.gameFinished) {
             this.gameEndCallback();
         }
         window.requestAnimationFrame(this.updateGameState)
