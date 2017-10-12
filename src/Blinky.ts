@@ -1,4 +1,3 @@
-import Point from './Point';
 import Ghost from './Ghost';
 
 /**
