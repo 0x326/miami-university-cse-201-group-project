@@ -3,7 +3,7 @@ function createMultiDimensionalArray<T>(dimensionSizes: number[], initializer: (
 }
 
 function _createMultiDimensionalArray<T>(dimensionSizes: number[], initializer: (position: number[]) => T, position: number[]) {
-    if (dimensionSizes.length == 1) {
+    if (dimensionSizes.length === 1) {
         let size = dimensionSizes[0];
         let array = new Array(size);
         for (let i = 0; i < array.length; i++) {

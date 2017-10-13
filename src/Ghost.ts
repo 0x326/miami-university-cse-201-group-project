@@ -24,7 +24,7 @@ abstract class Ghost extends MovableEntity {
      * @return Whether this Ghost is vulnerable
      */
     isVunerable(): boolean {
-        return this.state != VulnerabilityState.DANGEROUS;
+        return this.state !== VulnerabilityState.DANGEROUS;
     }
 
     /**
@@ -39,7 +39,7 @@ abstract class Ghost extends MovableEntity {
      * If this method is called when the ghost is not vulnerable, an exception will be thrown.
      */
     startWarning(): void {
-        if (this.state == VulnerabilityState.VULNERABLE) {
+        if (this.state === VulnerabilityState.VULNERABLE) {
             this.state = VulnerabilityState.VULNERABLE_BLINKING;
         } else {
             throw new Error();
