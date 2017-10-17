@@ -21,7 +21,7 @@ Gameplay Requirements
 * PacMan must have one life
 * Game generates maze for each level
 
-  * Must create a psuedo-random maze of Pac-Dots
+  * Must create a pseudo-random maze of Pac-Dots
 
     * The starting location of the ghosts and PacMan are fixed
 
@@ -46,7 +46,7 @@ Gameplay Requirements
 
 * Four ghosts try to catch PacMan
 
-  * Ghosts are mutli-colored
+  * Ghosts are multi-colored
   * Ghosts chase PacMan with specific algorithms
 
     * Red ghost (Blinky) actively chases PacMan.
@@ -73,13 +73,13 @@ Gameplay Requirements
       * Depends on level
       * Becomes shorter we level increases
       * At some point, ghosts immediately start flashing.
-      * The duration of the vunerable state must be greater than
+      * The duration of the vulnerable state must be greater than
         or equal to the length of the flashing time.
 
   * When ghost is eaten, it is returned to the center box
     where it is regenerated with normal properties
 
-Game Presenation Requirements
+Game Presentation Requirements
 -----------------------------
 
 * Game does not start with 'READY!' message and does not wait to begin
