@@ -1,25 +1,23 @@
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.Collection;
+import Drawable from './Drawable';
 
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
- * <p>
+ *
  * CSE 201 Project
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public abstract class MovableEntity implements Drawable {
+abstract class MovableEntity implements Drawable {
 
-    private Point2D.Double logicalLocation;
+    logicalLocation: [number, number];
 
     /**
      * Creates a MovableEntity
      * @param initialLocation The starting location of this entity.
      */
-    public MovableEntity(Point2D.Double initialLocation) {
-        logicalLocation = initialLocation;
+    constructor(initialLocation: [number, number]) {
+        this.logicalLocation = initialLocation;
     }
 
     /**
@@ -27,8 +25,8 @@ public abstract class MovableEntity implements Drawable {
      *
      * @return The current location
      */
-    public Point2D.Double getLogicalLocation() {
-        return logicalLocation;
+    getLogicalLocation(): [number, number] {
+        return this.logicalLocation;
     }
 
     /**
@@ -39,7 +37,7 @@ public abstract class MovableEntity implements Drawable {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    public void move(double timePassed, Drawable[][] map) {
+    move(timePassed: number, map: Drawable[][]): void {
 
     }
 
@@ -52,8 +50,9 @@ public abstract class MovableEntity implements Drawable {
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
      */
-    @Override
-    public void draw(Graphics board, Point2D.Double location, double maxSize, Collection<Drawable> neighboringEntities) {
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]) {
 
     }
 }
+
+export default MovableEntity;

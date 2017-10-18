@@ -1,16 +1,14 @@
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.Collection;
+import Drawable from './Drawable';
 
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
- * <p>
+ *
  * CSE 201 Project
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class Pellet implements Drawable {
+class PowerPellet implements Drawable {
     /**
      * Draw this object on the graphic at the given location.
      *
@@ -20,8 +18,9 @@ public class Pellet implements Drawable {
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
      */
-    @Override
-    public void draw(Graphics board, Point2D.Double location, double maxSize, Collection<Drawable> neighboringEntities) {
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void {
 
     }
 }
+
+export default PowerPellet;
