@@ -6,7 +6,16 @@ import Inky from './Inky';
 import Pinky from './Pinky';
 import Clyde from './Clyde';
 import Drawable from './Drawable';
+import Wall from './Wall';
+import Pellet from './Pellet';
+import PowerPellet from './PowerPellet';
 import {createMultiDimensionalArray} from './lib';
+
+const scoringTable = {
+    // TODO: Adjust scores
+    'pellet': 1,
+    'powerPellet': 2,
+};
 
 /**
  * Course: CSE 201 A
@@ -21,6 +30,7 @@ class Board extends React.Component {
     pacMan: PacMan;
     ghosts: Ghost[];
 
+    score: number;
     gameFinished: boolean = false;
     gameEndCallback: () => void;
 
@@ -35,7 +45,7 @@ class Board extends React.Component {
             new Pinky([14, 16]),
             new Clyde([18, 16])
         ];
-
+        this.score = 0;
     }
 
     /**
@@ -62,6 +72,7 @@ class Board extends React.Component {
     updateGameState(): void {
         // TODO: Move Pac-Man
         // TODO: Move ghosts
+        this.detectCollisions();
         // TODO: Repaint board
         // TODO: Determine when the game has ended
 
@@ -69,6 +80,36 @@ class Board extends React.Component {
             this.gameEndCallback();
         }
         window.requestAnimationFrame(this.updateGameState)
+    }
+
+    detectCollisions(): void {
+        let [x, y] = this.pacMan.getLogicalLocation();
+
+        let stationaryItem = this.stationaryEntities[x][y];
+        if (stationaryItem instanceof Wall) {
+            throw 'pacMan is on a wall';
+        }
+        else if (stationaryItem instanceof Pellet) {
+            this.score += scoringTable.pellet;
+            this.stationaryEntities[x][y];  // TODO: Replace item
+        }
+        else if (stationaryItem instanceof PowerPellet) {
+            this.score += scoringTable.powerPellet;
+            this.stationaryEntities[x][y];  // TODO: Replace item
+        }
+
+        for (let ghost of this.ghosts) {
+            let [ghostX, ghostY] = ghost.getLogicalLocation();
+            if (x === ghostX && y === ghostY) {
+                if (ghost.isVunerable()) {
+                    // TODO: Do something
+                }
+                else {
+                    // TODO: Do something
+                }
+                break;
+            }
+        }
     }
 }
 
