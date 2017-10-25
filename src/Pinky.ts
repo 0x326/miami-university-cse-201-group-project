@@ -17,15 +17,6 @@ class Pinky extends Ghost {
     constructor(initialLocation: [number, number]) {
         super(initialLocation);
     }
-
-    /**
-     * Gets the current logical location of this MovableEntity.
-     *
-     * @return The current location
-     */
-    getLogicalLocation(): [number, number] {
-        return [0, 0];
-    }
 }
 
 export default Pinky;
