@@ -11,13 +11,16 @@ import Drawable from './Drawable';
 abstract class MovableEntity implements Drawable {
 
     logicalLocation: [number, number];
+    direction: Direction;
 
     /**
      * Creates a MovableEntity
      * @param initialLocation The starting location of this entity.
+     * @param direction The initial direction that this entity is facing
      */
-    constructor(initialLocation: [number, number]) {
+    constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
         this.logicalLocation = initialLocation;
+        this.direction = direction;
     }
 
     /**
@@ -51,6 +54,13 @@ abstract class MovableEntity implements Drawable {
     draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]) {
 
     }
+}
+
+enum Direction {
+    North,
+    South,
+    East,
+    West
 }
 
 export default MovableEntity;
