@@ -37,9 +37,7 @@ abstract class MovableEntity implements Drawable {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    move(timePassed: number, map: Drawable[][]): void {
-
-    }
+    abstract move(timePassed: number, map: Drawable[][]): void;
 
     /**
      * Draw this object on the graphic at the given location.
