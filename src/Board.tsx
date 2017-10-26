@@ -8,6 +8,13 @@ import Clyde from './Clyde';
 import Drawable from './Drawable';
 import {createMultiDimensionalArray} from './lib';
 
+interface Props {
+    onScoreChange: (newScore: number) => void
+}
+
+interface State {
+}
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -16,7 +23,7 @@ import {createMultiDimensionalArray} from './lib';
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-class Board extends React.Component {
+class Board extends React.Component<Props, State> {
     stationaryEntities: Drawable[][];
     pacMan: PacMan;
     ghosts: Ghost[];
