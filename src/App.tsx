@@ -1,9 +1,24 @@
 import * as React from 'react';
 import './App.css';
+import Board from './Board';
 
 const logo = require('./logo.svg');
 
-class App extends React.Component {
+interface Props {
+}
+
+interface State {
+  score: number
+}
+
+class App extends React.Component<Props, State> {
+  constructor() {
+    super();
+    this.state = {
+      score: 0
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -14,6 +29,12 @@ class App extends React.Component {
         <p className="App-intro">
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <div>
+          {this.state.score}
+        </div>
+        <Board onScoreChange={(newScore: number) => this.setState({
+          score: newScore
+          })} />
       </div>
     );
   }
