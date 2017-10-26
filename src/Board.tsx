@@ -45,6 +45,12 @@ class Board extends React.Component<Props, State> {
 
     }
 
+    render() {
+        return (
+            <canvas ref="canvas" />
+        );
+    }
+
     /**
      * Starts the game.  The game is finished when the callback is called.
      *
