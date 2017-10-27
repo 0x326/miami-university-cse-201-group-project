@@ -179,6 +179,10 @@ class Board extends React.Component<Props> {
                 item.draw(this.canvasContext, [columnNumber, rowNumber], boundingBoxSize, neighbors);
             }
         }
+        for (let ghost of this.ghosts) {
+            ghost.draw(this.canvasContext, boundingBoxSize);
+        }
+        this.pacMan.draw(this.canvasContext, boundingBoxSize);
     }
 }
 
