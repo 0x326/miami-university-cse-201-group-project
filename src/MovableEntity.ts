@@ -64,3 +64,4 @@ enum Direction {
 }
 
 export default MovableEntity;
+export { Direction };
