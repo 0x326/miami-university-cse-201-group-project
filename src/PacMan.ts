@@ -20,6 +20,7 @@ class PacMan extends MovableEntity {
     }
 
     stopped: boolean = true;
+    speed: number = 1;
 
     /**
      * Creates a MovableEntity
@@ -66,13 +67,13 @@ class PacMan extends MovableEntity {
 
         let xIncrement = 0, yIncrement = 0;
         if (this.direction == Direction.North) {
-            yIncrement = 1;
+            yIncrement = this.speed * timePassed;
         } else if (this.direction == Direction.West) {
-            xIncrement = 1;
+            xIncrement = - this.speed * timePassed;
         } else if (this.direction == Direction.South) {
-            yIncrement = -1;
+            yIncrement = - this.speed * timePassed;
         } else {
-            xIncrement = -1;
+            xIncrement = this.speed * timePassed;
         }
         this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
     }
