@@ -37,6 +37,8 @@ class Board extends React.Component {
     pacMan: PacMan;
     ghosts: Ghost[];
 
+    timeOfLastUpdate: number = 0;
+
     score: number;
     gameFinished: boolean = false;
     gameEndCallback: () => void;
@@ -76,13 +78,19 @@ class Board extends React.Component {
     }
 
     // TODO: Add time-since-last-update-parameter
-    updateGameState(): void {
-        // TODO: Move Pac-Man
-        // TODO: Move ghosts
-        this.detectCollisions();
-        // TODO: Repaint board
-        // TODO: Determine when the game has ended
+    updateGameState(currentTime: number): void {
+        if (this.timeOfLastUpdate !== 0) {
+            let elapsedTime = currentTime - this.timeOfLastUpdate;
 
+            this.pacMan.move(elapsedTime, this.stationaryEntities);
+            for (let ghost of this.ghosts) {
+                ghost.move(elapsedTime, this.stationaryEntities);
+            }
+
+            this.detectCollisions();
+            // TODO: Determine when the game has ended
+        }
+        this.timeOfLastUpdate = currentTime;
         if (this.gameFinished) {
             this.gameEndCallback();
         }
