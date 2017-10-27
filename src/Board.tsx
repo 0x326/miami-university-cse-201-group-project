@@ -94,11 +94,11 @@ class Board extends React.Component {
         }
         else if (stationaryItem instanceof Pellet) {
             this.score += scoringTable.pellet;
-            this.stationaryEntities[x][y];  // TODO: Replace item
+            delete this.stationaryEntities[x][y];
         }
         else if (stationaryItem instanceof PowerPellet) {
             this.score += scoringTable.powerPellet;
-            this.stationaryEntities[x][y];  // TODO: Replace item
+            delete this.stationaryEntities[x][y];
         }
 
         for (let ghost of this.ghosts) {
