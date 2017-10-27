@@ -1,3 +1,16 @@
+interface Neighbors {
+    topLeft: Drawable | undefined,
+    top: Drawable | undefined,
+    topRight: Drawable | undefined,
+
+    left: Drawable | undefined,
+    right: Drawable | undefined,
+
+    bottomLeft: Drawable | undefined,
+    bottom: Drawable | undefined,
+    bottomRight: Drawable | undefined
+}
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Sobel
@@ -17,7 +30,8 @@ interface Drawable {
      * @param neighboringEntities A collection of adjacent entities.
      *                            Use this if the image depends on its surroundings
      */
-    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void;
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void;
 }
 
 export default Drawable;
+export { Neighbors };
