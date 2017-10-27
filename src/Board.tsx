@@ -15,7 +15,10 @@ const scoringTable = {
     // TODO: Adjust scores
     'pellet': 1,
     'powerPellet': 2,
+    'ghost': 5
 };
+
+const ghostRespawningPoint = [14, 16];
 
 /**
  * Course: CSE 201 A
@@ -102,12 +105,15 @@ class Board extends React.Component {
             let [ghostX, ghostY] = ghost.getLogicalLocation();
             if (x === ghostX && y === ghostY) {
                 if (ghost.isVunerable()) {
-                    // TODO: Do something
+                    ghost.logicalLocation[0] = ghostRespawningPoint[0];
+                    ghost.logicalLocation[1] = ghostRespawningPoint[1];
+                    ghost.makeDangerous();
+                    this.score += scoringTable.ghost;
                 }
                 else {
-                    // TODO: Do something
+                    this.gameFinished = true;
+                    break;
                 }
-                break;
             }
         }
     }
