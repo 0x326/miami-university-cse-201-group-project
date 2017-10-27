@@ -29,6 +29,10 @@ const ghostRespawningPoint = [14, 16];
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Board extends React.Component {
+    // 27 X 31 board
+    static logicalColumns = 27;
+    static logicalRows = 31;
+
     stationaryEntities: Drawable[][];
     pacMan: PacMan;
     ghosts: Ghost[];
@@ -39,7 +43,7 @@ class Board extends React.Component {
 
     constructor() {
         super();
-        this.stationaryEntities = createMultiDimensionalArray([27, 31]) // 27 X 31 board
+        this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows])
         // TODO: Populate board
         this.pacMan = new PacMan([1, 1]);
         this.ghosts = [
