@@ -1,6 +1,6 @@
 import MovableEntity, { Direction } from './MovableEntity';
 import Drawable from './Drawable';
-import { Listener as KeypressListener } from 'keypress.js';
+import KeyboardListener from './KeyboardListener';
 
 /**
  * Course: CSE 201 A
@@ -27,19 +27,19 @@ class PacMan extends MovableEntity {
      *
      * @param initialLocation The starting location of this entity.
      */
-    constructor(initialLocation: [number, number], keyboardListener: KeypressListener) {
+    constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
         super(initialLocation);
         this.stopped
         this.direction = Direction.North;
         for (let key in PacMan.KeyMap) {
-            keyboardListener.register_combo({
-                keys: key,
-                on_keydown: () => {
+            keyboardListener.registerKey(key, (isPressed: boolean) => {
+                if (isPressed) {
                     this.direction = PacMan.KeyMap[key];
                     this.stopped = false;
-                },
-                on_keyup: () => this.stopped = true
-            })
+                } else {
+                    this.stopped = true;
+                }
+            });
         }
     }
 

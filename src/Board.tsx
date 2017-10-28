@@ -7,7 +7,7 @@ import Pinky from './Pinky';
 import Clyde from './Clyde';
 import Drawable from './Drawable';
 import {createMultiDimensionalArray} from './lib';
-import { Listener as KeypressListener } from 'keypress.js';
+import KeyboardListener from './KeyboardListener';
 
 /**
  * Course: CSE 201 A
@@ -25,11 +25,11 @@ class Board extends React.Component {
     gameFinished: boolean = false;
     gameEndCallback: () => void;
 
-    keyboardListener: KeypressListener;
+    keyboardListener: KeyboardListener;
 
     constructor() {
         super();
-        this.keyboardListener = new KeypressListener();
+        this.keyboardListener = new KeyboardListener(document);
         this.stationaryEntities = createMultiDimensionalArray([27, 31], (position) => null) // 27 X 31 board
         // TODO: Populate board
         this.pacMan = new PacMan([1, 1], this.keyboardListener);
