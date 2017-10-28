@@ -52,7 +52,20 @@ abstract class MovableEntity implements Drawable {
      * @param neighboringEntities A collection of adjacent entities.
      */
     draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]) {
-
+        board.fillStyle = '#9E9E9E';
+        board.fillRect(location[0] - maxSize / 2, location[1] - maxSize / 2, maxSize, maxSize);
+        board.strokeStyle = '#BDBDBD';
+        board.moveTo(location[0], location[1]);
+        if (this.direction == Direction.North) {
+            board.lineTo(location[0], location[1] + maxSize / 2);
+        } else if (this.direction == Direction.South) {
+            board.lineTo(location[0], location[1] - maxSize / 2);
+        } else if (this.direction == Direction.East) {
+            board.lineTo(location[0] + maxSize / 2, location[1]);
+        } else {
+            board.lineTo(location[0] - maxSize / 2, location[1]);
+        }
+        board.stroke();
     }
 }
 
