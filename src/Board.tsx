@@ -24,6 +24,8 @@ const ghostRespawningPoint = [14, 16];
 interface Props {
     width: number;
     height: number;
+    onGameFinish: () => void;
+    active: boolean;
 }
 
 /**
@@ -46,8 +48,8 @@ class Board extends React.Component<Props> {
     timeOfLastUpdate: number = 0;
 
     score: number;
+    gameActive: boolean = false;
     gameFinished: boolean = false;
-    gameEndCallback: () => void;
 
     canvasContext: CanvasRenderingContext2D
     keyboardListener: KeyboardListener;
@@ -65,6 +67,7 @@ class Board extends React.Component<Props> {
             new Clyde([18, 16])
         ];
         this.score = 0;
+        this.updateGameState = this.updateGameState.bind(this);
     }
 
     render() {
@@ -80,15 +83,24 @@ class Board extends React.Component<Props> {
         )
     }
 
-    /**
-     * Starts the game.  The game is finished when the callback is called.
-     *
-     * @param gameTickLength The length of each game tick
-     * @param callback A lambda function to call when the game has ended.
-     */
-    startGame(gameTickLength: number, callback: () => void): void {
-        this.gameEndCallback = callback;
-        window.requestAnimationFrame(this.updateGameState)
+    componentDidMount() {
+        this.gameActive = this.props.active;
+        if (this.gameActive) {
+            window.requestAnimationFrame(this.updateGameState);
+        }
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: {}) {
+        if (prevProps.active === true && !this.gameActive) {
+            this.gameActive = true;
+            window.requestAnimationFrame(this.updateGameState);
+        } else if (prevProps.active === false) {
+            this.gameActive = false;
+        }
+    }
+
+    componentWillUnmount() {
+        this.gameActive = false;
     }
 
     /**
@@ -116,9 +128,9 @@ class Board extends React.Component<Props> {
         }
         this.timeOfLastUpdate = currentTime;
         if (this.gameFinished) {
-            this.gameEndCallback();
-        } else {
-            window.requestAnimationFrame(this.updateGameState)
+            this.props.onGameFinish();
+        } else if (this.gameActive) {
+            window.requestAnimationFrame(this.updateGameState);
         }
     }
 
