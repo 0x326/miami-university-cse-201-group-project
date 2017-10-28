@@ -65,17 +65,17 @@ abstract class MovableEntity {
      */
     draw(board: CanvasRenderingContext2D, maxSize: number) {
         board.fillStyle = '#9E9E9E';
-        board.fillRect(location[0] - maxSize / 2, location[1] - maxSize / 2, maxSize, maxSize);
+        board.fillRect(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1] - maxSize / 2, maxSize, maxSize);
         board.strokeStyle = '#BDBDBD';
-        board.moveTo(location[0], location[1]);
+        board.moveTo(this.logicalLocation[0], this.logicalLocation[1]);
         if (this.direction == Direction.North) {
-            board.lineTo(location[0], location[1] + maxSize / 2);
+            board.lineTo(this.logicalLocation[0], this.logicalLocation[1] + maxSize / 2);
         } else if (this.direction == Direction.South) {
-            board.lineTo(location[0], location[1] - maxSize / 2);
+            board.lineTo(this.logicalLocation[0], this.logicalLocation[1] - maxSize / 2);
         } else if (this.direction == Direction.East) {
-            board.lineTo(location[0] + maxSize / 2, location[1]);
+            board.lineTo(this.logicalLocation[0] + maxSize / 2, this.logicalLocation[1]);
         } else {
-            board.lineTo(location[0] - maxSize / 2, location[1]);
+            board.lineTo(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1]);
         }
         board.stroke();
     }
