@@ -1,4 +1,5 @@
 import Drawable from './Drawable';
+import Wall from './Wall';
 
 /**
  * Course: CSE 201 A
@@ -39,6 +40,19 @@ abstract class MovableEntity {
      */
     move(timePassed: number, map: Drawable[][]): void {
 
+    }
+
+    /**
+     * Checks to see which adjacent cells this entity can legally move
+     * @param map The grid of stationary entities
+     */
+    getMovementOptions(map: Drawable[][]) {
+        return {
+            top: !(map[this.logicalLocation[0]][this.logicalLocation[1] + 1] instanceof Wall),
+            left: !(map[this.logicalLocation[0] - 1][this.logicalLocation[1]] instanceof Wall),
+            right: !(map[this.logicalLocation[0] + 1][this.logicalLocation[1]] instanceof Wall),
+            bottom: !(map[this.logicalLocation[0]][this.logicalLocation[1] - 1] instanceof Wall),
+        };
     }
 
     /**
