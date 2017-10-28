@@ -54,11 +54,11 @@ abstract class MovableEntity {
 
         let xIncrement = 0, yIncrement = 0;
         if (this.direction == Direction.North) {
-            yIncrement = this.speed * timePassed;
+            yIncrement = - this.speed * timePassed;
         } else if (this.direction == Direction.West) {
             xIncrement = - this.speed * timePassed;
         } else if (this.direction == Direction.South) {
-            yIncrement = - this.speed * timePassed;
+            yIncrement = this.speed * timePassed;
         } else {
             xIncrement = this.speed * timePassed;
         }
