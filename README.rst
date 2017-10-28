@@ -18,6 +18,7 @@ You'll need Yarn_ installed for these scripts to work:
 #. ``yarn``: Install dependencies
 #. ``yarn start``: Start a live development server, reloads automatically
 #. ``yarn test``: Runs test cases (files with ``.test.ts`` or ``.test.tsx`` extension)
+#. ``yarn lint``: Makes sure code is formatted correctly
 #. ``yarn build``: Builds a production version of the code. Use for submissions
 
 Team Members
