@@ -30,11 +30,11 @@ class PacMan extends MovableEntity {
         this.direction = Direction.North;
         for (let key in PacMan.KeyMap) {
             keyboardListener.registerKey(key, (isPressed: boolean) => {
-                if (isPressed) {
+                if (PacMan.KeyMap[key] === this.direction) {
+                    this.stopped = !isPressed;
+                } else if (isPressed) {
                     this.direction = PacMan.KeyMap[key];
                     this.stopped = false;
-                } else {
-                    this.stopped = true;
                 }
             });
         }
