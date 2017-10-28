@@ -10,6 +10,7 @@ import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
 import {createMultiDimensionalArray} from './lib';
+import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
     // TODO: Adjust scores
@@ -49,12 +50,14 @@ class Board extends React.Component<Props> {
     gameEndCallback: () => void;
 
     canvasContext: CanvasRenderingContext2D
+    keyboardListener: KeyboardListener;
 
     constructor() {
         super();
+        this.keyboardListener = new KeyboardListener(document);
         this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows])
         // TODO: Populate board
-        this.pacMan = new PacMan([1, 1]);
+        this.pacMan = new PacMan([1, 1], this.keyboardListener);
         this.ghosts = [
             new Blinky([14, 19]),
             new Inky([10, 16]),

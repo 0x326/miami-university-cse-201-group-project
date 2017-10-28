@@ -12,13 +12,16 @@ import Wall from './Wall';
 abstract class MovableEntity {
 
     logicalLocation: [number, number];
+    direction: Direction;
 
     /**
      * Creates a MovableEntity
      * @param initialLocation The starting location of this entity.
+     * @param direction The initial direction that this entity is facing
      */
-    constructor(initialLocation: [number, number]) {
+    constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
         this.logicalLocation = initialLocation;
+        this.direction = direction;
     }
 
     /**
@@ -38,9 +41,7 @@ abstract class MovableEntity {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    move(timePassed: number, map: Drawable[][]): void {
-
-    }
+    abstract move(timePassed: number, map: Drawable[][]): void;
 
     /**
      * Checks to see which adjacent cells this entity can legally move
@@ -63,8 +64,29 @@ abstract class MovableEntity {
      *                            The image drawn should be proportional to mazSize to support scaling.
      */
     draw(board: CanvasRenderingContext2D, maxSize: number) {
-
+        board.fillStyle = '#9E9E9E';
+        board.fillRect(location[0] - maxSize / 2, location[1] - maxSize / 2, maxSize, maxSize);
+        board.strokeStyle = '#BDBDBD';
+        board.moveTo(location[0], location[1]);
+        if (this.direction == Direction.North) {
+            board.lineTo(location[0], location[1] + maxSize / 2);
+        } else if (this.direction == Direction.South) {
+            board.lineTo(location[0], location[1] - maxSize / 2);
+        } else if (this.direction == Direction.East) {
+            board.lineTo(location[0] + maxSize / 2, location[1]);
+        } else {
+            board.lineTo(location[0] - maxSize / 2, location[1]);
+        }
+        board.stroke();
     }
 }
 
+enum Direction {
+    North,
+    South,
+    East,
+    West
+}
+
 export default MovableEntity;
+export { Direction };
