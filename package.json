@@ -12,7 +12,7 @@
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
-    "lintcheck": "tslint 'src/**/*.ts' 'src/**/*.tsx' --fix",
+    "lintcheck": "tslint 'src/**/*.ts' 'src/**/*.tsx'",
     "lint": "tslint 'src/**/*.ts' 'src/**/*.tsx' --fix"
   },
   "devDependencies": {
