@@ -19,9 +19,6 @@ class PacMan extends MovableEntity {
         'd': Direction.East
     }
 
-    stopped: boolean = true;
-    speed: number = 1;
-
     /**
      * Creates a MovableEntity
      *
@@ -52,30 +49,9 @@ class PacMan extends MovableEntity {
         return [0, 0];
     }
 
-    /**
-     * Gives this MovableEntity a chance to move.
-     * The move should be proportional to the amount of time passed from the previous move.
-     *
-     * @param timePassed The amount of elapsed time from the previous move.
-     *                   This time may be subject to a maximum value at the discretion of the callee.
-     * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
-     */
-    move(timePassed: number, map: Drawable[][]): void {
-        if (this.stopped) {
-            return;
-        }
-
-        let xIncrement = 0, yIncrement = 0;
-        if (this.direction == Direction.North) {
-            yIncrement = this.speed * timePassed;
-        } else if (this.direction == Direction.West) {
-            xIncrement = - this.speed * timePassed;
-        } else if (this.direction == Direction.South) {
-            yIncrement = - this.speed * timePassed;
-        } else {
-            xIncrement = this.speed * timePassed;
-        }
-        this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
+    chooseDirection(map: Drawable[][]): void {
+        // Do nothing
+        // Direction is decided by keyboard
     }
 }
 

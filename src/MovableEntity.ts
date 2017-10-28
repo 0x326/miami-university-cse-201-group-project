@@ -13,6 +13,8 @@ abstract class MovableEntity {
 
     logicalLocation: [number, number];
     direction: Direction;
+    stopped: boolean = true;
+    speed: number = 0.05;
 
     /**
      * Creates a MovableEntity
@@ -33,6 +35,8 @@ abstract class MovableEntity {
         return this.logicalLocation;
     }
 
+    abstract chooseDirection(map: Drawable[][]): void;
+
     /**
      * Gives this MovableEntity a chance to move.
      * The move should be proportional to the amount of time passed from the previous move.
@@ -41,7 +45,26 @@ abstract class MovableEntity {
      *                   This time may be subject to a maximum value at the discretion of the callee.
      * @param map        The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
      */
-    abstract move(timePassed: number, map: Drawable[][]): void;
+    move(timePassed: number, map: Drawable[][]): void {
+        if (this.stopped) {
+            return;
+        }
+
+        this.chooseDirection(map);
+
+        let xIncrement = 0, yIncrement = 0;
+        if (this.direction == Direction.North) {
+            yIncrement = this.speed * timePassed;
+        } else if (this.direction == Direction.West) {
+            xIncrement = - this.speed * timePassed;
+        } else if (this.direction == Direction.South) {
+            yIncrement = - this.speed * timePassed;
+        } else {
+            xIncrement = this.speed * timePassed;
+        }
+        this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
+
+    }
 
     /**
      * Checks to see which adjacent cells this entity can legally move
