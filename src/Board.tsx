@@ -62,15 +62,6 @@ class Board extends React.Component<Props, State> {
         window.requestAnimationFrame(this.updateGameState)
     }
 
-    /**
-     * Gets the current score of the game.
-     *
-     * @return The score of the game
-     */
-    getScore(): number {
-        return 0;
-    }
-
     // TODO: Add time-since-last-update-parameter
     updateGameState(): void {
         // TODO: Move Pac-Man
