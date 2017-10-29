@@ -38,7 +38,7 @@ class Board extends React.Component {
         super();
         this.stationaryEntities = createMultiDimensionalArray([27, 31], (position) => null) // 27 X 31 board
         // TODO: Populate board
-        this.pacMan = new PacMan([1, 1]);
+        this.pacMan = new PacMan([14, 22]);
         this.ghosts = [
             new Blinky([14, 19]),
             new Inky([10, 16]),
