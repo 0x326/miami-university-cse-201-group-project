@@ -1,4 +1,4 @@
-import Drawable from './Drawable';
+import Drawable, { Neighbors } from './Drawable';
 
 /**
  * Course: CSE 201 A
@@ -18,7 +18,7 @@ class Pellet implements Drawable {
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
      */
-    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void {
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
 
     }
 }

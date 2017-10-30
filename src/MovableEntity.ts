@@ -1,4 +1,5 @@
 import Drawable from './Drawable';
+import Wall from './Wall';
 
 /**
  * Course: CSE 201 A
@@ -8,7 +9,7 @@ import Drawable from './Drawable';
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-abstract class MovableEntity implements Drawable {
+abstract class MovableEntity {
 
     logicalLocation: [number, number];
 
@@ -42,15 +43,26 @@ abstract class MovableEntity implements Drawable {
     }
 
     /**
+     * Checks to see which adjacent cells this entity can legally move
+     * @param map The grid of stationary entities
+     */
+    getMovementOptions(map: Drawable[][]) {
+        return {
+            top: !(map[this.logicalLocation[0]][this.logicalLocation[1] + 1] instanceof Wall),
+            left: !(map[this.logicalLocation[0] - 1][this.logicalLocation[1]] instanceof Wall),
+            right: !(map[this.logicalLocation[0] + 1][this.logicalLocation[1]] instanceof Wall),
+            bottom: !(map[this.logicalLocation[0]][this.logicalLocation[1] - 1] instanceof Wall),
+        };
+    }
+
+    /**
      * Draw this object on the graphic at the given location.
      *
      * @param board               The graphic to draw on
-     * @param location            The location at which to draw
      * @param maxSize             The maximum size of the image.
      *                            The image drawn should be proportional to mazSize to support scaling.
-     * @param neighboringEntities A collection of adjacent entities.
      */
-    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]) {
+    draw(board: CanvasRenderingContext2D, maxSize: number) {
 
     }
 }

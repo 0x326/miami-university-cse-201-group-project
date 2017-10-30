@@ -5,7 +5,7 @@ import Blinky from './Blinky';
 import Inky from './Inky';
 import Pinky from './Pinky';
 import Clyde from './Clyde';
-import Drawable from './Drawable';
+import Drawable, { Neighbors } from './Drawable';
 import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
@@ -15,7 +15,15 @@ const scoringTable = {
     // TODO: Adjust scores
     'pellet': 1,
     'powerPellet': 2,
+    'ghost': 5
 };
+
+const ghostRespawningPoint = [14, 16];
+
+interface Props {
+    width: number;
+    height: number;
+}
 
 /**
  * Course: CSE 201 A
@@ -25,18 +33,26 @@ const scoringTable = {
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-class Board extends React.Component {
+class Board extends React.Component<Props> {
+    // 27 X 31 board
+    static logicalColumns = 27;
+    static logicalRows = 31;
+
     stationaryEntities: Drawable[][];
     pacMan: PacMan;
     ghosts: Ghost[];
+
+    timeOfLastUpdate: number = 0;
 
     score: number;
     gameFinished: boolean = false;
     gameEndCallback: () => void;
 
+    canvasContext: CanvasRenderingContext2D
+
     constructor() {
         super();
-        this.stationaryEntities = createMultiDimensionalArray([27, 31], (position) => null) // 27 X 31 board
+        this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows])
         // TODO: Populate board
         this.pacMan = new PacMan([14, 22]);
         this.ghosts = [
@@ -46,6 +62,19 @@ class Board extends React.Component {
             new Clyde([18, 16])
         ];
         this.score = 0;
+    }
+
+    render() {
+        return (
+            <canvas ref={(elem) => {
+                if (elem !== null) {
+                    let context = elem.getContext('2d');
+                    if (context !== null) {
+                        this.canvasContext = context;
+                    }
+                }
+            }} />
+        )
     }
 
     /**
@@ -69,17 +98,25 @@ class Board extends React.Component {
     }
 
     // TODO: Add time-since-last-update-parameter
-    updateGameState(): void {
-        // TODO: Move Pac-Man
-        // TODO: Move ghosts
-        this.detectCollisions();
-        // TODO: Repaint board
-        // TODO: Determine when the game has ended
+    updateGameState(currentTime: number): void {
+        if (this.timeOfLastUpdate !== 0) {
+            let elapsedTime = currentTime - this.timeOfLastUpdate;
 
+            this.pacMan.move(elapsedTime, this.stationaryEntities);
+            for (let ghost of this.ghosts) {
+                ghost.move(elapsedTime, this.stationaryEntities);
+            }
+
+            this.detectCollisions();
+            this.repaintCanvas();
+            // TODO: Determine when the game has ended
+        }
+        this.timeOfLastUpdate = currentTime;
         if (this.gameFinished) {
             this.gameEndCallback();
+        } else {
+            window.requestAnimationFrame(this.updateGameState)
         }
-        window.requestAnimationFrame(this.updateGameState)
     }
 
     detectCollisions(): void {
@@ -87,29 +124,65 @@ class Board extends React.Component {
 
         let stationaryItem = this.stationaryEntities[x][y];
         if (stationaryItem instanceof Wall) {
+            // TODO: Add correction logic
             throw 'pacMan is on a wall';
         }
         else if (stationaryItem instanceof Pellet) {
             this.score += scoringTable.pellet;
-            this.stationaryEntities[x][y];  // TODO: Replace item
+            delete this.stationaryEntities[x][y];
         }
         else if (stationaryItem instanceof PowerPellet) {
             this.score += scoringTable.powerPellet;
-            this.stationaryEntities[x][y];  // TODO: Replace item
+            delete this.stationaryEntities[x][y];
         }
 
         for (let ghost of this.ghosts) {
             let [ghostX, ghostY] = ghost.getLogicalLocation();
             if (x === ghostX && y === ghostY) {
                 if (ghost.isVunerable()) {
-                    // TODO: Do something
+                    ghost.logicalLocation[0] = ghostRespawningPoint[0];
+                    ghost.logicalLocation[1] = ghostRespawningPoint[1];
+                    ghost.makeDangerous();
+                    this.score += scoringTable.ghost;
                 }
                 else {
-                    // TODO: Do something
+                    this.gameFinished = true;
+                    break;
                 }
-                break;
             }
         }
+    }
+
+    repaintCanvas(): void {
+        this.canvasContext.clearRect(0, 0, this.props.width, this.props.height);
+
+        let boundingBoxSize = Math.min(this.props.width / Board.logicalColumns, this.props.height / Board.logicalRows);
+        for (let column in this.stationaryEntities) {
+            for (let row in this.stationaryEntities[column]) {
+                // Type cast
+                let columnNumber = Number(column), rowNumber = Number(row);
+
+                let item = this.stationaryEntities[columnNumber][rowNumber];
+                // Create representation of surroundings
+                let neighbors: Neighbors = {
+                    topLeft: this.stationaryEntities[columnNumber - 1][rowNumber + 1],
+                    top: this.stationaryEntities[columnNumber][rowNumber + 1],
+                    topRight: this.stationaryEntities[columnNumber + 1][rowNumber + 1],
+
+                    left: this.stationaryEntities[columnNumber - 1][rowNumber],
+                    right: this.stationaryEntities[columnNumber + 1][rowNumber],
+
+                    bottomLeft: this.stationaryEntities[columnNumber - 1][rowNumber - 1],
+                    bottom: this.stationaryEntities[columnNumber][rowNumber - 1],
+                    bottomRight: this.stationaryEntities[columnNumber + 1][rowNumber - 1],
+                };
+                item.draw(this.canvasContext, [columnNumber, rowNumber], boundingBoxSize, neighbors);
+            }
+        }
+        for (let ghost of this.ghosts) {
+            ghost.draw(this.canvasContext, boundingBoxSize);
+        }
+        this.pacMan.draw(this.canvasContext, boundingBoxSize);
     }
 }
 
