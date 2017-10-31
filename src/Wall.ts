@@ -1,16 +1,14 @@
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.Collection;
+import Drawable from './Drawable';
 
 /**
  * Course: CSE 201 A
- * Instructor: Dr. Sobel
- * <p>
+ * Instructor: Dr. Kiper
+ *
  * CSE 201 Project
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public interface Drawable {
+class Wall implements Drawable {
     /**
      * Draw this object on the graphic at the given location.
      *
@@ -19,7 +17,10 @@ public interface Drawable {
      * @param maxSize             The maximum size of the image.
      *                            The image drawn should be proportional to mazSize to support scaling.
      * @param neighboringEntities A collection of adjacent entities.
-     *                            Use this if the image depends on its surroundings
      */
-    void draw(Graphics board, Point2D.Double location, double maxSize, Collection<Drawable> neighboringEntities);
+    draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Drawable[]): void {
+
+    }
 }
+
+export default Wall;

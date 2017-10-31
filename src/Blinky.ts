@@ -1,20 +1,20 @@
-import java.awt.geom.Point2D;
+import Ghost from './Ghost';
 
 /**
  * Course: CSE 201 A
- * Instructor: Dr. Sobel
- * <p>
+ * Instructor: Dr. Kiper
+ *
  * CSE 201 Project
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-public class Inky extends Ghost {
+class Blinky extends Ghost {
     /**
      * Creates a MovableEntity
      *
      * @param initialLocation The starting location of this entity.
      */
-    public Inky(Point2D.Double initialLocation) {
+    constructor(initialLocation: [number, number]) {
         super(initialLocation);
     }
 
@@ -23,8 +23,9 @@ public class Inky extends Ghost {
      *
      * @return The current location
      */
-    @Override
-    public Point2D.Double getLogicalLocation() {
-        return null;
+    getLogicalLocation(): [number, number] {
+        return [0, 0];
     }
 }
+
+export default Blinky;
