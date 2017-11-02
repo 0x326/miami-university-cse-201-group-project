@@ -37,8 +37,7 @@
                 updatePosition(ctx, blinky.x, blinky.y);
                 if (blinky.x <= 0) {
                     xVelo = 2;
-                }
-                else if (blinky.x >= 900) {
+                } else if (blinky.x >= 900) {
                     xVelo = -2;
                 }
                 blinky.x = blinky.x + xVelo;
@@ -50,8 +49,7 @@
                 updatePosition(ctx, inky.x, inky.y);
                 if (inky.y <= 0) {
                     yVelo = 2;
-                }
-                else if (inky.y >= 450) {
+                } else if (inky.y >= 450) {
                     yVelo = -2;
                 }
                 inky.y = inky.y + yVelo;
