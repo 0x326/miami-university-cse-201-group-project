@@ -11,21 +11,21 @@
 
         // erases the sprite of the ghost at its old position
         function updatePosition(context, oldX, oldY) {
-            context.fillStyle = "#FFFFFF";
+            context.fillStyle = '#FFFFFF';
             context.fillRect(oldX, oldY, 50, 50);
         }
 
         // moves a rectangle back and forth on the screen
         function moveGhost() {
-            let c = document.getElementById("myCanvas");
-            let ctx = c.getContext("2d");
             // setting everything up
+            let c = document.getElementById('myCanvas');
+            let ctx = c.getContext('2d');
             let xVelo = 2;
             let yVelo = -2;
             let blinkyImg = new Image();
-            blinkyImg.src = "Blinky.png";
+            blinkyImg.src = 'Blinky.png';
             let inkyImg = new Image();
-            inkyImg.src = "Inky.png";
+            inkyImg.src = 'Inky.png';
             let blinky = new ghost(100, 100, ctx, blinkyImg);
             let inky = new ghost(350, 500, ctx, inkyImg);
             window.setInterval(moveBlinky, 7);
