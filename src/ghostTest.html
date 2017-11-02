@@ -9,17 +9,17 @@
 
     <script type = "text/javascript">
 
-        //erases the sprite of the ghost at its old position
+        // erases the sprite of the ghost at its old position
         function updatePosition(context, oldX, oldY) {
             context.fillStyle = "#FFFFFF";
             context.fillRect(oldX, oldY, 50, 50);
         }
 
-        //moves a rectangle back and forth on the screen
+        // moves a rectangle back and forth on the screen
         function moveGhost() {
-            //setting everything up
             let c = document.getElementById("myCanvas");
             let ctx = c.getContext("2d");
+            // setting everything up
             let xVelo = 2;
             let yVelo = -2;
             let blinkyImg = new Image();
@@ -32,7 +32,7 @@
             window.setInterval(moveInky, 7);
 
 
-            //inner function, performs the actual movement
+            // inner function, performs the actual movement
             function moveBlinky() {
                 updatePosition(ctx, blinky.x, blinky.y);
                 if (blinky.x <= 0) {
@@ -45,7 +45,7 @@
                 ctx.drawImage(blinky.image, blinky.x, blinky.y, 50, 50);
             }
 
-            //inner function, performs the actual movement
+            // inner function, performs the actual movement
             function moveInky() {
                 updatePosition(ctx, inky.x, inky.y);
                 if (inky.y <= 0) {
