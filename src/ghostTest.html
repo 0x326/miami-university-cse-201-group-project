@@ -18,16 +18,16 @@
         //moves a rectangle back and forth on the screen
         function moveGhost() {
             //setting everything up
-            var c = document.getElementById("myCanvas");
-            var ctx = c.getContext("2d");
-            var xVelo = 2;
-            var yVelo = -2;
-            var blinkyImg = new Image();
+            let c = document.getElementById("myCanvas");
+            let ctx = c.getContext("2d");
+            let xVelo = 2;
+            let yVelo = -2;
+            let blinkyImg = new Image();
             blinkyImg.src = "Blinky.png";
-            var inkyImg = new Image();
+            let inkyImg = new Image();
             inkyImg.src = "Inky.png";
-            var blinky = new ghost(100, 100, ctx, blinkyImg);
-            var inky = new ghost(350, 500, ctx, inkyImg);
+            let blinky = new ghost(100, 100, ctx, blinkyImg);
+            let inky = new ghost(350, 500, ctx, inkyImg);
             window.setInterval(moveBlinky, 7);
             window.setInterval(moveInky, 7);
 
