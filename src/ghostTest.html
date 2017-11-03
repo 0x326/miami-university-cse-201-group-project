@@ -33,8 +33,8 @@
             inkyImg.src = 'Inky.png';
             let blinky = new ghost(100, 100, ctx, blinkyImg);
             let inky = new ghost(350, 500, ctx, inkyImg);
-            window.setInterval(moveBlinky, 7);
-            window.setInterval(moveInky, 7);
+            window.requestAnimationFrame(moveBlinky);
+            window.requestAnimationFrame(moveInky);
 
             // inner function, performs the actual movement
             function moveBlinky() {
@@ -46,6 +46,7 @@
                 }
                 blinky.x = blinky.x + xVelo;
                 ctx.drawImage(blinky.image, blinky.x, blinky.y, 50, 50);
+                window.requestAnimationFrame(moveBlinky);
             }
 
             // inner function, performs the actual movement
@@ -58,6 +59,7 @@
                 }
                 inky.y = inky.y + yVelo;
                 ctx.drawImage(inky.image, inky.x, inky.y, 50, 50);
+                window.requestAnimationFrame(moveInky);
             }
         }
 
