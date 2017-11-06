@@ -47,3 +47,21 @@ Meeting Notes
 * Noah suggested making a UML diagram
 * Started drafting project plan
 * We plan to work on project plan over the weekend
+
+9/29/17
+-------
+
+* Reviewed progress on SRS deliverable
+* TODO: Ask what the requirements are for the prototype demonstration
+* We plan to meet after class on October 4th for an hour
+* Noah will work on prototype
+* Laurel will work on the game display
+* Gauthier will work on the keyboard interface
+* John will work on incorporating the ``Timer`` class
+
+10/3/17
+-------
+
+Tried to meet with professor: office hours not filled.
+We did walk past the department chair and he said not to
+worry about the requirements since we'll have to revisit them anyway.
