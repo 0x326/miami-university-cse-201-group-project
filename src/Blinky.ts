@@ -3,7 +3,7 @@ import Drawable from './Drawable';
 
 /**
  * Course: CSE 201 A
- * Instructor: Dr. Sobel
+ * Instructor: Dr. Kiper
  *
  * CSE 201 Project
  *
