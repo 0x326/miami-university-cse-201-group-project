@@ -10,18 +10,18 @@ import Drawable from './Drawable';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Blinky extends Ghost {
-    /**
-     * Creates a MovableEntity
-     *
-     * @param initialLocation The starting location of this entity.
-     */
-    constructor(initialLocation: [number, number]) {
-        super(initialLocation);
-    }
+  /**
+   * Creates a MovableEntity
+   *
+   * @param initialLocation The starting location of this entity.
+   */
+  constructor(initialLocation: [number, number]) {
+    super(initialLocation);
+  }
 
-    chooseDirection(map: Drawable[][]): void {
+  chooseDirection(map: Drawable[][]): void {
 
-    }
+  }
 }
 
 export default Blinky;
