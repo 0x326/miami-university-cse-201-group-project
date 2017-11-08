@@ -9,7 +9,7 @@ import Drawable, { Neighbors } from './Drawable';
 import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
-import {createMultiDimensionalArray} from './lib';
+import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
@@ -51,13 +51,13 @@ class Board extends React.Component<Props> {
     gameActive: boolean = false;
     gameFinished: boolean = false;
 
-    canvasContext: CanvasRenderingContext2D
+    canvasContext: CanvasRenderingContext2D;
     keyboardListener: KeyboardListener;
 
     constructor() {
         super();
         this.keyboardListener = new KeyboardListener(document);
-        this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows])
+        this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
         // TODO: Populate board
         this.pacMan = new PacMan([14, 22], this.keyboardListener);
         this.ghosts = [
@@ -72,15 +72,17 @@ class Board extends React.Component<Props> {
 
     render() {
         return (
-            <canvas ref={(elem) => {
-                if (elem !== null) {
-                    let context = elem.getContext('2d');
-                    if (context !== null) {
-                        this.canvasContext = context;
+            <canvas
+                ref={(elem) => {
+                    if (elem !== null) {
+                        let context = elem.getContext('2d');
+                        if (context !== null) {
+                            this.canvasContext = context;
+                        }
                     }
-                }
-            }} />
-        )
+                }}
+            />
+        );
     }
 
     componentDidMount() {
@@ -141,12 +143,10 @@ class Board extends React.Component<Props> {
         if (stationaryItem instanceof Wall) {
             // TODO: Add correction logic
             throw 'pacMan is on a wall';
-        }
-        else if (stationaryItem instanceof Pellet) {
+        } else if (stationaryItem instanceof Pellet) {
             this.score += scoringTable.pellet;
             delete this.stationaryEntities[x][y];
-        }
-        else if (stationaryItem instanceof PowerPellet) {
+        } else if (stationaryItem instanceof PowerPellet) {
             this.score += scoringTable.powerPellet;
             delete this.stationaryEntities[x][y];
         }
@@ -159,8 +159,7 @@ class Board extends React.Component<Props> {
                     ghost.logicalLocation[1] = ghostRespawningPoint[1];
                     ghost.makeDangerous();
                     this.score += scoringTable.ghost;
-                }
-                else {
+                } else {
                     this.gameFinished = true;
                     break;
                 }

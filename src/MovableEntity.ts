@@ -53,11 +53,11 @@ abstract class MovableEntity {
         this.chooseDirection(map);
 
         let xIncrement = 0, yIncrement = 0;
-        if (this.direction == Direction.North) {
+        if (this.direction === Direction.North) {
             yIncrement = - this.speed * timePassed;
-        } else if (this.direction == Direction.West) {
+        } else if (this.direction === Direction.West) {
             xIncrement = - this.speed * timePassed;
-        } else if (this.direction == Direction.South) {
+        } else if (this.direction === Direction.South) {
             yIncrement = this.speed * timePassed;
         } else {
             xIncrement = this.speed * timePassed;
@@ -91,11 +91,11 @@ abstract class MovableEntity {
         board.fillRect(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1] - maxSize / 2, maxSize, maxSize);
         board.strokeStyle = '#BDBDBD';
         board.moveTo(this.logicalLocation[0], this.logicalLocation[1]);
-        if (this.direction == Direction.North) {
+        if (this.direction === Direction.North) {
             board.lineTo(this.logicalLocation[0], this.logicalLocation[1] + maxSize / 2);
-        } else if (this.direction == Direction.South) {
+        } else if (this.direction === Direction.South) {
             board.lineTo(this.logicalLocation[0], this.logicalLocation[1] - maxSize / 2);
-        } else if (this.direction == Direction.East) {
+        } else if (this.direction === Direction.East) {
             board.lineTo(this.logicalLocation[0] + maxSize / 2, this.logicalLocation[1]);
         } else {
             board.lineTo(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1]);

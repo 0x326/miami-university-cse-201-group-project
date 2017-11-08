@@ -1,14 +1,14 @@
 interface Neighbors {
-    topLeft: Drawable | undefined,
-    top: Drawable | undefined,
-    topRight: Drawable | undefined,
+    topLeft: Drawable | undefined;
+    top: Drawable | undefined;
+    topRight: Drawable | undefined;
 
-    left: Drawable | undefined,
-    right: Drawable | undefined,
+    left: Drawable | undefined;
+    right: Drawable | undefined;
 
-    bottomLeft: Drawable | undefined,
-    bottom: Drawable | undefined,
-    bottomRight: Drawable | undefined
+    bottomLeft: Drawable | undefined;
+    bottom: Drawable | undefined;
+    bottomRight: Drawable | undefined;
 }
 
 /**

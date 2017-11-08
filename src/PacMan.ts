@@ -17,7 +17,7 @@ class PacMan extends MovableEntity {
         'a': Direction.West,
         's': Direction.South,
         'd': Direction.East
-    }
+    };
 
     /**
      * Creates a MovableEntity
@@ -26,7 +26,6 @@ class PacMan extends MovableEntity {
      */
     constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
         super(initialLocation);
-        this.stopped
         this.direction = Direction.North;
         for (let key in PacMan.KeyMap) {
             keyboardListener.registerKey(key, (isPressed: boolean) => {
