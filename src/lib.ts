@@ -16,7 +16,7 @@ function _createMultiDimensionalArray(dimensionSizes: number[], position: number
   }
 }
 
-function initializeMutliDimensionalArray<T>(array: {}, initializer: (position: number[]) => T, position: number[] = []) {
+function initializeMutliDimensionalArray<T>(array: Array<any>, initializer: (position: number[]) => T, position: number[] = []) {
   for (let index = 0; index < array.length; index++) {
     if (index === NaN) {
       continue;
