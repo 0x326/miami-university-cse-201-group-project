@@ -97,9 +97,9 @@ abstract class MovableEntity {
     board.strokeStyle = '#BDBDBD';
     board.moveTo(drawLocation[0], drawLocation[1]);
     if (this.direction === Direction.North) {
-      board.lineTo(drawLocation[0], drawLocation[1] + maxSize / 2);
-    } else if (this.direction === Direction.South) {
       board.lineTo(drawLocation[0], drawLocation[1] - maxSize / 2);
+    } else if (this.direction === Direction.South) {
+      board.lineTo(drawLocation[0], drawLocation[1] + maxSize / 2);
     } else if (this.direction === Direction.East) {
       board.lineTo(drawLocation[0] + maxSize / 2, drawLocation[1]);
     } else {
