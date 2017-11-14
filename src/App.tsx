@@ -16,8 +16,8 @@ class App extends React.Component {
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
         <Board
-          width={500}
-          height={500}
+          width={'500 cm'}
+          height={'500 cm'}
           active={true}
           onGameFinish={() => {
 

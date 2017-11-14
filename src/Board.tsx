@@ -22,8 +22,8 @@ const scoringTable = {
 const ghostRespawningPoint = [14, 16];
 
 interface Props {
-  width: number;
-  height: number;
+  width: string;
+  height: string;
   onGameFinish: () => void;
   active: boolean;
 }
@@ -73,6 +73,8 @@ class Board extends React.Component<Props> {
   render() {
     return (
       <canvas
+        width={this.props.width}
+        height={this.props.height}
         ref={(elem) => {
           if (elem !== null) {
             let context = elem.getContext('2d');
@@ -168,9 +170,12 @@ class Board extends React.Component<Props> {
   }
 
   repaintCanvas(): void {
-    this.canvasContext.clearRect(0, 0, this.props.width, this.props.height);
+    let canvasWidth = this.canvasContext.canvas.width;
+    let canvasHeight = this.canvasContext.canvas.height;
+    this.canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    let boundingBoxSize = Math.min(this.props.width / Board.logicalColumns, this.props.height / Board.logicalRows);
+    let boundingBoxSize = Math.min(canvasWidth / Board.logicalColumns,
+      canvasHeight / Board.logicalRows);
     for (let column in this.stationaryEntities) {
       for (let row in this.stationaryEntities[column]) {
         // Type cast
