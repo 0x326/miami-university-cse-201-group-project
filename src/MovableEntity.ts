@@ -14,7 +14,10 @@ abstract class MovableEntity {
   logicalLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
-  speed: number = 0.05;
+  /**
+   * The speed of this MovableEntity in logical coordinates per second.
+   */
+  speed: number = 2;
 
   /**
    * Creates a MovableEntity
@@ -41,7 +44,7 @@ abstract class MovableEntity {
    * Gives this MovableEntity a chance to move.
    * The move should be proportional to the amount of time passed from the previous move.
    *
-   * @param timePassed The amount of elapsed time from the previous move.
+   * @param timePassed The amount of elapsed time from the previous move in milliseconds.
    *           This time may be subject to a maximum value at the discretion of the callee.
    * @param map    The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
    */
@@ -54,13 +57,13 @@ abstract class MovableEntity {
 
     let xIncrement = 0, yIncrement = 0;
     if (this.direction === Direction.North) {
-      yIncrement = - this.speed * timePassed;
+      yIncrement = - this.speed * timePassed / 1000;
     } else if (this.direction === Direction.West) {
-      xIncrement = - this.speed * timePassed;
+      xIncrement = - this.speed * timePassed / 1000;
     } else if (this.direction === Direction.South) {
-      yIncrement = this.speed * timePassed;
+      yIncrement = this.speed * timePassed / 1000;
     } else {
-      xIncrement = this.speed * timePassed;
+      xIncrement = this.speed * timePassed / 1000;
     }
     this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
 
