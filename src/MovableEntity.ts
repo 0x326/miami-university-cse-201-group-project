@@ -87,18 +87,23 @@ abstract class MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
+    let drawLocation: [number, number] = [
+      this.logicalLocation[0] * maxSize - maxSize,
+      this.logicalLocation[1] * maxSize - maxSize
+    ];
+
     board.fillStyle = '#9E9E9E';
-    board.fillRect(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1] - maxSize / 2, maxSize, maxSize);
+    board.fillRect(drawLocation[0] - maxSize / 2, drawLocation[1] - maxSize / 2, maxSize, maxSize);
     board.strokeStyle = '#BDBDBD';
-    board.moveTo(this.logicalLocation[0], this.logicalLocation[1]);
+    board.moveTo(drawLocation[0], drawLocation[1]);
     if (this.direction === Direction.North) {
-      board.lineTo(this.logicalLocation[0], this.logicalLocation[1] + maxSize / 2);
+      board.lineTo(drawLocation[0], drawLocation[1] + maxSize / 2);
     } else if (this.direction === Direction.South) {
-      board.lineTo(this.logicalLocation[0], this.logicalLocation[1] - maxSize / 2);
+      board.lineTo(drawLocation[0], drawLocation[1] - maxSize / 2);
     } else if (this.direction === Direction.East) {
-      board.lineTo(this.logicalLocation[0] + maxSize / 2, this.logicalLocation[1]);
+      board.lineTo(drawLocation[0] + maxSize / 2, drawLocation[1]);
     } else {
-      board.lineTo(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1]);
+      board.lineTo(drawLocation[0] - maxSize / 2, drawLocation[1]);
     }
     board.stroke();
   }

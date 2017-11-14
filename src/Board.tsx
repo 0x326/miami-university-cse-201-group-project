@@ -195,7 +195,12 @@ class Board extends React.Component<Props> {
           bottom: this.stationaryEntities[columnNumber][rowNumber - 1],
           bottomRight: this.stationaryEntities[columnNumber + 1][rowNumber - 1],
         };
-        item.draw(this.canvasContext, [columnNumber, rowNumber], boundingBoxSize, neighbors);
+
+        let drawLocation: [number, number] = [
+          columnNumber * boundingBoxSize - boundingBoxSize,
+          rowNumber * boundingBoxSize - boundingBoxSize
+        ];
+        item.draw(this.canvasContext, drawLocation, boundingBoxSize, neighbors);
       }
     }
     for (let ghost of this.ghosts) {
