@@ -59,6 +59,9 @@ class Board extends React.Component<Props> {
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     // TODO: Populate board
+    for (let i = 0; i < 10; i++) {
+      this.stationaryEntities[i][5] = new Wall;
+    }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
       new Blinky([14, 19]),
