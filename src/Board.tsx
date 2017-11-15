@@ -186,17 +186,20 @@ class Board extends React.Component<Props> {
 
         let item = this.stationaryEntities[columnNumber][rowNumber];
         // Create representation of surroundings
+        let leftColumn = this.stationaryEntities[columnNumber - 1];
+        let middleColumn = this.stationaryEntities[columnNumber];
+        let rightColumn = this.stationaryEntities[columnNumber + 1];
         let neighbors: Neighbors = {
-          topLeft: this.stationaryEntities[columnNumber - 1][rowNumber + 1],
-          top: this.stationaryEntities[columnNumber][rowNumber + 1],
-          topRight: this.stationaryEntities[columnNumber + 1][rowNumber + 1],
+          topLeft: leftColumn ? leftColumn[rowNumber + 1] : undefined,
+          top: middleColumn ? middleColumn[rowNumber + 1] : undefined,
+          topRight: rightColumn ? rightColumn[rowNumber + 1] : undefined,
 
-          left: this.stationaryEntities[columnNumber - 1][rowNumber],
-          right: this.stationaryEntities[columnNumber + 1][rowNumber],
+          left: leftColumn ? leftColumn[rowNumber] : undefined,
+          right: rightColumn ? rightColumn[rowNumber] : undefined,
 
-          bottomLeft: this.stationaryEntities[columnNumber - 1][rowNumber - 1],
-          bottom: this.stationaryEntities[columnNumber][rowNumber - 1],
-          bottomRight: this.stationaryEntities[columnNumber + 1][rowNumber - 1],
+          bottomLeft: leftColumn ? leftColumn[rowNumber - 1] : undefined,
+          bottom: middleColumn ? middleColumn[rowNumber - 1] : undefined,
+          bottomRight: rightColumn ? rightColumn[rowNumber - 1] : undefined,
         };
 
         let drawLocation: [number, number] = [
