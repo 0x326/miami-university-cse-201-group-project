@@ -38,8 +38,8 @@ interface Props {
  */
 class Board extends React.Component<Props> {
   // 27 X 31 board
-  static logicalColumns = 27;
-  static logicalRows = 31;
+  static logicalColumns = 28;
+  static logicalRows = 33;
 
   stationaryEntities: Drawable[][];
   pacMan: PacMan;
