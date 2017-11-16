@@ -1,3 +1,6 @@
+# Pac-Man Excel maps (should be CSV)
+maps/*.xlsx
+
 # Logs
 logs
 *.log
