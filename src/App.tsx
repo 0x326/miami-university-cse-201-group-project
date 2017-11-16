@@ -20,12 +20,17 @@ class App extends React.Component<Props, State> {
   render() {
     return (
       <div className="App">
-        <div>
+        <div className="header">
           Score: {this.state.score}
         </div>
-        <Board onScoreChange={(newScore: number) => this.setState({
-          score: newScore
-          })} />
+        <div className="board">
+          <Board
+            onScoreChange={(newScore: number) => this.setState({
+              score: newScore
+              })}
+          />
+        </div>
+        <div className="footer" />
       </div>
     );
   }
