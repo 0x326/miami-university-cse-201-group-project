@@ -62,6 +62,12 @@ class Board extends React.Component<Props> {
     for (let i = 0; i < 10; i++) {
       this.stationaryEntities[i][5] = new Wall;
     }
+    for (let i = 5; i < 15; i++) {
+      this.stationaryEntities[i][10] = new Pellet;
+    }
+    for (let i = 10; i < 20; i++) {
+      this.stationaryEntities[i][20] = new PowerPellet;
+    }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
       new Blinky([14, 19]),
