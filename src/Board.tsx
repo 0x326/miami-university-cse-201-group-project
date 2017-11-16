@@ -143,7 +143,7 @@ class Board extends React.Component<Props> {
   detectCollisions(): void {
     let [x, y] = this.pacMan.getLogicalLocation();
 
-    let stationaryItem = this.stationaryEntities[x][y];
+    let stationaryItem = this.stationaryEntities[x] ? this.stationaryEntities[x][y] : undefined;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
       throw 'pacMan is on a wall';
