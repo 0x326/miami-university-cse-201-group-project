@@ -142,7 +142,7 @@ class Board extends React.Component<Props> {
     if (this.gameFinished) {
       this.props.onGameFinish();
     } else if (this.gameActive) {
-      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
 
@@ -183,7 +183,7 @@ class Board extends React.Component<Props> {
     this.canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
     let boundingBoxSize = Math.min(canvasWidth / Board.logicalColumns,
-      canvasHeight / Board.logicalRows);
+                                   canvasHeight / Board.logicalRows);
     for (let column in this.stationaryEntities) {
       for (let row in this.stationaryEntities[column]) {
         // Type cast
