@@ -18,6 +18,14 @@ abstract class MovableEntity {
    * The speed of this MovableEntity in logical coordinates per second.
    */
   speed: number = 2;
+  /**
+   * Used by the move method for caching purposes.
+   */
+  private lastDirection: Direction;
+  /**
+   * The cached value.
+   */
+  private lastUpcomingWall: [number, number];
 
   /**
    * Creates a MovableEntity
@@ -35,7 +43,7 @@ abstract class MovableEntity {
    * @return The current location
    */
   getLogicalLocation(): [number, number] {
-    return this.logicalLocation;
+    return <[number, number]> this.logicalLocation.map(Math.round);
   }
 
   abstract chooseDirection(map: Drawable[][]): void;
@@ -55,18 +63,36 @@ abstract class MovableEntity {
 
     this.chooseDirection(map);
 
-    let xIncrement = 0, yIncrement = 0;
-    if (this.direction === Direction.North) {
-      yIncrement = - this.speed * timePassed / 1000;
-    } else if (this.direction === Direction.West) {
-      xIncrement = - this.speed * timePassed / 1000;
-    } else if (this.direction === Direction.South) {
-      yIncrement = this.speed * timePassed / 1000;
-    } else {
-      xIncrement = this.speed * timePassed / 1000;
-    }
-    this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
+    const [upcomingWallColumn, upcomingWallRow] = this.direction !== this.lastDirection ?
+                                                  this.findUpcomingWall(map) :
+                                                  this.lastUpcomingWall;
 
+    // Remember result of search for next time
+    this.lastUpcomingWall = [upcomingWallColumn, upcomingWallRow];
+    this.lastDirection = this.direction;
+
+    let maximumAllowableIncrement;
+    if (this.direction === Direction.North || this.direction === Direction.South) {
+      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.logicalLocation[1]);
+    } else {
+      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.logicalLocation[0]);
+    }
+    // Allow the entity to make full use of their logical coordinate
+    // (Might permit a slight visual overlap if items are drawn edge-to-edge)
+    // Makes sure the increment is not negative
+    maximumAllowableIncrement = Math.max(maximumAllowableIncrement - 0.51, 0);
+
+    const increment = Math.min(this.speed * timePassed / 1000, maximumAllowableIncrement);
+
+    if (this.direction === Direction.North) {
+      this.logicalLocation[1] -= increment;
+    } else if (this.direction === Direction.South) {
+      this.logicalLocation[1] += increment;
+    } else if (this.direction === Direction.West) {
+      this.logicalLocation[0] -= increment;
+    } else {
+      this.logicalLocation[0] += increment;
+    }
   }
 
   /**
@@ -110,6 +136,32 @@ abstract class MovableEntity {
     }
     board.stroke();
   }
+
+  private findUpcomingWall(map: Drawable[][]): [number, number] {
+    const [logicalColumn, logicalRow] = this.getLogicalLocation();
+
+    let columnNumber = logicalColumn;
+    let rowNumber = logicalRow;
+    while (0 <= columnNumber && columnNumber < map.length &&
+      0 <= rowNumber && rowNumber < map[columnNumber].length) {
+      if (map[columnNumber][rowNumber] instanceof Wall) {
+        break;
+      }
+
+      if (this.direction === Direction.North) {
+        rowNumber--;
+      } else if (this.direction === Direction.South) {
+        rowNumber++;
+      } else if (this.direction === Direction.East) {
+        columnNumber++;
+      } else {
+        columnNumber--;
+      }
+    }
+
+    return [columnNumber, rowNumber];
+  }
+
 }
 
 enum Direction {
