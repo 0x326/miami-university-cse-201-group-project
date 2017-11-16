@@ -1,5 +1,8 @@
 .. _Create React App: https://github.com/facebookincubator/create-react-app
 .. _Yarn: https://yarnpkg.com/lang/en/docs/install/
+.. _React: https://reactjs.org/
+.. _TypeScript: https://www.typescriptlang.org/
+.. _MDN: https://developer.mozilla.org/en-US/
 
 CSE 201 Project
 ===============
@@ -20,6 +23,13 @@ You'll need Yarn_ installed for these scripts to work:
 #. ``yarn test``: Runs test cases (files with ``.test.ts`` or ``.test.tsx`` extension)
 #. ``yarn lint``: Makes sure code is formatted correctly
 #. ``yarn build``: Builds a production version of the code. Use for submissions
+
+Resources
+---------
+
+* MDN_
+* React_
+* TypeScript_
 
 Team Members
 ------------
