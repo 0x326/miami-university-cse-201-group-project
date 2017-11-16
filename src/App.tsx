@@ -25,9 +25,15 @@ class App extends React.Component<Props, State> {
         </div>
         <div className="board">
           <Board
+            width={500}
+            height={500}
+            active={true}
             onScoreChange={(newScore: number) => this.setState({
               score: newScore
-              })}
+            })}
+            onGameFinish={() => {
+
+            }}
           />
         </div>
         <div className="footer" />

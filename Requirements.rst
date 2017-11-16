@@ -21,7 +21,7 @@ Gameplay Requirements
 * PacMan must have one life
 * Game generates maze for each level
 
-  * Must create a psuedo-random maze of Pac-Dots
+  * Must create a pseudorandom maze of Pac-Dots
 
     * The starting location of the ghosts and PacMan are fixed
 
@@ -73,14 +73,14 @@ Gameplay Requirements
       * Depends on level
       * Becomes shorter we level increases
       * At some point, ghosts immediately start flashing.
-      * The duration of the vunerable state must be greater than
+      * The duration of the vulnerable state must be greater than
         or equal to the length of the flashing time.
 
-  * When ghost is eaten, it is returned to the center box
+  * If a ghost is eaten, it is returned to the center box
     where it is regenerated with normal properties
 
-Game Presenation Requirements
------------------------------
+Game Presentation Requirements
+------------------------------
 
 * Game does not start with 'READY!' message and does not wait to begin
 * Blinky starts outside ghost spawning box like he does in the arcade
@@ -95,7 +95,7 @@ Game Presenation Requirements
     Instead, it teleports directly to the box
 
 * Ghost spawning box does not have an exit gate, rather, an opening.
-* Ghosts leaving spawning box leave one-at-a-time
+* Ghosts leaving spawning box leave one at a time
   and released over an undefined interval
 * Alternation between, at least, two frames where PacMan's mouth is open
   and where PacMan's mouth is closed
@@ -106,7 +106,7 @@ Game Presenation Requirements
   where the ghost once was
 * The game does not pause when ghosts are eaten
 * Ghosts should be slightly faster than PacMan
-* When beating a level, the map does not blink
+* After beating a level, the map does not blink like the arcade version
 * Power pellets do not blink
 
 Interface Requirements
