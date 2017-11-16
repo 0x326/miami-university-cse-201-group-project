@@ -24,6 +24,7 @@ const ghostRespawningPoint = [14, 16];
 interface Props {
   width: string;
   height: string;
+  onScoreChange: (newScore: number) => void;
   onGameFinish: () => void;
   active: boolean;
 }
@@ -115,15 +116,6 @@ class Board extends React.Component<Props> {
     this.gameActive = false;
   }
 
-  /**
-   * Gets the current score of the game.
-   *
-   * @return The score of the game
-   */
-  getScore(): number {
-    return 0;
-  }
-
   // TODO: Add time-since-last-update-parameter
   updateGameState(currentTime: number): void {
     if (this.timeOfLastUpdate !== 0) {
@@ -150,14 +142,15 @@ class Board extends React.Component<Props> {
     let [x, y] = this.pacMan.getLogicalLocation();
 
     let stationaryItem = this.stationaryEntities[x] ? this.stationaryEntities[x][y] : undefined;
+    let scoreIncrement = 0;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
       throw 'pacMan is on a wall';
     } else if (stationaryItem instanceof Pellet) {
-      this.score += scoringTable.pellet;
+      scoreIncrement += scoringTable.pellet;
       delete this.stationaryEntities[x][y];
     } else if (stationaryItem instanceof PowerPellet) {
-      this.score += scoringTable.powerPellet;
+      scoreIncrement += scoringTable.powerPellet;
       delete this.stationaryEntities[x][y];
     }
 
@@ -168,12 +161,18 @@ class Board extends React.Component<Props> {
           ghost.logicalLocation[0] = ghostRespawningPoint[0];
           ghost.logicalLocation[1] = ghostRespawningPoint[1];
           ghost.makeDangerous();
-          this.score += scoringTable.ghost;
+          scoreIncrement += scoringTable.ghost;
         } else {
           this.gameFinished = true;
           break;
         }
       }
+    }
+
+    if (scoreIncrement > 0) {
+      // Update score
+      this.score += scoreIncrement;
+      this.props.onScoreChange(this.score);
     }
   }
 
