@@ -30,7 +30,7 @@ class App extends React.Component<Props, State> {
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
         <div>
-          {this.state.score}
+          Score: {this.state.score}
         </div>
         <Board onScoreChange={(newScore: number) => this.setState({
           score: newScore
