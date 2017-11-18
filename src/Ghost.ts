@@ -18,6 +18,7 @@ abstract class Ghost extends MovableEntity {
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
+    this.stopped = false;
   }
 
   /**
