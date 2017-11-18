@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List } from 'immutable';
 import './App.css';
 import Board from './Board';
 
@@ -15,6 +16,7 @@ interface Props {
 interface State {
   gameState: GameState;
   score: number;
+  finalScores: List<number>;
 }
 
 class App extends React.Component<Props, State> {
@@ -23,6 +25,7 @@ class App extends React.Component<Props, State> {
     this.state = {
       gameState: GameState.TitleScreen,
       score: 0,
+      finalScores: List()
     };
   }
 
@@ -30,11 +33,15 @@ class App extends React.Component<Props, State> {
     if (this.state.gameState === GameState.TitleScreen) {
       return (
         <div className="App">
-          <title>
+          <h1>
             Pac-Man
-          </title>
+          </h1>
           <div>
-            <button>
+            <button
+              onClick={() => this.setState({
+                  gameState: GameState.PlayingGame,
+                  score: 0
+              })}>
               Start
             </button>
           </div>
@@ -62,7 +69,10 @@ class App extends React.Component<Props, State> {
             </div>
           </div>
           <div className="footer">
-            <button>
+            <button
+              onClick={() => this.setState({
+                gameState: GameState.GameOver
+              })}>
               Quit Game
             </button>
           </div>
@@ -83,10 +93,19 @@ class App extends React.Component<Props, State> {
             </div>
           </div>
           <div className="footer">
-            <button>
+            <button
+              onClick={() => this.setState((prevState) => ({
+                finalScores: prevState.finalScores.push(prevState.score),
+                score: 0,
+                gameState: GameState.PlayingGame
+              }))}>
               Play Again
             </button>
-            <button>
+            <button
+              onClick={() => this.setState((prevState) => ({
+                finalScores: prevState.finalScores.push(prevState.score),
+                gameState: GameState.ListScores
+              }))}>
               Quit
             </button>
           </div>
@@ -99,11 +118,22 @@ class App extends React.Component<Props, State> {
             Game Over
           </div>
           <div className="center">
-            {/* TODO: Add scores here */}
+            <div>
+              Your scores:
+            </div>
+            <ul>
+              {this.state.finalScores.map((score) => (
+                <li>{score}</li>
+              ))}
+            </ul>
           </div>
           <div className="footer">
-            <button>
-              Quit
+            <button
+              onClick={() => this.setState({
+                score: 0,
+                gameState: GameState.PlayingGame
+              })}>
+              Play Again
             </button>
           </div>
         </div>
