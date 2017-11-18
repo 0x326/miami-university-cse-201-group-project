@@ -6,7 +6,7 @@ interface Props {
 }
 
 interface State {
-  score: number
+  score: number;
 }
 
 class App extends React.Component<Props, State> {
@@ -14,7 +14,7 @@ class App extends React.Component<Props, State> {
     super();
     this.state = {
       score: 0
-    }
+    };
   }
 
   render() {
