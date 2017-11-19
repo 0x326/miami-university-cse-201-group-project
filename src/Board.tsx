@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Set } from 'immutable';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
 import Blinky from './Blinky';
@@ -54,6 +55,10 @@ class Board extends React.Component<Props> {
 
   canvasContext: CanvasRenderingContext2D;
   keyboardListener: KeyboardListener;
+
+  vulnerableGhosts: Set<Ghost>;
+  ghostWarningTimer: number;
+  ghostRecoveryTimer: number;
 
   constructor() {
     super();
@@ -152,6 +157,28 @@ class Board extends React.Component<Props> {
     } else if (stationaryItem instanceof PowerPellet) {
       scoreIncrement += scoringTable.powerPellet;
       delete this.stationaryEntities[x][y];
+
+      // TODO: Calculate time until recovery
+      const timeUntilRecovery = 5000;
+      const timeUntilWarning = timeUntilRecovery - 1000;
+
+      // Clear previous timers
+      if (this.ghostWarningTimer) {
+        window.clearTimeout(this.ghostWarningTimer);
+      }
+      if (this.ghostRecoveryTimer) {
+        window.clearTimeout(this.ghostRecoveryTimer);
+      }
+      // Set new timers
+      this.ghostWarningTimer = window.setTimeout(() =>
+        this.vulnerableGhosts.forEach(ghost => ghost && ghost.startWarning()),
+                                                 timeUntilWarning);
+      this.ghostRecoveryTimer = window.setTimeout(() =>
+        this.vulnerableGhosts.forEach(ghost => ghost && ghost.makeDangerous()),
+                                                  timeUntilRecovery);
+      // Make ghosts vulnerable
+      this.ghosts.forEach(ghost => ghost.makeVulnerable());
+      this.vulnerableGhosts = Set(this.ghosts);
     }
 
     for (let ghost of this.ghosts) {
@@ -160,6 +187,7 @@ class Board extends React.Component<Props> {
         if (ghost.isVunerable()) {
           ghost.logicalLocation[0] = ghostRespawningPoint[0];
           ghost.logicalLocation[1] = ghostRespawningPoint[1];
+          this.vulnerableGhosts = this.vulnerableGhosts.remove(ghost);
           ghost.makeDangerous();
           scoreIncrement += scoringTable.ghost;
         } else {
