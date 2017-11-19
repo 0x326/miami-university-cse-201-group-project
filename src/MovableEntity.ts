@@ -124,6 +124,7 @@ abstract class MovableEntity {
     board.fillStyle = '#9E9E9E';
     board.fillRect(drawLocation[0] - maxSize / 2, drawLocation[1] - maxSize / 2, maxSize, maxSize);
     board.strokeStyle = '#BDBDBD';
+    board.beginPath();
     board.moveTo(drawLocation[0], drawLocation[1]);
     if (this.direction === Direction.North) {
       board.lineTo(drawLocation[0], drawLocation[1] - maxSize / 2);
