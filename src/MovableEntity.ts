@@ -100,11 +100,16 @@ abstract class MovableEntity {
    * @param map The grid of stationary entities
    */
   getMovementOptions(map: Drawable[][]) {
+    const logicalLocation = this.getLogicalLocation();
+    const leftColumn = map[logicalLocation[0] - 1];
+    const middleColumn = map[logicalLocation[0]];
+    const rightColumn = map[logicalLocation[0] + 1];
+
     return {
-      top: !(map[this.logicalLocation[0]][this.logicalLocation[1] + 1] instanceof Wall),
-      left: !(map[this.logicalLocation[0] - 1][this.logicalLocation[1]] instanceof Wall),
-      right: !(map[this.logicalLocation[0] + 1][this.logicalLocation[1]] instanceof Wall),
-      bottom: !(map[this.logicalLocation[0]][this.logicalLocation[1] - 1] instanceof Wall),
+      [Direction.North]: !(middleColumn && middleColumn[logicalLocation[1] - 1] instanceof Wall),
+      [Direction.West]: !(leftColumn && leftColumn[logicalLocation[1]] instanceof Wall),
+      [Direction.East]: !(rightColumn && rightColumn[logicalLocation[1]] instanceof Wall),
+      [Direction.South]: !(middleColumn && middleColumn[logicalLocation[1] + 1] instanceof Wall),
     };
   }
 
