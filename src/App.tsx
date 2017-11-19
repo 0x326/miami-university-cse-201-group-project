@@ -51,7 +51,12 @@ class App extends React.Component<Props, State> {
       return (
         <div className="App">
           <div className="header">
-            Score: {this.state.score}
+            <div>
+              Score: {this.state.score}
+            </div>
+            <div>
+              High: {Math.max(this.state.score, this.state.finalScores.max() || 0)}
+            </div>
           </div>
           <div className="center">
             <div className="board">
