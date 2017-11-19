@@ -19,7 +19,10 @@ class Pellet implements Drawable {
    * @param neighboringEntities A collection of adjacent entities.
    */
   draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
-
+    board.fillStyle = '#FFC107';
+    board.beginPath();
+    board.arc(location[0], location[1], 3 * maxSize / 8, 0, 2 * Math.PI);
+    board.fill();
   }
 }
 
