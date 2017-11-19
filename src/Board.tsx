@@ -172,10 +172,10 @@ class Board extends React.Component<Props> {
       // Set new timers
       this.ghostWarningTimer = window.setTimeout(() =>
         this.vulnerableGhosts.forEach(ghost => ghost && ghost.startWarning()),
-        timeUntilWarning);
+                                                 timeUntilWarning);
       this.ghostRecoveryTimer = window.setTimeout(() =>
         this.vulnerableGhosts.forEach(ghost => ghost && ghost.makeDangerous()),
-        timeUntilRecovery);
+                                                  timeUntilRecovery);
       // Make ghosts vulnerable
       this.ghosts.forEach(ghost => ghost.makeVulnerable());
       this.vulnerableGhosts = Set(this.ghosts);
