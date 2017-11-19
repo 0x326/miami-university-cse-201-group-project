@@ -41,7 +41,8 @@ class App extends React.Component<Props, State> {
               onClick={() => this.setState({
                   gameState: GameState.PlayingGame,
                   score: 0
-              })}>
+              })}
+            >
               Start
             </button>
           </div>
@@ -77,7 +78,8 @@ class App extends React.Component<Props, State> {
             <button
               onClick={() => this.setState({
                 gameState: GameState.GameOver
-              })}>
+              })}
+            >
               Quit Game
             </button>
           </div>
@@ -103,14 +105,16 @@ class App extends React.Component<Props, State> {
                 finalScores: prevState.finalScores.push(prevState.score),
                 score: 0,
                 gameState: GameState.PlayingGame
-              }))}>
+              }))}
+            >
               Play Again
             </button>
             <button
               onClick={() => this.setState((prevState) => ({
                 finalScores: prevState.finalScores.push(prevState.score),
                 gameState: GameState.ListScores
-              }))}>
+              }))}
+            >
               Quit
             </button>
           </div>
@@ -137,7 +141,8 @@ class App extends React.Component<Props, State> {
               onClick={() => this.setState({
                 score: 0,
                 gameState: GameState.PlayingGame
-              })}>
+              })}
+            >
               Play Again
             </button>
           </div>
