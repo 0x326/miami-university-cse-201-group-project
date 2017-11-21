@@ -15,9 +15,9 @@ import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
   // TODO: Adjust scores
-  'pellet': 1,
-  'powerPellet': 2,
-  'ghost': 5
+  'pellet': 10,
+  'powerPellet': 50,
+  'ghost': 250
 };
 
 const ghostRespawningPoint = [14, 16];
