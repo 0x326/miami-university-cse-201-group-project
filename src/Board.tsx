@@ -119,6 +119,7 @@ class Board extends React.Component<Props> {
 
   componentWillUnmount() {
     this.gameActive = false;
+    this.keyboardListener.detachFromTarget();
   }
 
   // TODO: Add time-since-last-update-parameter
