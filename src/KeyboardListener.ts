@@ -23,12 +23,14 @@ class KeyboardListener {
     this.keyDownHandler = (keypressEvent: KeyboardEvent) => {
       let key = keypressEvent.key;
       if (this.registeredKeys[key]) {
+        keypressEvent.preventDefault();
         this.registeredKeys[key](true);
       }
     }
     this.keyUpHandler = (keypressEvent: KeyboardEvent) => {
       let key = keypressEvent.key;
       if (this.registeredKeys[key]) {
+        keypressEvent.preventDefault();
         this.registeredKeys[key](false);
       }
     }
