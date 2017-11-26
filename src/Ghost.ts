@@ -29,6 +29,13 @@ abstract class Ghost extends MovableEntity {
     return this.state !== VulnerabilityState.Dangerous;
   }
 
+    /**
+    * @return Whether this Ghost is vulnerable and blinking
+    */
+    isVulnerableBlinking(): boolean {
+        return this.state === VulnerabilityState.VulnerableBlinking;
+    }
+
   /**
    * Makes this Ghost vulnerable
    */
@@ -60,7 +67,7 @@ abstract class Ghost extends MovableEntity {
    *
    * @param board         The graphic to draw on
    * @param maxSize       The maximum size of the image.
-   *              The image drawn should be proportional to mazSize to support scaling.
+   *              The image drawn should be proportional to maxSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     super.draw(board, maxSize);
