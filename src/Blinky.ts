@@ -2,6 +2,8 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const BlinkyImage = require('./Blinky.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -52,7 +54,7 @@ class Blinky extends Ghost {
         */
       
       //image is not being loaded because reasons
-    this.sprite.src = 'Blinky.png';
+    this.sprite.src = BlinkyImage;
     board.drawImage(this.sprite, drawLocation[0], drawLocation[1], maxSize, maxSize);
       
       //image is meant to replace drawn shapes
