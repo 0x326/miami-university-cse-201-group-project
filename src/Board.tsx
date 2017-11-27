@@ -15,9 +15,9 @@ import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
   // TODO: Adjust scores
-  'pellet': 1,
-  'powerPellet': 2,
-  'ghost': 5
+  'pellet': 10,
+  'powerPellet': 50,
+  'ghost': 250
 };
 
 const ghostRespawningPoint = [14, 16];
@@ -65,14 +65,40 @@ class Board extends React.Component<Props> {
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     // TODO: Populate board
-    for (let i = 0; i < 10; i++) {
-      this.stationaryEntities[i][5] = new Wall;
+    for (let x = 8; x <= 20; x++) {
+      this.stationaryEntities[x][8] = new Wall;
+      this.stationaryEntities[x][10] = new Wall;
+      this.stationaryEntities[x][14] = new Wall;
+      this.stationaryEntities[x][20] = new Wall;
     }
-    for (let i = 5; i < 15; i++) {
-      this.stationaryEntities[i][10] = new Pellet;
+    for (let y = 8; y <= 20; y++) {
+      this.stationaryEntities[8][y] = new Wall;
+      this.stationaryEntities[20][y] = new Wall;
     }
-    for (let i = 10; i < 20; i++) {
-      this.stationaryEntities[i][20] = new PowerPellet;
+    delete this.stationaryEntities[9][10];
+    delete this.stationaryEntities[19][10];
+    delete this.stationaryEntities[9][14];
+    delete this.stationaryEntities[19][14];
+    for (let y = 12; y <= 13; y++) {
+      this.stationaryEntities[10][y] = new Wall;
+      this.stationaryEntities[18][y] = new Wall;
+    }
+    this.stationaryEntities[14][11] = new Wall;
+    this.stationaryEntities[14][12] = new Wall;
+    delete this.stationaryEntities[15][20];
+
+    this.stationaryEntities[9][9] = new PowerPellet;
+    this.stationaryEntities[19][9] = new PowerPellet;
+    this.stationaryEntities[9][19] = new PowerPellet;
+    this.stationaryEntities[19][19] = new PowerPellet;
+
+    for (let y = 10; y <= 18; y++) {
+      this.stationaryEntities[9][y] = new Pellet;
+      this.stationaryEntities[19][y] = new Pellet;
+    }
+    for (let x = 10; x <= 18; x++) {
+      this.stationaryEntities[x][9] = new Pellet;
+      this.stationaryEntities[x][19] = new Pellet;
     }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
