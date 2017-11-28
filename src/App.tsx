@@ -62,8 +62,8 @@ class App extends React.Component<Props, State> {
           <div className="center">
             <div className="board">
               <Board
-                width="500 cm"
-                height="500 cm"
+                width="13cm"
+                height="13cm"
                 active={true}
                 onScoreChange={(newScore: number) => this.setState({
                   score: newScore
