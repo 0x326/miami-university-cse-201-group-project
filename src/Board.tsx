@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Set } from 'immutable';
+import { Set, List } from 'immutable';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
 import Blinky from './Blinky';
@@ -22,6 +22,13 @@ const scoringTable = {
 
 const ghostRespawningPoint = [14, 16];
 
+/**
+ * A portion of a a logical grid.
+ *
+ * A chunk is a sixth of the logical grid (2 X 3 partition)
+ */
+type Chunk = Drawable[][];
+
 interface Props {
   width: string;
   height: string;
@@ -43,6 +50,14 @@ class Board extends React.Component<Props> {
   static logicalColumns = 27;
   static logicalRows = 31;
 
+  boardChunks: {
+    topLeft: List<Chunk>,
+    topRight: List<Chunk>,
+    middleLeft: List<Chunk>,
+    middleRight: List<Chunk>,
+    bottomLeft: List<Chunk>,
+    bottomRight: List<Chunk>
+  };
   stationaryEntities: Drawable[][];
   pacMan: PacMan;
   ghosts: Ghost[];
@@ -300,6 +315,15 @@ class Board extends React.Component<Props> {
       ghost.draw(this.canvasContext, boundingBoxSize);
     }
     this.pacMan.draw(this.canvasContext, boundingBoxSize);
+  }
+
+  /**
+   * Converts a map file (CSV format) to a Chunk representation.
+   *
+   * @param fileContents The contents of the CSV map file
+   */
+  static parseMap(fileContents: string): Chunk {
+    // TODO: Implement
   }
 }
 
