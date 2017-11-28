@@ -25,7 +25,7 @@ class Pinky extends Ghost {
     if (options[this.direction] === false) {
       if (options[Direction.West] === true) {
         this.direction = Direction.West;
-      } else if (options[Direction.East] == true) {
+      } else if (options[Direction.East] === true) {
         this.direction = Direction.East;
       } else if (options[Direction.North] === true) {
         this.direction = Direction.North;
