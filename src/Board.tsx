@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Set } from 'immutable';
+import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
 import Blinky from './Blinky';
@@ -85,10 +86,15 @@ class Board extends React.Component<Props> {
   }
 
   render() {
+    const pixelRatio = window.devicePixelRatio || 1;
     return (
       <canvas
-        width={this.props.width}
-        height={this.props.height}
+        width={unitsCssConvert('px', this.props.width) * pixelRatio}
+        height={unitsCssConvert('px', this.props.height) * pixelRatio}
+        style={{
+          width: this.props.width,
+          height: this.props.height
+        }}
         ref={(elem) => {
           if (elem !== null) {
             let context = elem.getContext('2d');
