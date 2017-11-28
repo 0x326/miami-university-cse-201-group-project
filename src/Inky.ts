@@ -19,6 +19,8 @@ class Inky extends Ghost {
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
   }
+    
+
 
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);

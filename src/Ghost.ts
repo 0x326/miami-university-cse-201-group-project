@@ -93,7 +93,6 @@ abstract class Ghost extends MovableEntity {
     board.arc(drawLocation[0], drawLocation[1], maxSize / 3, 0, 2 * Math.PI);
     board.fill();
   }
-
 }
 
 enum VulnerabilityState {
