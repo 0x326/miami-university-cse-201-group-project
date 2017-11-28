@@ -7,7 +7,7 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts-ts": "2.7.0",
-    "units-css": "^0.4.0"
+    "units-css": "0x326/units"
   },
   "scripts": {
     "start": "react-scripts-ts start",

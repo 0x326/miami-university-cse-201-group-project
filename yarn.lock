@@ -2617,9 +2617,9 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
 
-isnumeric@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/isnumeric/-/isnumeric-0.2.0.tgz#a2347ba360de19e33d0ffd590fddf7755cbf2e64"
+isnumeric@^0.3.1:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/isnumeric/-/isnumeric-0.3.2.tgz#9821f123478a4e5f2c0e41267887f29de0fb243b"
 
 isobject@^2.0.0:
   version "2.1.0"
@@ -5392,11 +5392,11 @@ uniqs@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/uniqs/-/uniqs-2.0.0.tgz#ffede4b36b25290696e6e165d4a59edb998e6b02"
 
-units-css@^0.4.0:
+units-css@0x326/units:
   version "0.4.0"
-  resolved "https://registry.yarnpkg.com/units-css/-/units-css-0.4.0.tgz#d6228653a51983d7c16ff28f8b9dc3b1ffed3a07"
+  resolved "https://codeload.github.com/0x326/units/tar.gz/2afbaabadb9a2d85aca9af2f37e795569d7b7917"
   dependencies:
-    isnumeric "^0.2.0"
+    isnumeric "^0.3.1"
     viewport-dimensions "^0.2.0"
 
 universalify@^0.1.0:
