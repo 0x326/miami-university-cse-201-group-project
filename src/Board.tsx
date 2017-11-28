@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Set } from 'immutable';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
 import Blinky from './Blinky';
@@ -14,16 +15,17 @@ import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
   // TODO: Adjust scores
-  'pellet': 1,
-  'powerPellet': 2,
-  'ghost': 5
+  'pellet': 10,
+  'powerPellet': 50,
+  'ghost': 250
 };
 
 const ghostRespawningPoint = [14, 16];
 
 interface Props {
-  width: number;
-  height: number;
+  width: string;
+  height: string;
+  onScoreChange: (newScore: number) => void;
   onGameFinish: () => void;
   active: boolean;
 }
@@ -54,11 +56,50 @@ class Board extends React.Component<Props> {
   canvasContext: CanvasRenderingContext2D;
   keyboardListener: KeyboardListener;
 
+  vulnerableGhosts: Set<Ghost>;
+  ghostWarningTimer: number;
+  ghostRecoveryTimer: number;
+
   constructor() {
     super();
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     // TODO: Populate board
+    for (let x = 8; x <= 20; x++) {
+      this.stationaryEntities[x][8] = new Wall;
+      this.stationaryEntities[x][10] = new Wall;
+      this.stationaryEntities[x][14] = new Wall;
+      this.stationaryEntities[x][20] = new Wall;
+    }
+    for (let y = 8; y <= 20; y++) {
+      this.stationaryEntities[8][y] = new Wall;
+      this.stationaryEntities[20][y] = new Wall;
+    }
+    delete this.stationaryEntities[9][10];
+    delete this.stationaryEntities[19][10];
+    delete this.stationaryEntities[9][14];
+    delete this.stationaryEntities[19][14];
+    for (let y = 12; y <= 13; y++) {
+      this.stationaryEntities[10][y] = new Wall;
+      this.stationaryEntities[18][y] = new Wall;
+    }
+    this.stationaryEntities[14][11] = new Wall;
+    this.stationaryEntities[14][12] = new Wall;
+    delete this.stationaryEntities[15][20];
+
+    this.stationaryEntities[9][9] = new PowerPellet;
+    this.stationaryEntities[19][9] = new PowerPellet;
+    this.stationaryEntities[9][19] = new PowerPellet;
+    this.stationaryEntities[19][19] = new PowerPellet;
+
+    for (let y = 10; y <= 18; y++) {
+      this.stationaryEntities[9][y] = new Pellet;
+      this.stationaryEntities[19][y] = new Pellet;
+    }
+    for (let x = 10; x <= 18; x++) {
+      this.stationaryEntities[x][9] = new Pellet;
+      this.stationaryEntities[x][19] = new Pellet;
+    }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
       new Blinky([14, 19]),
@@ -67,12 +108,13 @@ class Board extends React.Component<Props> {
       new Clyde([18, 16])
     ];
     this.score = 0;
-    this.updateGameState = this.updateGameState.bind(this);
   }
 
   render() {
     return (
       <canvas
+        width={this.props.width}
+        height={this.props.height}
         ref={(elem) => {
           if (elem !== null) {
             let context = elem.getContext('2d');
@@ -88,14 +130,14 @@ class Board extends React.Component<Props> {
   componentDidMount() {
     this.gameActive = this.props.active;
     if (this.gameActive) {
-      window.requestAnimationFrame(this.updateGameState);
+      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
     if (prevProps.active === true && !this.gameActive) {
       this.gameActive = true;
-      window.requestAnimationFrame(this.updateGameState);
+      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     } else if (prevProps.active === false) {
       this.gameActive = false;
     }
@@ -103,15 +145,6 @@ class Board extends React.Component<Props> {
 
   componentWillUnmount() {
     this.gameActive = false;
-  }
-
-  /**
-   * Gets the current score of the game.
-   *
-   * @return The score of the game
-   */
-  getScore(): number {
-    return 0;
   }
 
   // TODO: Add time-since-last-update-parameter
@@ -132,23 +165,46 @@ class Board extends React.Component<Props> {
     if (this.gameFinished) {
       this.props.onGameFinish();
     } else if (this.gameActive) {
-      window.requestAnimationFrame(this.updateGameState);
+      window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
 
   detectCollisions(): void {
     let [x, y] = this.pacMan.getLogicalLocation();
 
-    let stationaryItem = this.stationaryEntities[x][y];
+    let stationaryItem = this.stationaryEntities[x] ? this.stationaryEntities[x][y] : undefined;
+    let scoreIncrement = 0;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
       throw 'pacMan is on a wall';
     } else if (stationaryItem instanceof Pellet) {
-      this.score += scoringTable.pellet;
+      scoreIncrement += scoringTable.pellet;
       delete this.stationaryEntities[x][y];
     } else if (stationaryItem instanceof PowerPellet) {
-      this.score += scoringTable.powerPellet;
+      scoreIncrement += scoringTable.powerPellet;
       delete this.stationaryEntities[x][y];
+
+      // TODO: Calculate time until recovery
+      const timeUntilRecovery = 5000;
+      const timeUntilWarning = timeUntilRecovery - 1000;
+
+      // Clear previous timers
+      if (this.ghostWarningTimer) {
+        window.clearTimeout(this.ghostWarningTimer);
+      }
+      if (this.ghostRecoveryTimer) {
+        window.clearTimeout(this.ghostRecoveryTimer);
+      }
+      // Set new timers
+      this.ghostWarningTimer = window.setTimeout(() =>
+        this.vulnerableGhosts.forEach(ghost => ghost && ghost.startWarning()),
+                                                 timeUntilWarning);
+      this.ghostRecoveryTimer = window.setTimeout(() =>
+        this.vulnerableGhosts.forEach(ghost => ghost && ghost.makeDangerous()),
+                                                  timeUntilRecovery);
+      // Make ghosts vulnerable
+      this.ghosts.forEach(ghost => ghost.makeVulnerable());
+      this.vulnerableGhosts = Set(this.ghosts);
     }
 
     for (let ghost of this.ghosts) {
@@ -157,20 +213,30 @@ class Board extends React.Component<Props> {
         if (ghost.isVunerable()) {
           ghost.logicalLocation[0] = ghostRespawningPoint[0];
           ghost.logicalLocation[1] = ghostRespawningPoint[1];
+          this.vulnerableGhosts = this.vulnerableGhosts.remove(ghost);
           ghost.makeDangerous();
-          this.score += scoringTable.ghost;
+          scoreIncrement += scoringTable.ghost;
         } else {
           this.gameFinished = true;
           break;
         }
       }
     }
+
+    if (scoreIncrement > 0) {
+      // Update score
+      this.score += scoreIncrement;
+      this.props.onScoreChange(this.score);
+    }
   }
 
   repaintCanvas(): void {
-    this.canvasContext.clearRect(0, 0, this.props.width, this.props.height);
+    let canvasWidth = this.canvasContext.canvas.width;
+    let canvasHeight = this.canvasContext.canvas.height;
+    this.canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    let boundingBoxSize = Math.min(this.props.width / Board.logicalColumns, this.props.height / Board.logicalRows);
+    let boundingBoxSize = Math.min(canvasWidth / Board.logicalColumns,
+                                   canvasHeight / Board.logicalRows);
     for (let column in this.stationaryEntities) {
       for (let row in this.stationaryEntities[column]) {
         // Type cast
@@ -178,19 +244,27 @@ class Board extends React.Component<Props> {
 
         let item = this.stationaryEntities[columnNumber][rowNumber];
         // Create representation of surroundings
+        let leftColumn = this.stationaryEntities[columnNumber - 1];
+        let middleColumn = this.stationaryEntities[columnNumber];
+        let rightColumn = this.stationaryEntities[columnNumber + 1];
         let neighbors: Neighbors = {
-          topLeft: this.stationaryEntities[columnNumber - 1][rowNumber + 1],
-          top: this.stationaryEntities[columnNumber][rowNumber + 1],
-          topRight: this.stationaryEntities[columnNumber + 1][rowNumber + 1],
+          topLeft: leftColumn ? leftColumn[rowNumber + 1] : undefined,
+          top: middleColumn ? middleColumn[rowNumber + 1] : undefined,
+          topRight: rightColumn ? rightColumn[rowNumber + 1] : undefined,
 
-          left: this.stationaryEntities[columnNumber - 1][rowNumber],
-          right: this.stationaryEntities[columnNumber + 1][rowNumber],
+          left: leftColumn ? leftColumn[rowNumber] : undefined,
+          right: rightColumn ? rightColumn[rowNumber] : undefined,
 
-          bottomLeft: this.stationaryEntities[columnNumber - 1][rowNumber - 1],
-          bottom: this.stationaryEntities[columnNumber][rowNumber - 1],
-          bottomRight: this.stationaryEntities[columnNumber + 1][rowNumber - 1],
+          bottomLeft: leftColumn ? leftColumn[rowNumber - 1] : undefined,
+          bottom: middleColumn ? middleColumn[rowNumber - 1] : undefined,
+          bottomRight: rightColumn ? rightColumn[rowNumber - 1] : undefined,
         };
-        item.draw(this.canvasContext, [columnNumber, rowNumber], boundingBoxSize, neighbors);
+
+        let drawLocation: [number, number] = [
+          columnNumber * boundingBoxSize - boundingBoxSize,
+          rowNumber * boundingBoxSize - boundingBoxSize
+        ];
+        item.draw(this.canvasContext, drawLocation, boundingBoxSize, neighbors);
       }
     }
     for (let ghost of this.ghosts) {

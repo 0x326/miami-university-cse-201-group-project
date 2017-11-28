@@ -14,7 +14,18 @@ abstract class MovableEntity {
   logicalLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
-  speed: number = 0.05;
+  /**
+   * The speed of this MovableEntity in logical coordinates per second.
+   */
+  speed: number = 2;
+  /**
+   * Used by the move method for caching purposes.
+   */
+  private lastDirection: Direction;
+  /**
+   * The cached value.
+   */
+  private lastUpcomingWall: [number, number];
 
   /**
    * Creates a MovableEntity
@@ -32,7 +43,7 @@ abstract class MovableEntity {
    * @return The current location
    */
   getLogicalLocation(): [number, number] {
-    return this.logicalLocation;
+    return <[number, number]> this.logicalLocation.map(Math.round);
   }
 
   abstract chooseDirection(map: Drawable[][]): void;
@@ -41,7 +52,7 @@ abstract class MovableEntity {
    * Gives this MovableEntity a chance to move.
    * The move should be proportional to the amount of time passed from the previous move.
    *
-   * @param timePassed The amount of elapsed time from the previous move.
+   * @param timePassed The amount of elapsed time from the previous move in milliseconds.
    *           This time may be subject to a maximum value at the discretion of the callee.
    * @param map    The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
    */
@@ -52,18 +63,36 @@ abstract class MovableEntity {
 
     this.chooseDirection(map);
 
-    let xIncrement = 0, yIncrement = 0;
-    if (this.direction === Direction.North) {
-      yIncrement = - this.speed * timePassed;
-    } else if (this.direction === Direction.West) {
-      xIncrement = - this.speed * timePassed;
-    } else if (this.direction === Direction.South) {
-      yIncrement = this.speed * timePassed;
-    } else {
-      xIncrement = this.speed * timePassed;
-    }
-    this.logicalLocation = [this.logicalLocation[0] + xIncrement, this.logicalLocation[1] + yIncrement];
+    const [upcomingWallColumn, upcomingWallRow] = this.direction !== this.lastDirection ?
+                                                  this.findUpcomingWall(map) :
+                                                  this.lastUpcomingWall;
 
+    // Remember result of search for next time
+    this.lastUpcomingWall = [upcomingWallColumn, upcomingWallRow];
+    this.lastDirection = this.direction;
+
+    let maximumAllowableIncrement;
+    if (this.direction === Direction.North || this.direction === Direction.South) {
+      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.logicalLocation[1]);
+    } else {
+      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.logicalLocation[0]);
+    }
+    // Allow the entity to make full use of their logical coordinate
+    // (Might permit a slight visual overlap if items are drawn edge-to-edge)
+    // Makes sure the increment is not negative
+    maximumAllowableIncrement = Math.max(maximumAllowableIncrement - 0.51, 0);
+
+    const increment = Math.min(this.speed * timePassed / 1000, maximumAllowableIncrement);
+
+    if (this.direction === Direction.North) {
+      this.logicalLocation[1] -= increment;
+    } else if (this.direction === Direction.South) {
+      this.logicalLocation[1] += increment;
+    } else if (this.direction === Direction.West) {
+      this.logicalLocation[0] -= increment;
+    } else {
+      this.logicalLocation[0] += increment;
+    }
   }
 
   /**
@@ -71,11 +100,16 @@ abstract class MovableEntity {
    * @param map The grid of stationary entities
    */
   getMovementOptions(map: Drawable[][]) {
+    const logicalLocation = this.getLogicalLocation();
+    const leftColumn = map[logicalLocation[0] - 1];
+    const middleColumn = map[logicalLocation[0]];
+    const rightColumn = map[logicalLocation[0] + 1];
+
     return {
-      top: !(map[this.logicalLocation[0]][this.logicalLocation[1] + 1] instanceof Wall),
-      left: !(map[this.logicalLocation[0] - 1][this.logicalLocation[1]] instanceof Wall),
-      right: !(map[this.logicalLocation[0] + 1][this.logicalLocation[1]] instanceof Wall),
-      bottom: !(map[this.logicalLocation[0]][this.logicalLocation[1] - 1] instanceof Wall),
+      [Direction.North]: !(middleColumn && middleColumn[logicalLocation[1] - 1] instanceof Wall),
+      [Direction.West]: !(leftColumn && leftColumn[logicalLocation[1]] instanceof Wall),
+      [Direction.East]: !(rightColumn && rightColumn[logicalLocation[1]] instanceof Wall),
+      [Direction.South]: !(middleColumn && middleColumn[logicalLocation[1] + 1] instanceof Wall),
     };
   }
 
@@ -87,21 +121,53 @@ abstract class MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
+    let drawLocation: [number, number] = [
+      this.logicalLocation[0] * maxSize - maxSize,
+      this.logicalLocation[1] * maxSize - maxSize
+    ];
+
     board.fillStyle = '#9E9E9E';
-    board.fillRect(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1] - maxSize / 2, maxSize, maxSize);
+    board.fillRect(drawLocation[0] - maxSize / 2, drawLocation[1] - maxSize / 2, maxSize, maxSize);
     board.strokeStyle = '#BDBDBD';
-    board.moveTo(this.logicalLocation[0], this.logicalLocation[1]);
+    board.beginPath();
+    board.moveTo(drawLocation[0], drawLocation[1]);
     if (this.direction === Direction.North) {
-      board.lineTo(this.logicalLocation[0], this.logicalLocation[1] + maxSize / 2);
+      board.lineTo(drawLocation[0], drawLocation[1] - maxSize / 2);
     } else if (this.direction === Direction.South) {
-      board.lineTo(this.logicalLocation[0], this.logicalLocation[1] - maxSize / 2);
+      board.lineTo(drawLocation[0], drawLocation[1] + maxSize / 2);
     } else if (this.direction === Direction.East) {
-      board.lineTo(this.logicalLocation[0] + maxSize / 2, this.logicalLocation[1]);
+      board.lineTo(drawLocation[0] + maxSize / 2, drawLocation[1]);
     } else {
-      board.lineTo(this.logicalLocation[0] - maxSize / 2, this.logicalLocation[1]);
+      board.lineTo(drawLocation[0] - maxSize / 2, drawLocation[1]);
     }
     board.stroke();
   }
+
+  private findUpcomingWall(map: Drawable[][]): [number, number] {
+    const [logicalColumn, logicalRow] = this.getLogicalLocation();
+
+    let columnNumber = logicalColumn;
+    let rowNumber = logicalRow;
+    while (0 <= columnNumber && columnNumber < map.length &&
+      0 <= rowNumber && rowNumber < map[columnNumber].length) {
+      if (map[columnNumber][rowNumber] instanceof Wall) {
+        break;
+      }
+
+      if (this.direction === Direction.North) {
+        rowNumber--;
+      } else if (this.direction === Direction.South) {
+        rowNumber++;
+      } else if (this.direction === Direction.East) {
+        columnNumber++;
+      } else {
+        columnNumber--;
+      }
+    }
+
+    return [columnNumber, rowNumber];
+  }
+
 }
 
 enum Direction {

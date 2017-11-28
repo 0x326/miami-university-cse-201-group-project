@@ -19,7 +19,8 @@ class Wall implements Drawable {
    * @param neighboringEntities A collection of adjacent entities.
    */
   draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
-
+    board.fillStyle = '#3F51B5';
+    board.fillRect(location[0] - maxSize / 2, location[1] - maxSize / 2, maxSize, maxSize);
   }
 }
 

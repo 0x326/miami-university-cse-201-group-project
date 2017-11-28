@@ -39,15 +39,6 @@ class PacMan extends MovableEntity {
     }
   }
 
-  /**
-   * Gets the current logical location of this MovableEntity.
-   *
-   * @return The current location
-   */
-  getLogicalLocation(): [number, number] {
-    return [0, 0];
-  }
-
   chooseDirection(map: Drawable[][]): void {
     // Do nothing
     // Direction is decided by keyboard

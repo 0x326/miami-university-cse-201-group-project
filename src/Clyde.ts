@@ -1,5 +1,6 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
+import { Direction } from './MovableEntity';
 
 /**
  * Course: CSE 201 A
@@ -20,7 +21,18 @@ class Clyde extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-
+    const options = this.getMovementOptions(map);
+    if (options[this.direction] === false) {
+      if (options[Direction.East] === true) {
+        this.direction = Direction.East;
+      } else if (options[Direction.South] === true) {
+        this.direction = Direction.South;
+      } else if (options[Direction.West] === true) {
+        this.direction = Direction.West;
+      } else {
+        this.direction = Direction.North;
+      }
+    }
   }
 }
 

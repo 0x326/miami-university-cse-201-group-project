@@ -1,30 +1,166 @@
 import * as React from 'react';
+import { List } from 'immutable';
 import './App.css';
 import Board from './Board';
 
-const logo = require('./logo.svg');
+enum GameState {
+  TitleScreen,
+  PlayingGame,
+  GameOver,
+  ListScores
+}
 
-class App extends React.Component {
+interface Props {
+}
+
+interface State {
+  gameState: GameState;
+  gameOver: boolean;
+  score: number;
+  finalScores: List<number>;
+}
+
+class App extends React.Component<Props, State> {
+  constructor() {
+    super();
+    this.state = {
+      gameState: GameState.TitleScreen,
+      gameOver: false,
+      score: 0,
+      finalScores: List()
+    };
+  }
+
   render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+    if (this.state.gameState === GameState.TitleScreen) {
+      return (
+        <div className="App">
+          <h1>
+            Pac-Man
+          </h1>
+          <div>
+            <button
+              onClick={() => this.setState({
+                  gameState: GameState.PlayingGame,
+                  score: 0
+              })}
+            >
+              Start
+            </button>
+          </div>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <Board
-          width={500}
-          height={500}
-          active={true}
-          onGameFinish={() => {
-
-          }}
-        />
-      </div>
-    );
+      );
+    } else if (this.state.gameState === GameState.PlayingGame) {
+      return (
+        <div className="App">
+          <div className="header">
+            <div>
+              Score: {this.state.score}
+            </div>
+            <div>
+              High: {Math.max(this.state.score, this.state.finalScores.max() || 0)}
+            </div>
+          </div>
+          <div className="center">
+            <div className="board">
+              <Board
+                width="500 cm"
+                height="500 cm"
+                active={!this.state.gameOver}
+                onScoreChange={(newScore: number) => this.setState({
+                  score: newScore
+                })}
+                onGameFinish={() => this.setState({
+                  gameOver: true
+                })}
+              />
+            </div>
+          </div>
+          <div className="footer">
+            {this.state.gameOver &&
+              <div>
+              Game Over
+              </div>
+            }
+            <button
+              onClick={() => this.setState({
+                gameState: GameState.GameOver
+              })}
+            >
+              Quit Game
+            </button>
+          </div>
+        </div>
+      );
+    } else if (this.state.gameState === GameState.GameOver) {
+      return (
+        <div className="App">
+          <div className="header">
+            Game Over
+          </div>
+          <div className="center">
+            <div>
+              Your score is {this.state.score}
+            </div>
+            <div>
+              Play Again?
+            </div>
+          </div>
+          <div className="footer">
+            <button
+              onClick={() => this.setState((prevState) => ({
+                finalScores: prevState.finalScores.push(prevState.score),
+                score: 0,
+                gameState: GameState.PlayingGame,
+                gameOver: false
+              }))}
+            >
+              Play Again
+            </button>
+            <button
+              onClick={() => this.setState((prevState) => ({
+                finalScores: prevState.finalScores.push(prevState.score),
+                gameState: GameState.ListScores
+              }))}
+            >
+              Quit
+            </button>
+          </div>
+        </div>
+      );
+    } else if (this.state.gameState === GameState.ListScores) {
+      return (
+        <div className="App">
+          <div className="header">
+            Game Over
+          </div>
+          <div className="center">
+            <div>
+              Your scores:
+            </div>
+            <ul>
+              {this.state.finalScores.map((score) => (
+                <li>{score}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="footer">
+            <button
+              onClick={() => this.setState({
+                score: 0,
+                gameState: GameState.PlayingGame,
+                gameOver: false
+              })}
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      // Note: This should never happen
+      return null;
+    }
   }
 }
 
