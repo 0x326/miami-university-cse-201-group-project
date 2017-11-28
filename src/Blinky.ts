@@ -3,6 +3,8 @@ import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
 const BlinkyImage = require('./Blinky.png');
+const VulnerableImg = require('./Vulnerable.png');
+const BlinkingImg = require('./Blinking.png');
 
 /**
  * Course: CSE 201 A
@@ -15,6 +17,8 @@ const BlinkyImage = require('./Blinky.png');
 class Blinky extends Ghost {
     // instance variable, initializes the sprite
     sprite = new Image(); 
+    // used for alternating between two sprites
+    // static frameCount = 0;
   /**
    * Creates a Blinky object
    *
@@ -32,38 +36,34 @@ class Blinky extends Ghost {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    //super.draw(board, maxSize);
+    // super.draw(board, maxSize);
     let drawLocation: [number, number] = [
       this.logicalLocation[0] * maxSize - maxSize,
       this.logicalLocation[1] * maxSize - maxSize
     ];
-      //I'll fix this once I get the sprite working
-      /*
-    switch (this.state) {
-      case super.isVunerable():
-        board.fillStyle = '#03A9F4';
-        break;
+      // about to become dangerous again
+      if (this.isVunerable() && this.isVulnerableBlinking()) {
+          // alternate between blinking and vulnerable
+          /*if (this.frameCount <= 4) {
+              this.sprite.src = BlinkingImg;
+          }
+          else {
+              this.sprite.src = VulnerableImg;
+              if (this.frameCount === 8) {
+                  this.frameCount = 0;
+              }
+          } */
+        this.sprite.src = BlinkingImg;
 
-      case super.isVulnerableBlinking():
-        board.fillStyle = '#FF9800';
-        break;
-
-      default:
-        board.fillStyle = '#F44336';
-        break;
-        */
-      
-      //image is not being loaded because reasons
-    this.sprite.src = BlinkyImage;
-    board.drawImage(this.sprite, drawLocation[0], drawLocation[1], maxSize, maxSize);
-      
-      //image is meant to replace drawn shapes
-    /*
-    board.beginPath();
-    board.arc(drawLocation[0], drawLocation[1], maxSize / 3, 0, 2 * Math.PI);
-    board.fill();
-    */
-    
+      }
+      // vulnerable and not blinking
+      else if (this.isVunerable()) {
+          this.sprite.src = VulnerableImg;
+      }
+      else {
+          this.sprite.src = BlinkyImage;
+      }
+    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
   chooseDirection(map: Drawable[][]): void {
