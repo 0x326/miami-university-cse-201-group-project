@@ -49,8 +49,11 @@ class Board extends React.Component<Props> {
 
   timeOfLastUpdate: number = 0;
 
+  level: number = 1;
   score: number;
   gameActive: boolean = false;
+  pelletsEaten: number = 0;
+  pelletsToEat: number = 0;
   gameFinished: boolean = false;
 
   canvasContext: CanvasRenderingContext2D;
@@ -64,42 +67,6 @@ class Board extends React.Component<Props> {
     super();
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    // TODO: Populate board
-    for (let x = 8; x <= 20; x++) {
-      this.stationaryEntities[x][8] = new Wall;
-      this.stationaryEntities[x][10] = new Wall;
-      this.stationaryEntities[x][14] = new Wall;
-      this.stationaryEntities[x][20] = new Wall;
-    }
-    for (let y = 8; y <= 20; y++) {
-      this.stationaryEntities[8][y] = new Wall;
-      this.stationaryEntities[20][y] = new Wall;
-    }
-    delete this.stationaryEntities[9][10];
-    delete this.stationaryEntities[19][10];
-    delete this.stationaryEntities[9][14];
-    delete this.stationaryEntities[19][14];
-    for (let y = 12; y <= 13; y++) {
-      this.stationaryEntities[10][y] = new Wall;
-      this.stationaryEntities[18][y] = new Wall;
-    }
-    this.stationaryEntities[14][11] = new Wall;
-    this.stationaryEntities[14][12] = new Wall;
-    delete this.stationaryEntities[15][20];
-
-    this.stationaryEntities[9][9] = new PowerPellet;
-    this.stationaryEntities[19][9] = new PowerPellet;
-    this.stationaryEntities[9][19] = new PowerPellet;
-    this.stationaryEntities[19][19] = new PowerPellet;
-
-    for (let y = 10; y <= 18; y++) {
-      this.stationaryEntities[9][y] = new Pellet;
-      this.stationaryEntities[19][y] = new Pellet;
-    }
-    for (let x = 10; x <= 18; x++) {
-      this.stationaryEntities[x][9] = new Pellet;
-      this.stationaryEntities[x][19] = new Pellet;
-    }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
       new Blinky([14, 19]),
@@ -107,6 +74,7 @@ class Board extends React.Component<Props> {
       new Pinky([14, 16]),
       new Clyde([18, 16])
     ];
+    this.resetBoard();
     this.score = 0;
   }
 
@@ -147,6 +115,61 @@ class Board extends React.Component<Props> {
     this.gameActive = false;
   }
 
+  resetBoard(): void {
+    this.pelletsEaten = 0;
+    this.pelletsToEat = 0;
+    // TODO: Populate board
+    for (let x = 8; x <= 20; x++) {
+      this.stationaryEntities[x][8] = new Wall;
+      this.stationaryEntities[x][10] = new Wall;
+      this.stationaryEntities[x][14] = new Wall;
+      this.stationaryEntities[x][20] = new Wall;
+    }
+    for (let y = 8; y <= 20; y++) {
+      this.stationaryEntities[8][y] = new Wall;
+      this.stationaryEntities[20][y] = new Wall;
+    }
+    delete this.stationaryEntities[9][10];
+    delete this.stationaryEntities[19][10];
+    delete this.stationaryEntities[9][14];
+    delete this.stationaryEntities[19][14];
+    for (let y = 12; y <= 13; y++) {
+      this.stationaryEntities[10][y] = new Wall;
+      this.stationaryEntities[18][y] = new Wall;
+    }
+    this.stationaryEntities[14][11] = new Wall;
+    this.stationaryEntities[14][12] = new Wall;
+    delete this.stationaryEntities[15][20];
+
+    this.stationaryEntities[9][9] = new PowerPellet;
+    this.stationaryEntities[19][9] = new PowerPellet;
+    this.stationaryEntities[9][19] = new PowerPellet;
+    this.stationaryEntities[19][19] = new PowerPellet;
+    this.pelletsToEat += 4;
+
+    for (let y = 10; y <= 18; y++) {
+      this.stationaryEntities[9][y] = new Pellet;
+      this.stationaryEntities[19][y] = new Pellet;
+      this.pelletsToEat += 2;
+    }
+    for (let x = 10; x <= 18; x++) {
+      this.stationaryEntities[x][9] = new Pellet;
+      this.stationaryEntities[x][19] = new Pellet;
+      this.pelletsToEat += 2;
+    }
+    this.moveEntitiesToStartingLocation();
+  }
+
+  moveEntitiesToStartingLocation(): void {
+    this.pacMan.logicalLocation = [14, 22];
+    this.ghosts = [
+      new Blinky([14, 19]),
+      new Inky([10, 16]),
+      new Pinky([14, 16]),
+      new Clyde([18, 16])
+    ];
+  }
+
   // TODO: Add time-since-last-update-parameter
   updateGameState(currentTime: number): void {
     if (this.timeOfLastUpdate !== 0) {
@@ -165,6 +188,10 @@ class Board extends React.Component<Props> {
     if (this.gameFinished) {
       this.props.onGameFinish();
     } else if (this.gameActive) {
+      if (this.pelletsEaten === this.pelletsToEat) {
+        this.level++;
+        this.resetBoard();
+      }
       window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
@@ -179,9 +206,11 @@ class Board extends React.Component<Props> {
       throw 'pacMan is on a wall';
     } else if (stationaryItem instanceof Pellet) {
       scoreIncrement += scoringTable.pellet;
+      this.pelletsEaten++;
       delete this.stationaryEntities[x][y];
     } else if (stationaryItem instanceof PowerPellet) {
       scoreIncrement += scoringTable.powerPellet;
+      this.pelletsEaten++;
       delete this.stationaryEntities[x][y];
 
       // TODO: Calculate time until recovery
