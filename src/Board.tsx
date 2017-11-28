@@ -50,7 +50,6 @@ class Board extends React.Component<Props> {
   timeOfLastUpdate: number = 0;
 
   score: number;
-  gameActive: boolean = false;
   gameFinished: boolean = false;
 
   canvasContext: CanvasRenderingContext2D;
@@ -128,23 +127,18 @@ class Board extends React.Component<Props> {
   }
 
   componentDidMount() {
-    this.gameActive = this.props.active;
-    if (this.gameActive) {
+    if (this.props.active) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
-    if (prevProps.active === true && !this.gameActive) {
-      this.gameActive = true;
+    if (this.props.active === true && prevProps.active !== true) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
-    } else if (prevProps.active === false) {
-      this.gameActive = false;
     }
   }
 
   componentWillUnmount() {
-    this.gameActive = false;
   }
 
   // TODO: Add time-since-last-update-parameter
@@ -164,7 +158,7 @@ class Board extends React.Component<Props> {
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
-    } else if (this.gameActive) {
+    } else if (this.props.active) {
       window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
