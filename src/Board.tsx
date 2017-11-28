@@ -28,6 +28,8 @@ const ghostRespawningPoint = [14, 16];
  * A chunk is a sixth of the logical grid (2 X 3 partition)
  */
 type Chunk = Drawable[][];
+const chunkColumns = 13;
+const chunkRows = 11;
 
 interface Props {
   width: string;
@@ -323,7 +325,30 @@ class Board extends React.Component<Props> {
    * @param fileContents The contents of the CSV map file
    */
   static parseMap(fileContents: string): Chunk {
-    // TODO: Implement
+    // A comma-separated value file (CSV file) is a text-based
+    // representation of an Excel spreadsheet
+
+    // Between each row is the newline character
+    // Between every column of each row is a comma
+    // So, in order to parse a CSV file, we need to "split" the file contents by
+    // new-line then by comma
+    const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
+
+    for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries()) {
+      // TODO: Split lineContents by commas
+      for (const [columnNumber, cellContent] of /* TODO */) {
+        // TODO: Identify what cellContent represents
+        // Note:
+        // X = Wall
+        // O = Power Pellet
+        // . = Pellet
+
+        // TODO: Create respective object
+        const item: Drawable = /* TODO */;
+        // TODO: Use columnNumber and lineNumber to place it in chunk
+      }
+    }
+    return chunk;
   }
 }
 
