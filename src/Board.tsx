@@ -52,7 +52,6 @@ class Board extends React.Component<Props> {
 
   level: number = 1;
   score: number;
-  gameActive: boolean = false;
   pelletsEaten: number = 0;
   pelletsToEat: number = 0;
   gameFinished: boolean = false;
@@ -102,23 +101,18 @@ class Board extends React.Component<Props> {
   }
 
   componentDidMount() {
-    this.gameActive = this.props.active;
-    if (this.gameActive) {
+    if (this.props.active) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
-    if (prevProps.active === true && !this.gameActive) {
-      this.gameActive = true;
+    if (this.props.active === true && prevProps.active !== true) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
-    } else if (prevProps.active === false) {
-      this.gameActive = false;
     }
   }
 
   componentWillUnmount() {
-    this.gameActive = false;
   }
 
   resetBoard(): void {
@@ -193,7 +187,7 @@ class Board extends React.Component<Props> {
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
-    } else if (this.gameActive) {
+    } else if (this.props.active) {
       if (this.pelletsEaten === this.pelletsToEat) {
         this.level++;
         this.resetBoard();
