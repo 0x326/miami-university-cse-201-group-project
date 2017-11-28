@@ -22,6 +22,10 @@ const scoringTable = {
 
 const ghostRespawningPoint = [14, 16];
 
+interface State {
+  resourcesLoaded: boolean;
+}
+
 interface Props {
   width: string;
   height: string;
@@ -38,10 +42,12 @@ interface Props {
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-class Board extends React.Component<Props> {
+class Board extends React.Component<Props, State> {
   // 27 X 31 board
   static logicalColumns = 27;
   static logicalRows = 31;
+
+  loadResources: Promise<undefined>;
 
   stationaryEntities: Drawable[][];
   pacMan: PacMan;
@@ -62,6 +68,9 @@ class Board extends React.Component<Props> {
 
   constructor() {
     super();
+    this.state = {
+      resourcesLoaded: false
+    };
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     // TODO: Populate board
@@ -85,33 +94,57 @@ class Board extends React.Component<Props> {
   }
 
   render() {
-    return (
-      <canvas
-        width={this.props.width}
-        height={this.props.height}
-        ref={(elem) => {
-          if (elem !== null) {
-            let context = elem.getContext('2d');
-            if (context !== null) {
-              this.canvasContext = context;
+    if (!this.state.resourcesLoaded) {
+      return (
+        <div>
+          Loading resources...
+        </div>
+      );
+    } else {
+      return (
+        <canvas
+          width={this.props.width}
+          height={this.props.height}
+          ref={(elem) => {
+            if (elem !== null) {
+              let context = elem.getContext('2d');
+              if (context !== null) {
+                this.canvasContext = context;
+              }
             }
-          }
-        }}
-      />
-    );
+          }}
+        />
+      );
+    }
   }
 
   componentDidMount() {
     this.gameActive = this.props.active;
     if (this.gameActive) {
-      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      if (!this.state.resourcesLoaded) {
+        this.loadResources = new Promise((resolve, reject) => {
+          // TODO: Load resources
+          resolve();
+        });
+
+        this.loadResources.then(() => {
+          this.setState({
+            resourcesLoaded: true
+          });
+          window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+        });
+      } else {
+        window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      }
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
     if (prevProps.active === true && !this.gameActive) {
       this.gameActive = true;
-      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      if (this.state.resourcesLoaded) {
+        window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      }
     } else if (prevProps.active === false) {
       this.gameActive = false;
     }
