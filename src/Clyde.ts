@@ -2,6 +2,10 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const ClydeImage = require('./Clyde.png');
+const VulnerableImg = require('./Vulnerable.png');
+const BlinkingImg = require('./Blinking.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -11,13 +15,55 @@ import { Direction } from './MovableEntity';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Clyde extends Ghost {
+    // used for alternating between two blinking sprites
+    static frameCount : number;
+    // instance variable, initializes the sprite
+    private sprite = new Image();
   /**
-   * Creates a MovableEntity
+   * Creates an Clyde object
    *
    * @param initialLocation The starting location of this entity.
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
+    Clyde.frameCount = 0;
+  }
+    
+  /**
+   * Draw this object on the graphic at the given location.
+   *
+   * @param board         The graphic to draw on
+   * @param maxSize       The maximum size of the image.
+   *              The image drawn should be proportional to mazSize to support scaling.
+   */
+  draw(board: CanvasRenderingContext2D, maxSize: number) {
+    // super.draw(board, maxSize);
+    let drawLocation: [number, number] = [
+      this.logicalLocation[0] * maxSize - maxSize,
+      this.logicalLocation[1] * maxSize - maxSize
+    ];
+      // about to become dangerous again
+      if (this.isVunerable() && this.isVulnerableBlinking()) {
+          // alternate between blinking and vulnerable
+          if (Clyde.frameCount <= 7) {
+              this.sprite.src = BlinkingImg;
+          }
+          else {
+              this.sprite.src = VulnerableImg;
+              if (Clyde.frameCount === 14) {
+                  Clyde.frameCount = 0;
+              }
+          }
+          Clyde.frameCount++;
+      }
+      // vulnerable and not blinking
+      else if (this.isVunerable()) {
+          this.sprite.src = VulnerableImg;
+      }
+      else {
+          this.sprite.src = ClydeImage;
+      }
+    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
   chooseDirection(map: Drawable[][]): void {
