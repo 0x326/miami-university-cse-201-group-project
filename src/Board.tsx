@@ -63,8 +63,8 @@ class Board extends React.Component<Props> {
   ghostWarningTimer: number;
   ghostRecoveryTimer: number;
 
-  constructor() {
-    super();
+  constructor(props: Props) {
+    super(props);
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
