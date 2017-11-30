@@ -336,16 +336,25 @@ class Board extends React.Component<Props> {
 
     for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries()) {
       // TODO: Split lineContents by commas
-      for (const [columnNumber, cellContent] of /* TODO */) {
+      for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
         // TODO: Identify what cellContent represents
         // Note:
         // X = Wall
         // O = Power Pellet
         // . = Pellet
 
-        // TODO: Create respective object
-        const item: Drawable = /* TODO */;
+        let item : Drawable = new Wall;
+
+        if(cellContent === "O"){
+          item = new PowerPellet;
+        }
+
+        if(cellContent === "."){
+           item = new Pellet;
+        }
+        
         // TODO: Use columnNumber and lineNumber to place it in chunk
+        chunk[columnNumber][lineNumber] = item;
       }
     }
     return chunk;
