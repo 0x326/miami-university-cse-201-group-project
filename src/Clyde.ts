@@ -2,6 +2,8 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const ClydeImage = require('./Images/Clyde.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -11,8 +13,10 @@ import { Direction } from './MovableEntity';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Clyde extends Ghost {
+  protected normalSpriteURI: string = ClydeImage;
+
   /**
-   * Creates a MovableEntity
+   * Creates an Clyde object
    *
    * @param initialLocation The starting location of this entity.
    */

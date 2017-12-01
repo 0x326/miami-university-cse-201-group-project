@@ -19,10 +19,12 @@ class PowerPellet implements Drawable {
    * @param neighboringEntities A collection of adjacent entities.
    */
   draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
-    board.fillStyle = '#673AB7';
-    board.beginPath();
-    board.arc(location[0], location[1], maxSize / 2, 0, 2 * Math.PI);
-    board.fill();
+    if (performance.now() % 400 > 200) {
+      board.fillStyle = '#673AB7';
+      board.beginPath();
+      board.arc(location[0], location[1], maxSize / 2, 0, 2 * Math.PI);
+      board.fill();
+    }
   }
 }
 

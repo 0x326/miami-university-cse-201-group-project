@@ -1,5 +1,8 @@
 import MovableEntity from './MovableEntity';
 
+const VulnerableImg = require('./Images/Vulnerable.png');
+const BlinkingImg = require('./Images/Blinking.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -10,6 +13,13 @@ import MovableEntity from './MovableEntity';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  /**
+   * Time to switch from blue to white (or vice versa) in milliseconds.
+   */
+  readonly flashingInterval = 100;
+  protected abstract normalSpriteURI: string;
+  // used for alternating between two blinking sprites
+  private isFlashingWhite = false;
 
   /**
    * Creates a MovableEntity
@@ -30,6 +40,13 @@ abstract class Ghost extends MovableEntity {
   }
 
   /**
+  * @return Whether this Ghost is vulnerable and blinking
+  */
+  isVulnerableBlinking(): boolean {
+    return this.state === VulnerabilityState.VulnerableBlinking;
+  }
+
+  /**
    * Makes this Ghost vulnerable
    */
   makeVulnerable(): void {
@@ -43,6 +60,13 @@ abstract class Ghost extends MovableEntity {
   startWarning(): void {
     if (this.state === VulnerabilityState.Vulnerable) {
       this.state = VulnerabilityState.VulnerableBlinking;
+      const blinker = () => {
+        if (this.state === VulnerabilityState.VulnerableBlinking) {
+          this.isFlashingWhite = !this.isFlashingWhite;
+          window.setTimeout(blinker, this.flashingInterval);
+        }
+      }
+      window.setTimeout(blinker, this.flashingInterval);
     } else {
       throw new Error();
     }
@@ -60,33 +84,27 @@ abstract class Ghost extends MovableEntity {
    *
    * @param board         The graphic to draw on
    * @param maxSize       The maximum size of the image.
-   *              The image drawn should be proportional to mazSize to support scaling.
+   *              The image drawn should be proportional to maxSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    super.draw(board, maxSize);
-    let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
-    ];
-
     switch (this.state) {
-      case VulnerabilityState.Vulnerable:
-        board.fillStyle = '#03A9F4';
-        break;
-
       case VulnerabilityState.VulnerableBlinking:
-        board.fillStyle = '#FF9800';
+        if (this.isFlashingWhite) {
+          this.sprite.src = BlinkingImg;
+          break;
+        }
+        // Fall through
+
+      case VulnerabilityState.Vulnerable:
+        this.sprite.src = VulnerableImg;
         break;
 
       default:
-        board.fillStyle = '#F44336';
+        this.sprite.src = this.normalSpriteURI;
         break;
     }
-    board.beginPath();
-    board.arc(drawLocation[0], drawLocation[1], maxSize / 3, 0, 2 * Math.PI);
-    board.fill();
+    super.draw(board, maxSize);
   }
-
 }
 
 enum VulnerabilityState {

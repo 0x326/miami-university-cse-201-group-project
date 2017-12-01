@@ -14,14 +14,19 @@ abstract class MovableEntity {
   logicalLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
+
   /**
    * The speed of this MovableEntity in logical coordinates per second.
    */
   speed: number = 2;
+
+  protected sprite = new Image();
+
   /**
    * Used by the move method for caching purposes.
    */
   private lastDirection: Direction;
+
   /**
    * The cached value.
    */
@@ -126,21 +131,8 @@ abstract class MovableEntity {
       this.logicalLocation[1] * maxSize - maxSize
     ];
 
-    board.fillStyle = '#9E9E9E';
-    board.fillRect(drawLocation[0] - maxSize / 2, drawLocation[1] - maxSize / 2, maxSize, maxSize);
-    board.strokeStyle = '#BDBDBD';
     board.beginPath();
-    board.moveTo(drawLocation[0], drawLocation[1]);
-    if (this.direction === Direction.North) {
-      board.lineTo(drawLocation[0], drawLocation[1] - maxSize / 2);
-    } else if (this.direction === Direction.South) {
-      board.lineTo(drawLocation[0], drawLocation[1] + maxSize / 2);
-    } else if (this.direction === Direction.East) {
-      board.lineTo(drawLocation[0] + maxSize / 2, drawLocation[1]);
-    } else {
-      board.lineTo(drawLocation[0] - maxSize / 2, drawLocation[1]);
-    }
-    board.stroke();
+    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
   private findUpcomingWall(map: Drawable[][]): [number, number] {

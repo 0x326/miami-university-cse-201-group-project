@@ -2,6 +2,8 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const BlinkyImage = require('./Images/Blinky.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -11,8 +13,10 @@ import { Direction } from './MovableEntity';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Blinky extends Ghost {
+  protected normalSpriteURI: string = BlinkyImage;
+
   /**
-   * Creates a MovableEntity
+   * Creates a Blinky object
    *
    * @param initialLocation The starting location of this entity.
    */

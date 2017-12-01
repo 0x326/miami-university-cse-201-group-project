@@ -2,6 +2,8 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const InkyImage = require('./Images/Inky.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -11,8 +13,10 @@ import { Direction } from './MovableEntity';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Inky extends Ghost {
+  protected normalSpriteURI: string = InkyImage;
+
   /**
-   * Creates a MovableEntity
+   * Creates an Inky object
    *
    * @param initialLocation The starting location of this entity.
    */
