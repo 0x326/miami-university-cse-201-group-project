@@ -84,12 +84,12 @@ abstract class Ghost extends MovableEntity {
 
     switch (this.state) {
       case VulnerabilityState.VulnerableBlinking:
+        this.frameCount++;
+        this.frameCount %= 14;
         if (this.frameCount <= 7) {
           this.sprite.src = BlinkingImg;
           break;
         }
-        this.frameCount++;
-        this.frameCount %= 15;
         // Fall through
 
       case VulnerabilityState.Vulnerable:
