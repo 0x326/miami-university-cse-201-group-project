@@ -41,7 +41,7 @@ class PacMan extends MovableEntity {
   };
 
   // used for determining what animation sprite to display
-  private timeMoving: number = 0;
+  private timeWhenStartedMoving: number = performance.now();
 
   /**
    * Creates a MovableEntity
@@ -58,9 +58,11 @@ class PacMan extends MovableEntity {
         } else if (isPressed) {
           this.direction = PacMan.KeyMap[key];
           this.stopped = false;
+          this.timeWhenStartedMoving = performance.now();
         }
       });
     }
+    this.sprite.src = images[this.direction].half;
   }
 
   /**
@@ -71,26 +73,22 @@ class PacMan extends MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    // determines the sprite to be drawn
-    const f = (x: number) => Math.abs((x / 10) % 2 - 1);
-    const sprites = images[this.direction];
-
-    if (f(this.timeMoving) > 0.6) {
-      this.sprite.src = sprites.full;
-    } else if (f(this.timeMoving) > 0.3) {
-      this.sprite.src = sprites.half;
-    } else {
-      this.sprite.src = Closed;
-    }
-
     // animation stops when PacMan stops
     if (!this.stopped) {
-      this.timeMoving++;
-    }
-    if (this.timeMoving === 20) {
-      this.timeMoving = 0;
-    }
+      // determines the sprite to be drawn
+      const f = (x: number) => Math.abs((x / 100) % 2 - 1);
+      const sprites = images[this.direction];
+      const timeMoving = performance.now() - this.timeWhenStartedMoving;
 
+      if (f(timeMoving) > 0.6) {
+        this.sprite.src = sprites.full;
+      } else if (f(timeMoving) > 0.3) {
+        this.sprite.src = sprites.half;
+      } else {
+        this.sprite.src = Closed;
+      }
+
+    }
     super.draw(board, maxSize);
   }
 
