@@ -1,6 +1,20 @@
 import Graph from './Graph';
 import { List, Set } from 'immutable';
 
+describe('Test graph with non-primitive vertex IDs', () => {
+  const testGraph = new Graph<List<number>>();
+  it('adds successfully (same instance)', () => {
+    const vertex1 = List([1, 2]);
+    const vertex2 = List([2, 1]);
+    testGraph.addVertex(vertex1);
+    testGraph.addVertex(vertex2);
+    testGraph.addEdge(vertex1, vertex2, 1);
+  });
+  it('adds successfully (different instance; same data)', () => {
+    testGraph.addEdge(List([1, 2]), List([2, 1]), 1);
+  });
+});
+
 describe('Test shortest path', () => {
   it('works for a small evenly-weighted graph ', () => {
     const testGraph = new Graph<string>();
