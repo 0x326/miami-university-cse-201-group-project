@@ -13,10 +13,13 @@ const BlinkingImg = require('./Images/Blinking.png');
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  /**
+   * Time to switch from blue to white (or vice versa) in milliseconds.
+   */
+  readonly flashingInterval = 100;
   protected abstract normalSpriteURI: string;
   // used for alternating between two blinking sprites
-  private frameCount: number = 0;
-
+  private isFlashingWhite = false;
 
   /**
    * Creates a MovableEntity
@@ -57,6 +60,13 @@ abstract class Ghost extends MovableEntity {
   startWarning(): void {
     if (this.state === VulnerabilityState.Vulnerable) {
       this.state = VulnerabilityState.VulnerableBlinking;
+      const blinker = () => {
+        if (this.state === VulnerabilityState.VulnerableBlinking) {
+          this.isFlashingWhite = !this.isFlashingWhite;
+          window.setTimeout(blinker, this.flashingInterval);
+        }
+      }
+      window.setTimeout(blinker, this.flashingInterval);
     } else {
       throw new Error();
     }
@@ -79,9 +89,7 @@ abstract class Ghost extends MovableEntity {
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     switch (this.state) {
       case VulnerabilityState.VulnerableBlinking:
-        this.frameCount++;
-        this.frameCount %= 14;
-        if (this.frameCount <= 7) {
+        if (this.isFlashingWhite) {
           this.sprite.src = BlinkingImg;
           break;
         }
