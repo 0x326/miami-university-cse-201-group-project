@@ -31,7 +31,7 @@ class PacMan extends MovableEntity {
   };
 
     // used for determining what animation sprite to display
-    static frameCount : number;
+    private frameCount : number;
     // instance variable, initializes the sprite
     private sprite = new Image();
 
@@ -42,7 +42,7 @@ class PacMan extends MovableEntity {
    */
   constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
     super(initialLocation);
-    PacMan.frameCount = 0;
+    this.frameCount = 0;
     this.direction = Direction.North;
     for (let key in PacMan.KeyMap) {
       keyboardListener.registerKey(key, (isPressed: boolean) => {
@@ -72,14 +72,14 @@ class PacMan extends MovableEntity {
       
       // determines the sprite to be drawn
       if (this.direction === Direction.North) {
-          if (PacMan.frameCount <= 5) {
+          if (this.frameCount <= 5) {
               this.sprite.src = HalfOpenUp;
           }
-          else if (PacMan.frameCount <= 10) {
+          else if (this.frameCount <= 10) {
               this.sprite.src = FullyOpenUp;
 
           }
-          else if (PacMan.frameCount <= 15) {
+          else if (this.frameCount <= 15) {
               this.sprite.src = HalfOpenUp;
           }
           else {
@@ -87,14 +87,14 @@ class PacMan extends MovableEntity {
           }
       }
       else if (this.direction === Direction.East) {
-          if (PacMan.frameCount <= 5) {
+          if (this.frameCount <= 5) {
               this.sprite.src = HalfOpenRight;
           }
-          else if (PacMan.frameCount <= 10) {
+          else if (this.frameCount <= 10) {
               this.sprite.src = FullyOpenRight;
 
           }
-          else if (PacMan.frameCount <= 15) {
+          else if (this.frameCount <= 15) {
               this.sprite.src = HalfOpenRight;
           }
           else {
@@ -102,14 +102,14 @@ class PacMan extends MovableEntity {
           }
       }
       else if (this.direction === Direction.South) {
-          if (PacMan.frameCount <= 5) {
+          if (this.frameCount <= 5) {
               this.sprite.src = HalfOpenDown;
           }
-          else if (PacMan.frameCount <= 10) {
+          else if (this.frameCount <= 10) {
               this.sprite.src = FullyOpenDown;
 
           }
-          else if (PacMan.frameCount <= 15) {
+          else if (this.frameCount <= 15) {
               this.sprite.src = HalfOpenDown;
           }
           else {
@@ -117,14 +117,14 @@ class PacMan extends MovableEntity {
           }
       }
       else {
-          if (PacMan.frameCount <= 5) {
+          if (this.frameCount <= 5) {
               this.sprite.src = HalfOpenLeft;
           }
-          else if (PacMan.frameCount <= 10) {
+          else if (this.frameCount <= 10) {
               this.sprite.src = FullyOpenLeft;
 
           }
-          else if (PacMan.frameCount <= 15) {
+          else if (this.frameCount <= 15) {
               this.sprite.src = HalfOpenLeft;
           }
           else {
@@ -134,10 +134,10 @@ class PacMan extends MovableEntity {
         
       // animation stops when PacMan stops
       if (!this.stopped) {
-          PacMan.frameCount++;
+          this.frameCount++;
       }
-      if (PacMan.frameCount === 20) {
-          PacMan.frameCount = 0;
+      if (this.frameCount === 20) {
+          this.frameCount = 0;
       }
     // draws the sprite
     board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);

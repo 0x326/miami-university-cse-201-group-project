@@ -9,6 +9,8 @@ import Drawable, { Neighbors } from './Drawable';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class PowerPellet implements Drawable {
+    // used for determining what animation sprite to display
+    private frameCount = 0;
   /**
    * Draw this object on the graphic at the given location.
    *
@@ -19,10 +21,20 @@ class PowerPellet implements Drawable {
    * @param neighboringEntities A collection of adjacent entities.
    */
   draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
-    board.fillStyle = '#673AB7';
-    board.beginPath();
-    board.arc(location[0], location[1], maxSize / 2, 0, 2 * Math.PI);
-    board.fill();
+    
+    if (this.frameCount <= 10) {
+        board.fillStyle = '#673AB7';
+        board.beginPath();
+        board.arc(location[0], location[1], maxSize / 2, 0, 2 * Math.PI);
+        board.fill();
+    }
+    else {
+        board.clearRect(location[0], location[1], maxSize / 2, 0);
+    }
+    this.frameCount++;
+    if (this.frameCount === 20) {
+        this.frameCount = 0;
+    }
   }
 }
 
