@@ -29,12 +29,12 @@ abstract class Ghost extends MovableEntity {
     return this.state !== VulnerabilityState.Dangerous;
   }
 
-    /**
-    * @return Whether this Ghost is vulnerable and blinking
-    */
-    isVulnerableBlinking(): boolean {
-        return this.state === VulnerabilityState.VulnerableBlinking;
-    }
+  /**
+  * @return Whether this Ghost is vulnerable and blinking
+  */
+  isVulnerableBlinking(): boolean {
+    return this.state === VulnerabilityState.VulnerableBlinking;
+  }
 
   /**
    * Makes this Ghost vulnerable

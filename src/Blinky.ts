@@ -15,10 +15,11 @@ const BlinkingImg = require('./Blinking.png');
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Blinky extends Ghost {
-    // used for alternating between two blinking sprites
-    private frameCount : number;
-    // instance variable, initializes the sprite
-    private sprite = new Image();
+  // used for alternating between two blinking sprites
+  private frameCount: number;
+  // instance variable, initializes the sprite
+  private sprite = new Image();
+
   /**
    * Creates a Blinky object
    *
@@ -28,7 +29,7 @@ class Blinky extends Ghost {
     super(initialLocation);
     this.frameCount = 0;
   }
-    
+
   /**
    * Draw this object on the graphic at the given location.
    *
@@ -43,24 +44,20 @@ class Blinky extends Ghost {
       this.logicalLocation[1] * maxSize - maxSize
     ];
       // about to become dangerous again
-      if (this.isVunerable() && this.isVulnerableBlinking()) {
+    if (this.isVunerable() && this.isVulnerableBlinking()) {
           // alternate between blinking and vulnerable
           if (this.frameCount <= 7) {
               this.sprite.src = BlinkingImg;
-          }
-          else {
+          } else {
               this.sprite.src = VulnerableImg;
               if (this.frameCount === 14) {
                   this.frameCount = 0;
               }
           }
           this.frameCount++;
-      }
-      // vulnerable and not blinking
-      else if (this.isVunerable()) {
+      } else if (this.isVunerable()) {
           this.sprite.src = VulnerableImg;
-      }
-      else {
+      } else {
           this.sprite.src = BlinkyImage;
       }
     board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
