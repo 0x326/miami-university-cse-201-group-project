@@ -3,16 +3,14 @@ import Drawable from './Drawable';
 import KeyboardListener from './KeyboardListener';
 
 // Pacman's animation sprites
-
-// Trying to only use three instead of nine
-const HalfOpen = require('./Pacman_halfopen_right.png');
-// const HalfOpenLeft = require('./Pacman_halfopen_left.png');
-//const HalfOpenUp = require('./Pacman_halfopen_up.png');
-// const HalfOpenDown = require('./Pacman_halfopen_down.png');
-const FullyOpen = require('./Pacman_fullyopen_right.png');
-// const FullyOpenLeft = require('./Pacman_fullyopen_left.png');
-//const FullyOpenUp = require('./Pacman_fullyopen_up.png');
-// const FullyOpenDown = require('./Pacman_fullyopen_down.png');
+const HalfOpenRight = require('./Pacman_halfopen_right.png');
+const HalfOpenLeft = require('./Pacman_halfopen_left.png');
+const HalfOpenUp = require('./Pacman_halfopen_up.png');
+const HalfOpenDown = require('./Pacman_halfopen_down.png');
+const FullyOpenRight = require('./Pacman_fullyopen_right.png');
+const FullyOpenLeft = require('./Pacman_fullyopen_left.png');
+const FullyOpenUp = require('./Pacman_fullyopen_up.png');
+const FullyOpenDown = require('./Pacman_fullyopen_down.png');
 const Closed = require('./Pacman_closed.png');
 
 /**
@@ -72,43 +70,76 @@ class PacMan extends MovableEntity {
       this.logicalLocation[1] * maxSize - maxSize
     ];
       
-      
-      if (PacMan.frameCount <= 5) {
-          this.sprite.src = HalfOpen;
-      }
-      else if (PacMan.frameCount <= 10) {
-          this.sprite.src = FullyOpen;
-
-      }
-      else if (PacMan.frameCount <= 15) {
-          this.sprite.src = HalfOpen;
-      }
-      else {
-          this.sprite.src = Closed;
-      }
-      
-      /* Not sure how to rotate sprite
+      // determines the sprite to be drawn
       if (this.direction === Direction.North) {
-          this.sprite.style.transform = 'initial';
-          this.sprite.style.transform = 'rotate(90deg)';
+          if (PacMan.frameCount <= 5) {
+              this.sprite.src = HalfOpenUp;
+          }
+          else if (PacMan.frameCount <= 10) {
+              this.sprite.src = FullyOpenUp;
+
+          }
+          else if (PacMan.frameCount <= 15) {
+              this.sprite.src = HalfOpenUp;
+          }
+          else {
+              this.sprite.src = Closed;
+          }
+      }
+      else if (this.direction === Direction.East) {
+          if (PacMan.frameCount <= 5) {
+              this.sprite.src = HalfOpenRight;
+          }
+          else if (PacMan.frameCount <= 10) {
+              this.sprite.src = FullyOpenRight;
+
+          }
+          else if (PacMan.frameCount <= 15) {
+              this.sprite.src = HalfOpenRight;
+          }
+          else {
+              this.sprite.src = Closed;
+          }
       }
       else if (this.direction === Direction.South) {
-          this.sprite.style.transform = 'initial';
-          this.sprite.style.transform = 'rotate(270deg)';
+          if (PacMan.frameCount <= 5) {
+              this.sprite.src = HalfOpenDown;
+          }
+          else if (PacMan.frameCount <= 10) {
+              this.sprite.src = FullyOpenDown;
+
+          }
+          else if (PacMan.frameCount <= 15) {
+              this.sprite.src = HalfOpenDown;
+          }
+          else {
+              this.sprite.src = Closed;
+          }
       }
-      else if (this.direction === Direction.West) {
-          this.sprite.style.transform = 'initial';
-          this.sprite.style.transform = 'rotate(180deg)';
+      else {
+          if (PacMan.frameCount <= 5) {
+              this.sprite.src = HalfOpenLeft;
+          }
+          else if (PacMan.frameCount <= 10) {
+              this.sprite.src = FullyOpenLeft;
+
+          }
+          else if (PacMan.frameCount <= 15) {
+              this.sprite.src = HalfOpenLeft;
+          }
+          else {
+              this.sprite.src = Closed;
+          }
       }
-      */
-                   
+        
+      // animation stops when PacMan stops
       if (!this.stopped) {
           PacMan.frameCount++;
       }
       if (PacMan.frameCount === 20) {
           PacMan.frameCount = 0;
       }
-      
+    // draws the sprite
     board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
