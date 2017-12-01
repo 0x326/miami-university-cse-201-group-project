@@ -3,8 +3,6 @@ import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
 const BlinkyImage = require('./Blinky.png');
-const VulnerableImg = require('./Vulnerable.png');
-const BlinkingImg = require('./Blinking.png');
 
 /**
  * Course: CSE 201 A
@@ -15,8 +13,7 @@ const BlinkingImg = require('./Blinking.png');
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Blinky extends Ghost {
-  // used for alternating between two blinking sprites
-  private frameCount: number;
+  protected normalSpriteURI: string = BlinkyImage;
 
   /**
    * Creates a Blinky object
@@ -25,40 +22,6 @@ class Blinky extends Ghost {
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
-    this.frameCount = 0;
-  }
-
-  /**
-   * Draw this object on the graphic at the given location.
-   *
-   * @param board         The graphic to draw on
-   * @param maxSize       The maximum size of the image.
-   *              The image drawn should be proportional to mazSize to support scaling.
-   */
-  draw(board: CanvasRenderingContext2D, maxSize: number) {
-    // super.draw(board, maxSize);
-    let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
-    ];
-    // about to become dangerous again
-    if (this.isVunerable() && this.isVulnerableBlinking()) {
-      // alternate between blinking and vulnerable
-      if (this.frameCount <= 7) {
-        this.sprite.src = BlinkingImg;
-      } else {
-        this.sprite.src = VulnerableImg;
-        if (this.frameCount === 14) {
-          this.frameCount = 0;
-        }
-      }
-      this.frameCount++;
-    } else if (this.isVunerable()) {
-      this.sprite.src = VulnerableImg;
-    } else {
-      this.sprite.src = BlinkyImage;
-    }
-    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
   chooseDirection(map: Drawable[][]): void {

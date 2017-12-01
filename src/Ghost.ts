@@ -1,5 +1,8 @@
 import MovableEntity from './MovableEntity';
 
+const VulnerableImg = require('./Vulnerable.png');
+const BlinkingImg = require('./Blinking.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -10,6 +13,10 @@ import MovableEntity from './MovableEntity';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  protected abstract normalSpriteURI: string;
+  // used for alternating between two blinking sprites
+  private frameCount: number = 0;
+
 
   /**
    * Creates a MovableEntity
@@ -70,28 +77,31 @@ abstract class Ghost extends MovableEntity {
    *              The image drawn should be proportional to maxSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    super.draw(board, maxSize);
     let drawLocation: [number, number] = [
       this.logicalLocation[0] * maxSize - maxSize,
       this.logicalLocation[1] * maxSize - maxSize
     ];
 
     switch (this.state) {
-      case VulnerabilityState.Vulnerable:
-        board.fillStyle = '#03A9F4';
-        break;
-
       case VulnerabilityState.VulnerableBlinking:
-        board.fillStyle = '#FF9800';
+        if (this.frameCount <= 7) {
+          this.sprite.src = BlinkingImg;
+          break;
+        }
+        this.frameCount++;
+        this.frameCount %= 15;
+        // Fall through
+
+      case VulnerabilityState.Vulnerable:
+        this.sprite.src = VulnerableImg;
         break;
 
       default:
-        board.fillStyle = '#F44336';
+        this.sprite.src = this.normalSpriteURI;
         break;
     }
-    board.beginPath();
-    board.arc(drawLocation[0], drawLocation[1], maxSize / 3, 0, 2 * Math.PI);
-    board.fill();
+    // board.beginPath();
+    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 }
 
