@@ -3,6 +3,7 @@ import { List, Set } from 'immutable';
 
 describe('Test graph with non-primitive vertex IDs', () => {
   const testGraph = new Graph<List<number>>();
+
   it('adds successfully (same instance)', () => {
     const vertex1 = List([1, 2]);
     const vertex2 = List([2, 1]);
@@ -10,12 +11,15 @@ describe('Test graph with non-primitive vertex IDs', () => {
     testGraph.addVertex(vertex2);
     testGraph.addEdge(vertex1, vertex2, 1);
   });
+
   it('adds successfully (different instance; same data)', () => {
     testGraph.addEdge(List([1, 2]), List([2, 1]), 1);
   });
+
 });
 
 describe('Test shortest path', () => {
+
   it('works for a small evenly-weighted graph ', () => {
     const testGraph = new Graph<string>();
     testGraph.addVertex('1');
@@ -34,6 +38,7 @@ describe('Test shortest path', () => {
 
     expect(testGraph.computeShortestRoute('6', '1')).toEqual(List(['6', '4', '5', '1']));
   });
+
   it('works for a medium weighted graph', () => {
     const vertices = Set<string>([
       'A',
@@ -68,4 +73,5 @@ describe('Test shortest path', () => {
 
     expect(testGraph.computeShortestRoute('A', 'G')).toEqual(List('A-C-F-G'.split('-')));
   });
+
 });
