@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Set } from 'immutable';
+import { Set, List, Map, Stack } from 'immutable';
 import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
@@ -13,6 +13,7 @@ import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
 import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
+import Graph from './Graph';
 
 const scoringTable = {
   // TODO: Adjust scores
@@ -22,6 +23,8 @@ const scoringTable = {
 };
 
 type Location = [number, number];
+type ImmutableLocation = List<number>;
+
 const pacManStartingLocation: Location = [14, 22];
 const blinkyStartingLocation: Location = [14, 19];
 const inkyStartingLocation: Location = [10, 16];
@@ -51,6 +54,7 @@ class Board extends React.Component<Props> {
   static logicalRows = 33;
 
   stationaryEntities: Drawable[][];
+  mapGraph: Graph<string>;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -130,8 +134,9 @@ class Board extends React.Component<Props> {
       this.stationaryEntities[x][10] = new Wall;
       this.stationaryEntities[x][14] = new Wall;
       this.stationaryEntities[x][20] = new Wall;
+      this.stationaryEntities[x][24] = new Wall;
     }
-    for (let y = 8; y <= 20; y++) {
+    for (let y = 8; y <= 24; y++) {
       this.stationaryEntities[8][y] = new Wall;
       this.stationaryEntities[20][y] = new Wall;
     }
@@ -163,7 +168,79 @@ class Board extends React.Component<Props> {
       this.stationaryEntities[x][19] = new Pellet;
       this.pelletsToEat += 2;
     }
+
+    const [mapVertices, mapEdges] = this.parseGraph();
+    const mapGraph = new Graph<string>();
+    mapVertices.valueSeq().forEach(vertex => vertex !== undefined &&
+      mapGraph.addVertex(vertex.join()));
+    mapEdges.valueSeq().forEach(tuple => {
+      if (tuple !== undefined) {
+        const [vertexA, vertexB, cost] = tuple;
+        mapGraph.addBidirectionalEdge(vertexA.join(), vertexB.join(), cost);
+      }
+    });
+    this.mapGraph = mapGraph;
     this.moveEntitiesToStartingLocation();
+  }
+
+  parseGraph() {
+    let previousLocations = Stack<ImmutableLocation>();
+
+    const parseGraph = (location: ImmutableLocation):
+      [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] => {
+
+      const map = this.stationaryEntities;
+      const [x, y] = location.toArray();
+
+      const leftColumn = map[x - 1];
+      const middleColumn = map[x];
+      const rightColumn = map[x + 1];
+
+      const movementOptions = Map<ImmutableLocation, boolean>([
+        [List([x, y - 1]), middleColumn && middleColumn[y - 1] instanceof Wall],
+        [List([x - 1, y]), leftColumn && leftColumn[y] instanceof Wall],
+        [List([x + 1, y]), rightColumn && rightColumn[y] instanceof Wall],
+        [List([x, y + 1]), middleColumn && middleColumn[y + 1] instanceof Wall],
+      ]);
+
+      let vertices = Set<ImmutableLocation>();
+      let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
+
+      // Should this location be represented as a vertex in the graph?
+      // 1: Yes
+      // 2: No - it can be removed
+      // 3: Yes
+      // 4: Yes
+      if (movementOptions.valueSeq().filter(val => val === true).count() !== 2) {
+        vertices = vertices.add(location);
+
+        if (previousLocations.count() > 0) {
+          const previousLocation = previousLocations.last();
+          const [prevX, prevY] = previousLocation.toArray();
+          const [dx, dy] = [x - prevX, y - prevY].map(Math.abs);
+          const cost = Math.max(dx, dy);  // One should be zero
+          edges = edges.add([previousLocation, location, cost]);
+        }
+      }
+
+      // tslint:disable:no-any
+      for (const [newLocation, isWall] of movementOptions.entries() as any) {
+        if (!isWall && !previousLocations.contains(newLocation)) {
+          previousLocations = previousLocations.push(location);
+          const [newVertices, newEdges] = parseGraph(newLocation);
+          if (!newVertices.isEmpty()) {
+            vertices = vertices.union(newVertices);
+          }
+          if (!newEdges.isEmpty()) {
+            edges = edges.union(newEdges);
+          }
+        }
+      }
+
+      return [vertices, edges];
+    };
+
+    return parseGraph(List(pacManStartingLocation));
   }
 
   moveEntitiesToStartingLocation(): void {
