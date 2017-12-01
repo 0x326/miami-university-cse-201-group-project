@@ -3,7 +3,7 @@ import { List, Set } from 'immutable';
 
 describe('Test shortest path', () => {
   it('works for a small evenly-weighted graph ', () => {
-    const testGraph = new Graph;
+    const testGraph = new Graph<string>();
     testGraph.addVertex('1');
     testGraph.addVertex('2');
     testGraph.addVertex('3');
@@ -44,7 +44,7 @@ describe('Test shortest path', () => {
       'C-G 7',
       'F-E 5'
     ]);
-    const testGraph = new Graph;
+    const testGraph = new Graph<string>();
     vertices.valueSeq().forEach(vertex => vertex !== undefined && testGraph.addVertex(vertex));
     // tslint:disable:no-any
     for (let [vertex1, vertex2, cost] of edges.valueSeq().map(str => str !== undefined && str.split(/[- ]/)) as any) {
@@ -53,5 +53,5 @@ describe('Test shortest path', () => {
     }
 
     expect(testGraph.computeShortestRoute('A', 'G')).toEqual(List('A-C-F-G'.split('-')));
-  })
+  });
 });

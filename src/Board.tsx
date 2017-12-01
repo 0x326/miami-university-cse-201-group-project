@@ -16,7 +16,6 @@ import KeyboardListener from './KeyboardListener';
 import Graph from './Graph';
 
 const scoringTable = {
-  // TODO: Adjust scores
   'pellet': 10,
   'powerPellet': 50,
   'ghost': 250
@@ -54,7 +53,7 @@ class Board extends React.Component<Props> {
   static logicalRows = 33;
 
   stationaryEntities: Drawable[][];
-  mapGraph: Graph<string>;
+  mapGraph: Graph<List<number>>;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -169,14 +168,15 @@ class Board extends React.Component<Props> {
       this.pelletsToEat += 2;
     }
 
+    // (window as any).a = this.parseGraph().map(val => val.toJS());
     const [mapVertices, mapEdges] = this.parseGraph();
-    const mapGraph = new Graph<string>();
+    const mapGraph = new Graph<List<number>>();
     mapVertices.valueSeq().forEach(vertex => vertex !== undefined &&
-      mapGraph.addVertex(vertex.join()));
+      mapGraph.addVertex(vertex));
     mapEdges.valueSeq().forEach(tuple => {
       if (tuple !== undefined) {
         const [vertexA, vertexB, cost] = tuple;
-        mapGraph.addBidirectionalEdge(vertexA.join(), vertexB.join(), cost);
+        mapGraph.addBidirectionalEdge(vertexA, vertexB, cost);
       }
     });
     this.mapGraph = mapGraph;
