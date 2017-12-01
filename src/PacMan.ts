@@ -3,14 +3,24 @@ import Drawable from './Drawable';
 import KeyboardListener from './KeyboardListener';
 
 // Pacman's animation sprites
-const HalfOpenRight = require('./Images/Pacman_halfopen_right.png');
-const HalfOpenLeft = require('./Images/Pacman_halfopen_left.png');
-const HalfOpenUp = require('./Images/Pacman_halfopen_up.png');
-const HalfOpenDown = require('./Images/Pacman_halfopen_down.png');
-const FullyOpenRight = require('./Images/Pacman_fullyopen_right.png');
-const FullyOpenLeft = require('./Images/Pacman_fullyopen_left.png');
-const FullyOpenUp = require('./Images/Pacman_fullyopen_up.png');
-const FullyOpenDown = require('./Images/Pacman_fullyopen_down.png');
+const images = {
+  [Direction.North]: {
+    full: require('./Images/Pacman_fullyopen_up.png'),
+    half: require('./Images/Pacman_halfopen_up.png')
+  },
+  [Direction.South]: {
+    full: require('./Images/Pacman_fullyopen_down.png'),
+    half: require('./Images/Pacman_halfopen_down.png')
+  },
+  [Direction.East]: {
+    full: require('./Images/Pacman_fullyopen_right.png'),
+    half: require('./Images/Pacman_halfopen_right.png')
+  },
+  [Direction.West]: {
+    full: require('./Images/Pacman_fullyopen_left.png'),
+    half: require('./Images/Pacman_halfopen_left.png')
+  }
+};
 const Closed = require('./Images/Pacman_closed.png');
 
 /**
@@ -31,7 +41,7 @@ class PacMan extends MovableEntity {
   };
 
   // used for determining what animation sprite to display
-  private frameCount: number;
+  private timeMoving: number = 0;
 
   /**
    * Creates a MovableEntity
@@ -40,7 +50,6 @@ class PacMan extends MovableEntity {
    */
   constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
     super(initialLocation);
-    this.frameCount = 0;
     this.direction = Direction.North;
     for (let key in PacMan.KeyMap) {
       keyboardListener.registerKey(key, (isPressed: boolean) => {
@@ -63,54 +72,23 @@ class PacMan extends MovableEntity {
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     // determines the sprite to be drawn
-    if (this.direction === Direction.North) {
-      if (this.frameCount <= 5) {
-        this.sprite.src = HalfOpenUp;
-      } else if (this.frameCount <= 10) {
-        this.sprite.src = FullyOpenUp;
-      } else if (this.frameCount <= 15) {
-        this.sprite.src = HalfOpenUp;
-      } else {
-        this.sprite.src = Closed;
-      }
-    } else if (this.direction === Direction.East) {
-      if (this.frameCount <= 5) {
-        this.sprite.src = HalfOpenRight;
-      } else if (this.frameCount <= 10) {
-        this.sprite.src = FullyOpenRight;
-      } else if (this.frameCount <= 15) {
-        this.sprite.src = HalfOpenRight;
-      } else {
-        this.sprite.src = Closed;
-      }
-    } else if (this.direction === Direction.South) {
-      if (this.frameCount <= 5) {
-        this.sprite.src = HalfOpenDown;
-      } else if (this.frameCount <= 10) {
-        this.sprite.src = FullyOpenDown;
-      } else if (this.frameCount <= 15) {
-        this.sprite.src = HalfOpenDown;
-      } else {
-        this.sprite.src = Closed;
-      }
+    const f = (x: number) => Math.abs((x / 10) % 2 - 1);
+    const sprites = images[this.direction];
+
+    if (f(this.timeMoving) > 0.6) {
+      this.sprite.src = sprites.full;
+    } else if (f(this.timeMoving) > 0.3) {
+      this.sprite.src = sprites.half;
     } else {
-      if (this.frameCount <= 5) {
-        this.sprite.src = HalfOpenLeft;
-      } else if (this.frameCount <= 10) {
-        this.sprite.src = FullyOpenLeft;
-      } else if (this.frameCount <= 15) {
-        this.sprite.src = HalfOpenLeft;
-      } else {
-        this.sprite.src = Closed;
-      }
+      this.sprite.src = Closed;
     }
 
     // animation stops when PacMan stops
     if (!this.stopped) {
-      this.frameCount++;
+      this.timeMoving++;
     }
-    if (this.frameCount === 20) {
-      this.frameCount = 0;
+    if (this.timeMoving === 20) {
+      this.timeMoving = 0;
     }
 
     super.draw(board, maxSize);
