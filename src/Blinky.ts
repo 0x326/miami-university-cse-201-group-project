@@ -2,7 +2,7 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
-const BlinkyImage = require('./Blinky.png');
+const BlinkyImage = require('./Images/Blinky.png');
 
 /**
  * Course: CSE 201 A

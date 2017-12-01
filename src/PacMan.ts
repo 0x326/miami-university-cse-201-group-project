@@ -3,15 +3,15 @@ import Drawable from './Drawable';
 import KeyboardListener from './KeyboardListener';
 
 // Pacman's animation sprites
-const HalfOpenRight = require('./Pacman_halfopen_right.png');
-const HalfOpenLeft = require('./Pacman_halfopen_left.png');
-const HalfOpenUp = require('./Pacman_halfopen_up.png');
-const HalfOpenDown = require('./Pacman_halfopen_down.png');
-const FullyOpenRight = require('./Pacman_fullyopen_right.png');
-const FullyOpenLeft = require('./Pacman_fullyopen_left.png');
-const FullyOpenUp = require('./Pacman_fullyopen_up.png');
-const FullyOpenDown = require('./Pacman_fullyopen_down.png');
-const Closed = require('./Pacman_closed.png');
+const HalfOpenRight = require('./Images/Pacman_halfopen_right.png');
+const HalfOpenLeft = require('./Images/Pacman_halfopen_left.png');
+const HalfOpenUp = require('./Images/Pacman_halfopen_up.png');
+const HalfOpenDown = require('./Images/Pacman_halfopen_down.png');
+const FullyOpenRight = require('./Images/Pacman_fullyopen_right.png');
+const FullyOpenLeft = require('./Images/Pacman_fullyopen_left.png');
+const FullyOpenUp = require('./Images/Pacman_fullyopen_up.png');
+const FullyOpenDown = require('./Images/Pacman_fullyopen_down.png');
+const Closed = require('./Images/Pacman_closed.png');
 
 /**
  * Course: CSE 201 A

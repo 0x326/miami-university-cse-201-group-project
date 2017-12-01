@@ -1,7 +1,7 @@
 import MovableEntity from './MovableEntity';
 
-const VulnerableImg = require('./Vulnerable.png');
-const BlinkingImg = require('./Blinking.png');
+const VulnerableImg = require('./Images/Vulnerable.png');
+const BlinkingImg = require('./Images/Blinking.png');
 
 /**
  * Course: CSE 201 A

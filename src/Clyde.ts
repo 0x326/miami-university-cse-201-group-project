@@ -2,7 +2,7 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
-const ClydeImage = require('./Clyde.png');
+const ClydeImage = require('./Images/Clyde.png');
 
 /**
  * Course: CSE 201 A

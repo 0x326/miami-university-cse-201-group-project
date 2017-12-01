@@ -2,7 +2,7 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
-const InkyImage = require('./Inky.png');
+const InkyImage = require('./Images/Inky.png');
 
 /**
  * Course: CSE 201 A
