@@ -1,20 +1,15 @@
 import { List, Set, Map } from 'immutable';
 
 /**
- * A unique identifier for the vertices of a graph.
- */
-type Id = string;
-
-/**
  * Represents a vertex in a graph.
  *
  * This is an aggregate of Graph.
  */
-class Vertex {
+class Vertex<Id> {
   id: Id;
-  edges: Set<Edge>;
+  edges: Set<Edge<Id>>;
 
-  constructor(id: Id, edges: Set<Edge> = Set()) {
+  constructor(id: Id, edges: Set<Edge<Id>> = Set()) {
     this.id = id;
     this.edges = edges;
   }
@@ -25,12 +20,12 @@ class Vertex {
  *
  * This is an aggregate of Graph.
  */
-class Edge {
-  from: Vertex;
-  to: Vertex;
+class Edge<Id> {
+  from: Vertex<Id>;
+  to: Vertex<Id>;
   cost: number;
 
-  constructor(from: Vertex, to: Vertex, cost: number) {
+  constructor(from: Vertex<Id>, to: Vertex<Id>, cost: number) {
     this.from = from;
     this.to = to;
     this.cost = cost;
@@ -40,18 +35,18 @@ class Edge {
 /**
  * Represents a particular calculation in Dijkstra's algorithm.
  */
-class NetCost {
+class NetCost<Id> {
   cost: number = Infinity;
-  associatedEdge?: Edge;
+  associatedEdge?: Edge<Id>;
   isOptimal: boolean = false;
 }
 
 /**
  * A graph data structure.
  */
-class Graph {
-  private vertices: Map<Id, Vertex> = Map();
-  private edges: Map<[Vertex, Vertex], Edge> = Map();
+class Graph<Id> {
+  private vertices: Map<Id, Vertex<Id>> = Map();
+  private edges: Map<[Vertex<Id>, Vertex<Id>], Edge<Id>> = Map();
 
   /**
    * Computes the shortest path between the given vertices.
@@ -67,7 +62,7 @@ class Graph {
       throw `${to} is not in the graph`;
     }
 
-    let costTable = Map<Id, NetCost>(this.vertices.keySeq().map(key => [key, new NetCost]));
+    let costTable = Map<Id, NetCost<Id>>(this.vertices.keySeq().map(key => [key, new NetCost]));
     costTable = costTable.update(from, costCalculation => {
       costCalculation.cost = 0;
       costCalculation.isOptimal = true;
@@ -99,7 +94,7 @@ class Graph {
 
       // Select lowest cost
       let minimumCalculation: number = Infinity;
-      let minimumCalculationKey: string = '';
+      let minimumCalculationKey: Id | undefined = undefined;
       // tslint:disable:no-any
       // Immutable.js Map objects are incorrectly typed in its index.d.ts
       // Use ``any`` to override type errors
@@ -112,12 +107,16 @@ class Graph {
         }
       }
 
+      if (minimumCalculationKey === undefined) {
+        throw 'minimumCalculationKey === undefined';
+      }
+
       costTable = costTable.update(minimumCalculationKey, calc => {
         if (calc === undefined) {
           throw `minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`;
         }
         calc.isOptimal = true;
-        currentNode = minimumCalculationKey;
+        currentNode = <Id> minimumCalculationKey;
         return calc;
       });
     }
