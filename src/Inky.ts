@@ -17,8 +17,6 @@ const BlinkingImg = require('./Blinking.png');
 class Inky extends Ghost {
   // used for alternating between two blinking sprites
   private frameCount: number;
-  // instance variable, initializes the sprite
-  private sprite = new Image();
 
   /**
    * Creates an Inky object

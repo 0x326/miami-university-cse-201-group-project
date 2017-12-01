@@ -14,14 +14,19 @@ abstract class MovableEntity {
   logicalLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
+
   /**
    * The speed of this MovableEntity in logical coordinates per second.
    */
   speed: number = 2;
+
+  protected sprite = new Image();
+
   /**
    * Used by the move method for caching purposes.
    */
   private lastDirection: Direction;
+
   /**
    * The cached value.
    */

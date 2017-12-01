@@ -32,8 +32,6 @@ class PacMan extends MovableEntity {
 
   // used for determining what animation sprite to display
   private frameCount: number;
-  // instance variable, initializes the sprite
-  private sprite = new Image();
 
   /**
    * Creates a MovableEntity
