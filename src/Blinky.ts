@@ -43,23 +43,23 @@ class Blinky extends Ghost {
       this.logicalLocation[0] * maxSize - maxSize,
       this.logicalLocation[1] * maxSize - maxSize
     ];
-      // about to become dangerous again
+    // about to become dangerous again
     if (this.isVunerable() && this.isVulnerableBlinking()) {
-          // alternate between blinking and vulnerable
-          if (this.frameCount <= 7) {
-              this.sprite.src = BlinkingImg;
-          } else {
-              this.sprite.src = VulnerableImg;
-              if (this.frameCount === 14) {
-                  this.frameCount = 0;
-              }
-          }
-          this.frameCount++;
-      } else if (this.isVunerable()) {
-          this.sprite.src = VulnerableImg;
+      // alternate between blinking and vulnerable
+      if (this.frameCount <= 7) {
+        this.sprite.src = BlinkingImg;
       } else {
-          this.sprite.src = BlinkyImage;
+        this.sprite.src = VulnerableImg;
+        if (this.frameCount === 14) {
+          this.frameCount = 0;
+        }
       }
+      this.frameCount++;
+    } else if (this.isVunerable()) {
+      this.sprite.src = VulnerableImg;
+    } else {
+      this.sprite.src = BlinkyImage;
+    }
     board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 
