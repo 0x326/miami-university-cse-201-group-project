@@ -77,11 +77,6 @@ abstract class Ghost extends MovableEntity {
    *              The image drawn should be proportional to maxSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
-    ];
-
     switch (this.state) {
       case VulnerabilityState.VulnerableBlinking:
         this.frameCount++;
@@ -100,8 +95,7 @@ abstract class Ghost extends MovableEntity {
         this.sprite.src = this.normalSpriteURI;
         break;
     }
-    board.beginPath();
-    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
+    super.draw(board, maxSize);
   }
 }
 

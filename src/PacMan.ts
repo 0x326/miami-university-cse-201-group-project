@@ -62,12 +62,6 @@ class PacMan extends MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
-    // super.draw(board, maxSize);
-    let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
-    ];
-
     // determines the sprite to be drawn
     if (this.direction === Direction.North) {
       if (this.frameCount <= 5) {
@@ -118,8 +112,8 @@ class PacMan extends MovableEntity {
     if (this.frameCount === 20) {
       this.frameCount = 0;
     }
-    // draws the sprite
-    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
+
+    super.draw(board, maxSize);
   }
 
   chooseDirection(map: Drawable[][]): void {
