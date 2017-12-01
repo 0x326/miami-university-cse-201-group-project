@@ -100,7 +100,7 @@ abstract class Ghost extends MovableEntity {
         this.sprite.src = this.normalSpriteURI;
         break;
     }
-    // board.beginPath();
+    board.beginPath();
     board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
   }
 }
