@@ -15,6 +15,7 @@ interface Props {
 
 interface State {
   gameState: GameState;
+  gameOver: boolean;
   score: number;
   finalScores: List<number>;
 }
@@ -24,6 +25,7 @@ class App extends React.Component<Props, State> {
     super();
     this.state = {
       gameState: GameState.TitleScreen,
+      gameOver: false,
       score: 0,
       finalScores: List()
     };
@@ -62,19 +64,24 @@ class App extends React.Component<Props, State> {
           <div className="center">
             <div className="board">
               <Board
-                width="500 cm"
-                height="500 cm"
-                active={true}
+                width="13cm"
+                height="13cm"
+                active={!this.state.gameOver}
                 onScoreChange={(newScore: number) => this.setState({
                   score: newScore
                 })}
-                onGameFinish={() => {
-
-                }}
+                onGameFinish={() => this.setState({
+                  gameOver: true
+                })}
               />
             </div>
           </div>
           <div className="footer">
+            {this.state.gameOver &&
+              <div>
+              Game Over
+              </div>
+            }
             <button
               onClick={() => this.setState({
                 gameState: GameState.GameOver
@@ -104,7 +111,8 @@ class App extends React.Component<Props, State> {
               onClick={() => this.setState((prevState) => ({
                 finalScores: prevState.finalScores.push(prevState.score),
                 score: 0,
-                gameState: GameState.PlayingGame
+                gameState: GameState.PlayingGame,
+                gameOver: false
               }))}
             >
               Play Again
@@ -140,7 +148,8 @@ class App extends React.Component<Props, State> {
             <button
               onClick={() => this.setState({
                 score: 0,
-                gameState: GameState.PlayingGame
+                gameState: GameState.PlayingGame,
+                gameOver: false
               })}
             >
               Play Again
