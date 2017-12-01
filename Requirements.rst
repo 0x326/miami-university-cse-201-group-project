@@ -21,11 +21,7 @@ Gameplay Requirements
 * PacMan must have one life
 * Game generates maze for each level
 
-<<<<<<< HEAD
-  * Must create a pseudo-random maze of Pac-Dots
-=======
   * Must create a pseudorandom maze of Pac-Dots
->>>>>>> 0163e022e7cdd544af245b9e9305e56c6b07bcad
 
     * The starting location of the ghosts and PacMan are fixed
 
@@ -84,11 +80,7 @@ Gameplay Requirements
     where it is regenerated with normal properties
 
 Game Presentation Requirements
-<<<<<<< HEAD
------------------------------
-=======
 ------------------------------
->>>>>>> 0163e022e7cdd544af245b9e9305e56c6b07bcad
 
 * Game does not start with 'READY!' message and does not wait to begin
 * Blinky starts outside ghost spawning box like he does in the arcade
