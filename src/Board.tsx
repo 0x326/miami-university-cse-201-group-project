@@ -21,7 +21,13 @@ const scoringTable = {
   'ghost': 250
 };
 
-const ghostRespawningPoint = [14, 16];
+type Location = [number, number];
+const pacManStartingLocation: Location = [14, 22];
+const blinkyStartingLocation: Location = [14, 19];
+const inkyStartingLocation: Location = [10, 16];
+const pinkyStaringLocation: Location = [14, 16];
+const clydeStartingLocation: Location = [18, 16];
+const ghostRespawningPoint: Location = [14, 16];
 
 interface Props {
   width: string;
@@ -161,12 +167,12 @@ class Board extends React.Component<Props> {
   }
 
   moveEntitiesToStartingLocation(): void {
-    this.pacMan.logicalLocation = [14, 22];
+    this.pacMan.logicalLocation = pacManStartingLocation;
     this.ghosts = [
-      new Blinky([14, 19]),
-      new Inky([10, 16]),
-      new Pinky([14, 16]),
-      new Clyde([18, 16])
+      new Blinky(blinkyStartingLocation),
+      new Inky(inkyStartingLocation),
+      new Pinky(pinkyStaringLocation),
+      new Clyde(clydeStartingLocation)
     ];
   }
 
