@@ -13,7 +13,7 @@ import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
 import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
-import Graph from './Graph';
+import DirectedWeightedGraph from './DirectedWeightedGraph';
 
 const scoringTable = {
   'pellet': 10,
@@ -53,7 +53,7 @@ class Board extends React.Component<Props> {
   static logicalRows = 33;
 
   stationaryEntities: Drawable[][];
-  mapGraph: Graph<List<number>>;
+  mapGraph: DirectedWeightedGraph<List<number>>;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -170,7 +170,7 @@ class Board extends React.Component<Props> {
 
     // (window as any).a = this.parseGraph().map(val => val.toJS());
     const [mapVertices, mapEdges] = this.parseGraph();
-    const mapGraph = new Graph<List<number>>();
+    const mapGraph = new DirectedWeightedGraph<List<number>>();
     mapVertices.valueSeq().forEach(vertex => vertex !== undefined &&
       mapGraph.addVertex(vertex));
     mapEdges.valueSeq().forEach(tuple => {

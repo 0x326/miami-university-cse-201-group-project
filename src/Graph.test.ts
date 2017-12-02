@@ -1,8 +1,8 @@
-import Graph from './Graph';
+import DirectedWeightedGraph from './DirectedWeightedGraph';
 import { List, Set } from 'immutable';
 
 describe('Test graph with non-primitive vertex IDs', () => {
-  const testGraph = new Graph<List<number>>();
+  const testGraph = new DirectedWeightedGraph<List<number>>();
 
   it('adds successfully (same instance)', () => {
     const vertex1 = List([1, 2]);
@@ -21,7 +21,7 @@ describe('Test graph with non-primitive vertex IDs', () => {
 describe('Test shortest path', () => {
 
   it('works for a small evenly-weighted graph ', () => {
-    const testGraph = new Graph<string>();
+    const testGraph = new DirectedWeightedGraph<string>();
     testGraph.addVertex('1');
     testGraph.addVertex('2');
     testGraph.addVertex('3');
@@ -63,7 +63,7 @@ describe('Test shortest path', () => {
       'C-G 7',
       'F-E 5'
     ]);
-    const testGraph = new Graph<string>();
+    const testGraph = new DirectedWeightedGraph<string>();
     vertices.valueSeq().forEach(vertex => vertex !== undefined && testGraph.addVertex(vertex));
     // tslint:disable:no-any
     for (let [vertex1, vertex2, cost] of edges.valueSeq().map(str => str !== undefined && str.split(/[- ]/)) as any) {

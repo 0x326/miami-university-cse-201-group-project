@@ -44,7 +44,7 @@ class NetCost<Id> {
 /**
  * A graph data structure.
  */
-class Graph<Id> {
+class DirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
   private edges: Map<[Vertex<Id>, Vertex<Id>], Edge<Id>> = Map();
 
@@ -160,6 +160,7 @@ class Graph<Id> {
     this.addEdge(a, b, cost);
     this.addEdge(b, a, cost);
   }
+
 }
 
-export default Graph;
+export default DirectedWeightedGraph;
