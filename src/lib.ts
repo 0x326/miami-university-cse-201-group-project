@@ -28,4 +28,23 @@ function initializeMutliDimensionalArray<T>(array: Array<any>, initializer: (pos
   }
 }
 
-export { createMultiDimensionalArray, initializeMutliDimensionalArray };
+function computeOrthogonalDistance(point2: [number, number], point1: [number, number]) {
+  const [x1, y1] = point1;
+  const [x2, y2] = point2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  if (dx !== 0 && dy !== 0) {
+    throw 'Points do not lay on an orthogonal axis';
+  } else if (dx !== 0) {
+    return dx;
+  } else {
+    return dy;
+  }
+}
+
+export {
+  createMultiDimensionalArray,
+  initializeMutliDimensionalArray,
+  computeOrthogonalDistance
+};

@@ -1,4 +1,8 @@
-import MovableEntity from './MovableEntity';
+import { List } from 'immutable';
+import MovableEntity, { Direction } from './MovableEntity';
+import Drawable from './Drawable';
+import DirectedWeightedGraph from './DirectedWeightedGraph'
+import { computeOrthogonalDistance } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -10,6 +14,7 @@ import MovableEntity from './MovableEntity';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  private boardGraph: DirectedWeightedGraph<List<number>>;
 
   /**
    * Creates a MovableEntity
@@ -85,6 +90,40 @@ abstract class Ghost extends MovableEntity {
     board.beginPath();
     board.arc(drawLocation[0], drawLocation[1], maxSize / 3, 0, 2 * Math.PI);
     board.fill();
+  }
+
+  findClosestVertex(map: Drawable[][]) {
+    const options = this.getMovementOptions(map);
+    // tslint:disable:no-any
+    const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
+    const numberOfOptions = optionsArray.length;
+
+    let closestVertexLocation = this.logicalLocation;
+    if (numberOfOptions === 2) {
+      const [x, y] = this.logicalLocation;
+      let minimumDistance: number = Infinity;
+
+      const updateMinimumDistance = (direction: Direction) => {
+        const [a, b] = this.findUpcomingWall(map, direction);
+        const distance = computeOrthogonalDistance([a, b], [x, y]);
+        if (distance < minimumDistance) {
+          closestVertexLocation = [a, b];
+          minimumDistance = distance;
+        }
+      };
+
+      if (options[Direction.North] === true) {
+        updateMinimumDistance(Direction.North);
+      } else if (options[Direction.South] === true) {
+        updateMinimumDistance(Direction.South);
+      } else if (options[Direction.West] === true) {
+        updateMinimumDistance(Direction.West);
+      } else {
+        updateMinimumDistance(Direction.East);
+      }
+    }
+
+    return List(closestVertexLocation);
   }
 
 }

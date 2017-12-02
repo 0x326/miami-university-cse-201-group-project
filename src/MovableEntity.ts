@@ -64,7 +64,7 @@ abstract class MovableEntity {
     this.chooseDirection(map);
 
     const [upcomingWallColumn, upcomingWallRow] = this.direction !== this.lastDirection ?
-                                                  this.findUpcomingWall(map) :
+                                                  this.findUpcomingWall(map, this.direction) :
                                                   this.lastUpcomingWall;
 
     // Remember result of search for next time
@@ -143,7 +143,7 @@ abstract class MovableEntity {
     board.stroke();
   }
 
-  private findUpcomingWall(map: Drawable[][]): [number, number] {
+  protected findUpcomingWall(map: Drawable[][], direction: Direction): [number, number] {
     const [logicalColumn, logicalRow] = this.getLogicalLocation();
 
     let columnNumber = logicalColumn;
@@ -154,11 +154,11 @@ abstract class MovableEntity {
         break;
       }
 
-      if (this.direction === Direction.North) {
+      if (direction === Direction.North) {
         rowNumber--;
-      } else if (this.direction === Direction.South) {
+      } else if (direction === Direction.South) {
         rowNumber++;
-      } else if (this.direction === Direction.East) {
+      } else if (direction === Direction.East) {
         columnNumber++;
       } else {
         columnNumber--;
