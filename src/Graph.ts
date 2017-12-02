@@ -6,7 +6,7 @@ import { List, Set, Map } from 'immutable';
  * This is an aggregate of Graph.
  */
 class Vertex<Id> {
-  id: Id;
+  readonly id: Id;
   edges: Set<Edge<Id>>;
 
   constructor(id: Id, edges: Set<Edge<Id>> = Set()) {
@@ -21,9 +21,9 @@ class Vertex<Id> {
  * This is an aggregate of Graph.
  */
 class Edge<Id> {
-  from: Vertex<Id>;
-  to: Vertex<Id>;
-  cost: number;
+  readonly from: Vertex<Id>;
+  readonly to: Vertex<Id>;
+  readonly cost: number;
 
   constructor(from: Vertex<Id>, to: Vertex<Id>, cost: number) {
     this.from = from;
