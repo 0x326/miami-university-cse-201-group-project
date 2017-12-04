@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import MovableEntity, { Direction } from './MovableEntity';
+import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
@@ -117,15 +117,11 @@ abstract class Ghost extends MovableEntity {
         }
       };
 
-      if (options[Direction.North] === true) {
-        updateMinimumDistance(Direction.North);
-      } else if (options[Direction.South] === true) {
-        updateMinimumDistance(Direction.South);
-      } else if (options[Direction.West] === true) {
-        updateMinimumDistance(Direction.West);
-      } else {
-        updateMinimumDistance(Direction.East);
-      }
+      directionSeq.forEach(direction => {
+        if (direction !== undefined && options[direction] === true) {
+          updateMinimumDistance(direction);
+        }
+      });
     }
 
     return List(closestVertexLocation);

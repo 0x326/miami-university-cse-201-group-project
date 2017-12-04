@@ -1,5 +1,6 @@
 import Drawable from './Drawable';
 import Wall from './Wall';
+import { Seq } from 'immutable';
 
 /**
  * Course: CSE 201 A
@@ -185,5 +186,7 @@ enum Direction {
   West
 }
 
+const directionSeq = Seq([Direction.North, Direction.South, Direction.East, Direction.West]);
+
 export default MovableEntity;
-export { Direction };
+export { Direction, directionSeq };
