@@ -7,9 +7,9 @@ import { List, Set, Map } from 'immutable';
  */
 class Vertex<Id> {
   readonly id: Id;
-  edges: Set<Edge<Id>>;
+  edges: Set<DirectedEdge<Id>>;
 
-  constructor(id: Id, edges: Set<Edge<Id>> = Set()) {
+  constructor(id: Id, edges: Set<DirectedEdge<Id>> = Set()) {
     this.id = id;
     this.edges = edges;
   }
@@ -20,7 +20,7 @@ class Vertex<Id> {
  *
  * This is an aggregate of Graph.
  */
-class Edge<Id> {
+class DirectedEdge<Id> {
   readonly from: Vertex<Id>;
   readonly to: Vertex<Id>;
   readonly cost: number;
@@ -37,7 +37,7 @@ class Edge<Id> {
  */
 class NetCost<Id> {
   cost: number = Infinity;
-  associatedEdge?: Edge<Id>;
+  associatedEdge?: DirectedEdge<Id>;
   isOptimal: boolean = false;
 }
 
@@ -48,7 +48,7 @@ class NetCost<Id> {
  */
 class UndirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
-  private edges: Map<List<Id>, Edge<Id>> = Map();
+  private edges: Map<List<Id>, DirectedEdge<Id>> = Map();
 
   /**
    * Computes the shortest path between the given vertices.
@@ -171,10 +171,10 @@ class UndirectedWeightedGraph<Id> {
     const vertexB = this.vertices.get(b);
 
     // Add edge to vertexA
-    const edgeAB = new Edge(vertexA, vertexB, cost);
+    const edgeAB = new DirectedEdge(vertexA, vertexB, cost);
     vertexA.edges = vertexA.edges.add(edgeAB);
     // Add edge to vertexB
-    const edgeBA = new Edge(vertexB, vertexA, cost);
+    const edgeBA = new DirectedEdge(vertexB, vertexA, cost);
     vertexB.edges = vertexB.edges.add(edgeBA);
 
     this.edges = this.edges.set(List([a, b]), edgeAB);
