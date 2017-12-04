@@ -63,9 +63,17 @@ abstract class MovableEntity {
 
     this.chooseDirection(map);
 
-    const [upcomingWallColumn, upcomingWallRow] = this.direction !== this.lastDirection ?
-                                                  this.findUpcomingWall(map, this.direction) :
-                                                  this.lastUpcomingWall;
+    let upcomingWall: [number, number] | undefined;
+    if (this.direction !== this.lastDirection) {
+      upcomingWall = this.findUpcomingEntity(map, this.direction, entity => entity instanceof Wall);
+      if (upcomingWall === undefined) {
+        upcomingWall = [Infinity, Infinity];
+      }
+    } else {
+      upcomingWall = this.lastUpcomingWall;
+    }
+
+    const [upcomingWallColumn, upcomingWallRow] = upcomingWall;
 
     // Remember result of search for next time
     this.lastUpcomingWall = [upcomingWallColumn, upcomingWallRow];
@@ -143,15 +151,15 @@ abstract class MovableEntity {
     board.stroke();
   }
 
-  protected findUpcomingWall(map: Drawable[][], direction: Direction): [number, number] {
+  protected findUpcomingEntity(map: Drawable[][], direction: Direction, criteria: (entity: Drawable) => boolean): [number, number] | undefined {
     const [logicalColumn, logicalRow] = this.getLogicalLocation();
 
     let columnNumber = logicalColumn;
     let rowNumber = logicalRow;
     while (0 <= columnNumber && columnNumber < map.length &&
       0 <= rowNumber && rowNumber < map[columnNumber].length) {
-      if (map[columnNumber][rowNumber] instanceof Wall) {
-        break;
+      if (criteria(map[columnNumber][rowNumber])) {
+        return [columnNumber, rowNumber];
       }
 
       if (direction === Direction.North) {
@@ -165,7 +173,7 @@ abstract class MovableEntity {
       }
     }
 
-    return [columnNumber, rowNumber];
+    return undefined;
   }
 
 }

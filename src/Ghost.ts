@@ -2,6 +2,7 @@ import { List } from 'immutable';
 import MovableEntity, { Direction } from './MovableEntity';
 import Drawable from './Drawable';
 import DirectedWeightedGraph from './DirectedWeightedGraph'
+import Wall from './Wall';
 import { computeOrthogonalDistance } from './lib';
 
 /**
@@ -104,7 +105,7 @@ abstract class Ghost extends MovableEntity {
       let minimumDistance: number = Infinity;
 
       const updateMinimumDistance = (direction: Direction) => {
-        const [a, b] = this.findUpcomingWall(map, direction);
+        const [a, b] = this.findUpcomingEntity(map, direction, entity => entity instanceof Wall);
         const distance = computeOrthogonalDistance([a, b], [x, y]);
         if (distance < minimumDistance) {
           closestVertexLocation = [a, b];
