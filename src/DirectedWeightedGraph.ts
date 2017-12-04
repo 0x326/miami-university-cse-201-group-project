@@ -136,11 +136,21 @@ class DirectedWeightedGraph<Id> {
     return List(route.reverse());
   }
 
+  /**
+   * Adds a vertex to the graph.
+   * @param id An id for the vertex
+   */
   addVertex(id: Id): void {
     const vertex = new Vertex(id);
     this.vertices = this.vertices.set(id, vertex);
   }
 
+  /**
+   * Adds a directed, weighted edge to the graph.
+   * @param from The id of the "from" vertex
+   * @param to The id of the "to" vertex
+   * @param cost The cost of the edge
+   */
   addEdge(from: Id, to: Id, cost: number): void {
     if (!this.vertices.keySeq().contains(from)) {
       throw `From vertex with id ${from} cannot be found`;
@@ -156,6 +166,13 @@ class DirectedWeightedGraph<Id> {
     this.edges = this.edges.set([fromVertex, toVertex], edge);
   }
 
+  /**
+   * Adds a undirected, weighted edge to the graph.
+   * (Alias for creating two directed edges to the graph).
+   * @param a The id of the first vertex
+   * @param b The id of the second vertex
+   * @param cost The cost of the edge
+   */
   addBidirectionalEdge(a: Id, b: Id, cost: number) {
     this.addEdge(a, b, cost);
     this.addEdge(b, a, cost);
