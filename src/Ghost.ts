@@ -105,7 +105,11 @@ abstract class Ghost extends MovableEntity {
       let minimumDistance: number = Infinity;
 
       const updateMinimumDistance = (direction: Direction) => {
-        const [a, b] = this.findUpcomingEntity(map, direction, entity => entity instanceof Wall);
+        const nextWall = this.findUpcomingEntity(map, direction, entity => entity instanceof Wall);
+        if (nextWall === undefined) {
+          return;
+        }
+        const [a, b] = nextWall;
         const distance = computeOrthogonalDistance([a, b], [x, y]);
         if (distance < minimumDistance) {
           closestVertexLocation = [a, b];
