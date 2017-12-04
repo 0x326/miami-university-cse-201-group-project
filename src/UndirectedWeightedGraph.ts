@@ -42,11 +42,13 @@ class NetCost<Id> {
 }
 
 /**
- * A graph data structure.
+ * An undirected, weighted graph.
+ *
+ * Internally stores the undirected graph as a directed graph.
  */
 class UndirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
-  private edges: Map<[Vertex<Id>, Vertex<Id>], Edge<Id>> = Map();
+  private edges: Map<List<Id>, Edge<Id>> = Map();
 
   /**
    * Computes the shortest path between the given vertices.
@@ -150,40 +152,33 @@ class UndirectedWeightedGraph<Id> {
   }
 
   /**
-   * Adds a directed, weighted edge to the graph.
-   *
-   * `O(log32 N)`
-   * @param from The id of the "from" vertex
-   * @param to The id of the "to" vertex
-   * @param cost The cost of the edge
-   */
-  addEdge(from: Id, to: Id, cost: number): void {
-    if (!this.vertices.keySeq().contains(from)) {
-      throw `From vertex with id ${from} cannot be found`;
-    }
-    if (!this.vertices.keySeq().contains(to)) {
-      throw `To vertex with id ${to} cannot be found`;
-    }
-
-    const fromVertex = this.vertices.get(from);
-    const toVertex = this.vertices.get(to);
-    const edge = new Edge(fromVertex, toVertex, cost);
-    fromVertex.edges = fromVertex.edges.add(edge);
-    this.edges = this.edges.set([fromVertex, toVertex], edge);
-  }
-
-  /**
    * Adds a undirected, weighted edge to the graph.
-   * (Alias for creating two directed edges to the graph).
    *
    * `O(log32 N)`
    * @param a The id of the first vertex
    * @param b The id of the second vertex
    * @param cost The cost of the edge
    */
-  addBidirectionalEdge(a: Id, b: Id, cost: number) {
-    this.addEdge(a, b, cost);
-    this.addEdge(b, a, cost);
+  addEdge(a: Id, b: Id, cost: number) {
+    if (!this.vertices.keySeq().contains(a)) {
+      throw `From vertex with id ${a} cannot be found`;
+    }
+    if (!this.vertices.keySeq().contains(b)) {
+      throw `To vertex with id ${b} cannot be found`;
+    }
+
+    const vertexA = this.vertices.get(a);
+    const vertexB = this.vertices.get(b);
+
+    // Add edge to vertexA
+    const edgeAB = new Edge(vertexA, vertexB, cost);
+    vertexA.edges = vertexA.edges.add(edgeAB);
+    // Add edge to vertexB
+    const edgeBA = new Edge(vertexB, vertexA, cost);
+    vertexB.edges = vertexB.edges.add(edgeBA);
+
+    this.edges = this.edges.set(List([a, b]), edgeAB);
+    this.edges = this.edges.set(List([b, a]), edgeBA);
   }
 
 }

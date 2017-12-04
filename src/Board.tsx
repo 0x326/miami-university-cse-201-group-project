@@ -176,7 +176,7 @@ class Board extends React.Component<Props> {
     mapEdges.valueSeq().forEach(tuple => {
       if (tuple !== undefined) {
         const [vertexA, vertexB, cost] = tuple;
-        mapGraph.addBidirectionalEdge(vertexA, vertexB, cost);
+        mapGraph.addEdge(vertexA, vertexB, cost);
       }
     });
     this.mapGraph = mapGraph;

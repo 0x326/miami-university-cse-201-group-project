@@ -28,13 +28,13 @@ describe('Test shortest path', () => {
     testGraph.addVertex('4');
     testGraph.addVertex('5');
     testGraph.addVertex('6');
-    testGraph.addBidirectionalEdge('1', '5', 1);
-    testGraph.addBidirectionalEdge('1', '2', 1);
-    testGraph.addBidirectionalEdge('5', '2', 1);
-    testGraph.addBidirectionalEdge('5', '4', 1);
-    testGraph.addBidirectionalEdge('2', '3', 1);
-    testGraph.addBidirectionalEdge('3', '4', 1);
-    testGraph.addBidirectionalEdge('4', '6', 1);
+    testGraph.addEdge('1', '5', 1);
+    testGraph.addEdge('1', '2', 1);
+    testGraph.addEdge('5', '2', 1);
+    testGraph.addEdge('5', '4', 1);
+    testGraph.addEdge('2', '3', 1);
+    testGraph.addEdge('3', '4', 1);
+    testGraph.addEdge('4', '6', 1);
 
     expect(testGraph.computeShortestRoute('6', '1')).toEqual(List(['6', '4', '5', '1']));
   });
@@ -68,7 +68,7 @@ describe('Test shortest path', () => {
     // tslint:disable:no-any
     for (let [vertex1, vertex2, cost] of edges.valueSeq().map(str => str !== undefined && str.split(/[- ]/)) as any) {
       cost = Number(cost);
-      testGraph.addBidirectionalEdge(vertex1, vertex2, cost);
+      testGraph.addEdge(vertex1, vertex2, cost);
     }
 
     expect(testGraph.computeShortestRoute('A', 'G')).toEqual(List('A-C-F-G'.split('-')));
