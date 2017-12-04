@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import MovableEntity, { Direction } from './MovableEntity';
 import Drawable from './Drawable';
-import DirectedWeightedGraph from './DirectedWeightedGraph'
+import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
 import { computeOrthogonalDistance } from './lib';
 
@@ -15,7 +15,7 @@ import { computeOrthogonalDistance } from './lib';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
-  private boardGraph: DirectedWeightedGraph<List<number>>;
+  private boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
    * Creates a MovableEntity

@@ -44,7 +44,7 @@ class NetCost<Id> {
 /**
  * A graph data structure.
  */
-class DirectedWeightedGraph<Id> {
+class UndirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
   private edges: Map<[Vertex<Id>, Vertex<Id>], Edge<Id>> = Map();
 
@@ -188,4 +188,4 @@ class DirectedWeightedGraph<Id> {
 
 }
 
-export default DirectedWeightedGraph;
+export default UndirectedWeightedGraph;
