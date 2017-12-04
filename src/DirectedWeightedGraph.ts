@@ -52,6 +52,8 @@ class DirectedWeightedGraph<Id> {
    * Computes the shortest path between the given vertices.
    *
    * Uses Dijkstra's algorithm.
+   *
+   * `O(n^2)`
    * @param from The starting vertex
    * @param to The goal vertex
    */
@@ -138,6 +140,8 @@ class DirectedWeightedGraph<Id> {
 
   /**
    * Adds a vertex to the graph.
+   *
+   * `O(log32 N)`
    * @param id An id for the vertex
    */
   addVertex(id: Id): void {
@@ -147,6 +151,8 @@ class DirectedWeightedGraph<Id> {
 
   /**
    * Adds a directed, weighted edge to the graph.
+   *
+   * `O(log32 N)`
    * @param from The id of the "from" vertex
    * @param to The id of the "to" vertex
    * @param cost The cost of the edge
@@ -169,6 +175,8 @@ class DirectedWeightedGraph<Id> {
   /**
    * Adds a undirected, weighted edge to the graph.
    * (Alias for creating two directed edges to the graph).
+   *
+   * `O(log32 N)`
    * @param a The id of the first vertex
    * @param b The id of the second vertex
    * @param cost The cost of the edge
