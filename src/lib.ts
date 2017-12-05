@@ -45,9 +45,9 @@ function computeOrthogonalDistance(point2: [number, number], point1: [number, nu
   }
 }
 
-function computeDirection(point2: [number, number], point1: [number, number]) {
-  const [x1, y1] = point1;
-  const [x2, y2] = point2;
+function computeDirection(from: [number, number], to: [number, number]) {
+  const [x1, y1] = to;
+  const [x2, y2] = from;
   const dx = x2 - x1;
   const dy = y2 - y1;
 
