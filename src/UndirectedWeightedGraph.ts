@@ -73,20 +73,20 @@ class UndirectedWeightedGraph<Id> {
       return costCalculation;
     });
 
-    let currentNode = from;
+    let currentVertex = from;
     while (!costTable.every(calculation => calculation !== undefined && calculation.isOptimal)) {
-      const nodeEdges = this.vertices.get(currentNode).edges;
-      const costIncrement = costTable.get(currentNode).cost;
+      const vertexEdges = this.vertices.get(currentVertex).edges;
+      const costIncrement = costTable.get(currentVertex).cost;
 
       // tslint:disable:no-any
       // Immutable.js Set objects are incorrectly typed in its index.d.ts
       // Use ``any`` to override type errors
-      for (const edge of nodeEdges.values() as any) {
+      for (const edge of vertexEdges.values() as any) {
         if (edge !== undefined && !costTable.get(edge.to.id).isOptimal) {
-          const otherNode = edge.to;
-          if (edge.cost + costIncrement < costTable.get(otherNode.id).cost) {
+          const otherVertex = edge.to;
+          if (edge.cost + costIncrement < costTable.get(otherVertex.id).cost) {
             // Update value in table
-            costTable = costTable.update(otherNode.id, cost => {
+            costTable = costTable.update(otherVertex.id, cost => {
               cost.cost = edge.cost + costIncrement;
               // Keep track of which edge caused this value to change
               cost.associatedEdge = edge;
@@ -120,21 +120,21 @@ class UndirectedWeightedGraph<Id> {
           throw `minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`;
         }
         calc.isOptimal = true;
-        currentNode = <Id> minimumCalculationKey;
+        currentVertex = <Id> minimumCalculationKey;
         return calc;
       });
     }
 
     let route = List<Id>([to]);
-    currentNode = to;
+    currentVertex = to;
     while (!route.contains(from)) {
-      const optimalEdge = costTable.get(currentNode).associatedEdge;
+      const optimalEdge = costTable.get(currentVertex).associatedEdge;
       if (optimalEdge === undefined) {
         throw 'Optimal calculation does not have an associatedEdge';
       }
 
-      currentNode = optimalEdge.from.id;
-      route = route.push(currentNode);
+      currentVertex = optimalEdge.from.id;
+      route = route.push(currentVertex);
     }
 
     return List(route.reverse());
