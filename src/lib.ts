@@ -1,4 +1,4 @@
-import { Direction } from "./MovableEntity";
+import { Direction } from './MovableEntity';
 
 function createMultiDimensionalArray(dimensionSizes: number[]) {
   return _createMultiDimensionalArray(dimensionSizes.reverse(), []);

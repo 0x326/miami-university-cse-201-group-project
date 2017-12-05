@@ -26,7 +26,6 @@ class PacMan extends MovableEntity {
    */
   constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
     super(initialLocation);
-    this.direction = Direction.North;
     for (let key in PacMan.KeyMap) {
       keyboardListener.registerKey(key, (isPressed: boolean) => {
         if (PacMan.KeyMap[key] === this.direction) {
