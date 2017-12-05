@@ -11,7 +11,7 @@ import Drawable, { Neighbors } from './Drawable';
 import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
-import { createMultiDimensionalArray } from './lib';
+import { createMultiDimensionalArray, computeOrthogonalDistance } from './lib';
 import KeyboardListener from './KeyboardListener';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 
@@ -221,10 +221,11 @@ class Board extends React.Component<Props> {
         vertices = vertices.add(location);
 
         const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
-          const [x0, y0] = otherLocation.toArray();
-          const [dx, dy] = [x - x0, y - y0].map(Math.abs);
-          const cost = Math.max(dx, dy);  // One should be zero
-          edges = edges.add([otherLocation, location, cost]);
+          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS())
+          if (orthogonalDistance !== undefined) {
+            const cost = Math.abs(orthogonalDistance);
+            edges = edges.add([otherLocation, location, cost]);
+          }
         }
 
         if (lastKnownVertex !== undefined) {
