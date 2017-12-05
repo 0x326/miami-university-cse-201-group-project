@@ -280,7 +280,7 @@ class Board extends React.Component<Props> {
   }
 
   detectCollisions(): void {
-    let [x, y] = this.pacMan.getLogicalLocation();
+    let [x, y] = this.pacMan.logicalLocation;
 
     let stationaryItem = this.stationaryEntities[x] ? this.stationaryEntities[x][y] : undefined;
     let scoreIncrement = 0;
@@ -320,7 +320,7 @@ class Board extends React.Component<Props> {
     }
 
     for (let ghost of this.ghosts) {
-      let [ghostX, ghostY] = ghost.getLogicalLocation();
+      let [ghostX, ghostY] = ghost.logicalLocation;
       if (x === ghostX && y === ghostY) {
         if (ghost.isVunerable()) {
           ghost.exactLocation[0] = ghostRespawningPoint[0];

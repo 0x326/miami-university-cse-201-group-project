@@ -43,7 +43,7 @@ abstract class MovableEntity {
    *
    * @return The current location
    */
-  getLogicalLocation(): [number, number] {
+  get logicalLocation() {
     return <[number, number]> this.exactLocation.map(Math.round);
   }
 
@@ -66,7 +66,7 @@ abstract class MovableEntity {
 
     let upcomingWall: [number, number] | undefined;
     if (this.direction !== this.lastDirection) {
-      upcomingWall = MovableEntity.findUpcomingEntity(map, this.getLogicalLocation(), this.direction,
+      upcomingWall = MovableEntity.findUpcomingEntity(map, this.logicalLocation, this.direction,
                                                       entity => entity instanceof Wall);
       if (upcomingWall === undefined) {
         upcomingWall = [Infinity, Infinity];
