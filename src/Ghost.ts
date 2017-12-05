@@ -3,8 +3,7 @@ import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
-import PacMan from './PacMan';
-import { computeOrthogonalDistance, computeDirection, isPointOnLine } from './lib';
+import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -16,6 +15,7 @@ import { computeOrthogonalDistance, computeDirection, isPointOnLine } from './li
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  private _pacManLocation: [number, number];
   private boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
@@ -23,10 +23,16 @@ abstract class Ghost extends MovableEntity {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
+  constructor(initialLocation: [number, number], pacManLocation: [number, number]) {
     super(initialLocation);
+    this._pacManLocation = <[number, number]> pacManLocation.slice();
     this.stopped = false;
     this.speed = 2.3;
+  }
+
+  set pacManLocation(location: [number, number]) {
+    this._pacManLocation[0] = location[0];
+    this._pacManLocation[1] = location[1];
   }
 
   /**
@@ -144,22 +150,27 @@ abstract class Ghost extends MovableEntity {
     const options = Ghost.getMovementOptions(map, this.logicalLocation);
 
     // Check to see whether Pac-Man is within sight
-    directionSeq.forEach(direction => {
-      if (direction !== undefined && options[direction] === true) {
+    const pacManLineSlope = slope(this._pacManLocation, this.logicalLocation);
+    if (pacManLineSlope === 0 || pacManLineSlope === Infinity) {
+      const direction = computeDirection(this._pacManLocation, this.logicalLocation);
+
+      if (options[direction] === true) {
         const upcomingEntity = Ghost.findUpcomingEntity(map, this.logicalLocation, direction,
-                                                        entity => entity instanceof Wall || entity instanceof PacMan);
+                                                        entity => entity instanceof Wall);
         if (upcomingEntity !== undefined) {
           const [a, b] = upcomingEntity;
-          const entity = map[a][b];
 
-          if (entity instanceof PacMan) {
+          const distanceToWall = Math.abs(computeOrthogonalDistance([a, b], this.logicalLocation));
+          const distanceToPacMan = Math.abs(computeOrthogonalDistance(this._pacManLocation, this.logicalLocation));
+
+          if (distanceToPacMan < distanceToWall) {
             // Pac-Man is within sight! Follow him
-            this.direction = computeDirection([a, b], this.logicalLocation);
+            this.direction = direction;
             return;
           }
         }
       }
-    });
+    }
 
     // Compute route
     const ghostVertex = Ghost.findClosestVertex(map, this.logicalLocation);

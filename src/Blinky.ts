@@ -16,8 +16,8 @@ class Blinky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
-    super(initialLocation);
+  constructor(initialLocation: [number, number], pacManLocation: [number, number]) {
+    super(initialLocation, pacManLocation);
   }
 
   chooseDirection(map: Drawable[][]): void {

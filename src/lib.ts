@@ -76,10 +76,20 @@ function isPointOnLine(testPoint: [number, number], linePoint2: [number, number]
   return Math.abs((b - y1) - slope * (a - x1)) < precision;
 }
 
+function slope(linePoint2: [number, number], linePoint1: [number, number]) {
+  const [x1, y1] = linePoint1;
+  const [x2, y2] = linePoint2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  return dx / dy;
+}
+
 export {
   createMultiDimensionalArray,
   initializeMutliDimensionalArray,
   computeOrthogonalDistance,
   computeDirection,
-  isPointOnLine
+  isPointOnLine,
+  slope
 };

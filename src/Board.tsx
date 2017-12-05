@@ -76,12 +76,12 @@ class Board extends React.Component<Props> {
     super(props);
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    this.pacMan = new PacMan([14, 22], this.keyboardListener);
+    this.pacMan = new PacMan(pacManStartingLocation, this.keyboardListener);
     this.ghosts = [
-      new Blinky([14, 19]),
-      new Inky([10, 16]),
-      new Pinky([14, 16]),
-      new Clyde([18, 16])
+      new Blinky(blinkyStartingLocation, pacManStartingLocation),
+      new Inky(inkyStartingLocation, pacManStartingLocation),
+      new Pinky(pinkyStaringLocation, pacManStartingLocation),
+      new Clyde(clydeStartingLocation, pacManStartingLocation)
     ];
     this.resetBoard();
     this.score = 0;
@@ -246,10 +246,10 @@ class Board extends React.Component<Props> {
   moveEntitiesToStartingLocation(): void {
     this.pacMan.logicalLocation = pacManStartingLocation;
     this.ghosts = [
-      new Blinky(blinkyStartingLocation),
-      new Inky(inkyStartingLocation),
-      new Pinky(pinkyStaringLocation),
-      new Clyde(clydeStartingLocation)
+      new Blinky(blinkyStartingLocation, pacManStartingLocation),
+      new Inky(inkyStartingLocation, pacManStartingLocation),
+      new Pinky(pinkyStaringLocation, pacManStartingLocation),
+      new Clyde(clydeStartingLocation, pacManStartingLocation)
     ];
   }
 
@@ -260,6 +260,7 @@ class Board extends React.Component<Props> {
 
       this.pacMan.move(elapsedTime, this.stationaryEntities);
       for (let ghost of this.ghosts) {
+        ghost.pacManLocation = this.pacMan.logicalLocation;
         ghost.move(elapsedTime, this.stationaryEntities);
       }
 
