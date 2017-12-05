@@ -21,7 +21,7 @@ class Inky extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = this.getMovementOptions(map);
+    const options = Inky.getMovementOptions(map, this.logicalLocation);
     if (options[this.direction] === false) {
       if (options[Direction.South] === true) {
         this.direction = Direction.South;

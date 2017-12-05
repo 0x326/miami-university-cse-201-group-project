@@ -94,7 +94,7 @@ abstract class Ghost extends MovableEntity {
   }
 
   findClosestVertex(map: Drawable[][]) {
-    const options = this.getMovementOptions(map);
+    const options = Ghost.getMovementOptions(map, this.logicalLocation);
     // tslint:disable:no-any
     const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
     const numberOfOptions = optionsArray.length;

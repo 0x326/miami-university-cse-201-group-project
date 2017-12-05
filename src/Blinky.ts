@@ -21,7 +21,7 @@ class Blinky extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = this.getMovementOptions(map);
+    const options = Blinky.getMovementOptions(map, this.logicalLocation);
     if (options[this.direction] === false) {
       if (options[Direction.North] === true) {
         this.direction = Direction.North;

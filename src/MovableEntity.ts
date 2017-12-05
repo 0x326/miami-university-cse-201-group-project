@@ -108,8 +108,7 @@ abstract class MovableEntity {
    * Checks to see which adjacent cells this entity can legally move
    * @param map The grid of stationary entities
    */
-  getMovementOptions(map: Drawable[][]) {
-    const logicalLocation = this.getLogicalLocation();
+  static getMovementOptions(map: Drawable[][], logicalLocation: [number, number]) {
     const leftColumn = map[logicalLocation[0] - 1];
     const middleColumn = map[logicalLocation[0]];
     const rightColumn = map[logicalLocation[0] + 1];
