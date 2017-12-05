@@ -1,3 +1,5 @@
+import { Direction } from "./MovableEntity";
+
 function createMultiDimensionalArray(dimensionSizes: number[]) {
   return _createMultiDimensionalArray(dimensionSizes.reverse(), []);
 }
@@ -43,8 +45,41 @@ function computeOrthogonalDistance(point2: [number, number], point1: [number, nu
   }
 }
 
+function computeDirection(point2: [number, number], point1: [number, number]) {
+  const [x1, y1] = point1;
+  const [x2, y2] = point2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  const theta = Math.atan2(dy, dx);
+  if (-Math.PI / 4 < theta && theta <= Math.PI / 4) {
+    return Direction.East;
+  } else if (Math.PI / 4 < theta && theta <= 3 * Math.PI / 4) {
+    return Direction.North;
+  } else if (-3 * Math.PI < theta && theta <= -Math.PI / 4) {
+    return Direction.South;
+  } else {
+    return Direction.West;
+  }
+}
+
+function isPointOnLine(testPoint: [number, number], linePoint2: [number, number], linePoint1: [number, number], precision: number = 1e-6) {
+  const [x1, y1] = linePoint1;
+  const [x2, y2] = linePoint2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  const slope = dx / dy;
+
+  const [a, b] = testPoint;
+
+  return Math.abs((b - y1) - slope * (a - x1)) < precision;
+}
+
 export {
   createMultiDimensionalArray,
   initializeMutliDimensionalArray,
-  computeOrthogonalDistance
+  computeOrthogonalDistance,
+  computeDirection,
+  isPointOnLine
 };

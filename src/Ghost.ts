@@ -1,9 +1,10 @@
-import { List } from 'immutable';
+import { List, Seq } from 'immutable';
 import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
-// import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
-import { computeOrthogonalDistance } from './lib';
+import PacMan from './PacMan';
+import { computeOrthogonalDistance, computeDirection, isPointOnLine } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -15,7 +16,7 @@ import { computeOrthogonalDistance } from './lib';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
-  // private boardGraph: UndirectedWeightedGraph<List<number>>;
+  private boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
    * Creates a MovableEntity
@@ -93,13 +94,14 @@ abstract class Ghost extends MovableEntity {
     board.fill();
   }
 
-  static findClosestVertex(map: Drawable[][], logicalLocation: [number, number]) {
+  static findClosestVertex(map: Drawable[][], logicalLocation: [number, number], preferredDirections=Seq<Direction>([])) {
     const options = Ghost.getMovementOptions(map, logicalLocation);
     // tslint:disable:no-any
     const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
     const numberOfOptions = optionsArray.length;
 
     let closestVertexLocation = logicalLocation;
+    // We are not a vertex if we only have two ways to go (ex: O--*--O)
     if (numberOfOptions === 2) {
       const [x, y] = logicalLocation;
       let minimumDistance: number = Infinity;
@@ -118,15 +120,68 @@ abstract class Ghost extends MovableEntity {
         }
       };
 
-      directionSeq.forEach(direction => {
-        if (direction !== undefined && options[direction] === true) {
-          updateMinimumDistance(direction);
-        }
-      });
+      if (!preferredDirections.isEmpty()) {
+        // Give preferance to user-specified directions
+        preferredDirections.forEach(direction => {
+          if (direction !== undefined && options[direction] === true) {
+            updateMinimumDistance(direction);
+          }
+        });
+      } else {
+        // Otherwise, try all directions
+        directionSeq.forEach(direction => {
+          if (direction !== undefined && options[direction] === true) {
+            updateMinimumDistance(direction);
+          }
+        });
+      }
     }
 
     return List(closestVertexLocation);
   }
+
+  chooseDirection(map: Drawable[][]): void {
+    const options = Ghost.getMovementOptions(map, this.logicalLocation);
+
+    // Check to see whether Pac-Man is within sight
+    directionSeq.forEach(direction => {
+      if (direction !== undefined && options[direction] === true) {
+        const upcomingEntity = Ghost.findUpcomingEntity(map, this.logicalLocation, direction,
+                                                        entity => entity instanceof Wall || entity instanceof PacMan);
+        if (upcomingEntity !== undefined) {
+          const [a, b] = upcomingEntity;
+          const entity = map[a][b];
+
+          if (entity instanceof PacMan) {
+            // Pac-Man is within sight! Follow him
+            this.direction = computeDirection([a, b], this.logicalLocation);
+            return;
+          }
+        }
+      }
+    });
+
+    // Compute route
+    const ghostVertex = Ghost.findClosestVertex(map, this.logicalLocation);
+    const pacManVertex = this.chooseClosestPacManVertex(map);
+    const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
+
+    // Determine whether we are along the first edge (between routeVertices[0] and routeVertices[1])
+    const [firstVertex, secondVertex] = routeVertices.slice(1, 3).toArray();
+    const [a, b] = firstVertex.toArray();
+    const [c, d] = secondVertex.toArray();
+
+    if (isPointOnLine(this.logicalLocation, [c, d], [a, b])) {
+      // First vertex is behind us now. Go to the second one
+      this.direction = computeDirection([c, d], this.logicalLocation);
+    } else {
+      // We still need to go to the first vertex
+      this.direction = computeDirection([a, b], this.logicalLocation);
+    }
+
+  }
+
+  abstract chooseClosestPacManVertex(map: Drawable[][]): List<number>;
 
 }
 
