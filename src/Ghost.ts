@@ -16,29 +16,32 @@ import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope } fro
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
   private _pacManLocation: [number, number];
-  private _pacManDirection: Direction;
-  private boardGraph: UndirectedWeightedGraph<List<number>>;
+  pacManDirection: Direction;
+  boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
    * Creates a MovableEntity
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number], pacManLocation: [number, number], pacManDirection: Direction) {
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: UndirectedWeightedGraph<List<number>>) {
     super(initialLocation);
     this._pacManLocation = <[number, number]> pacManLocation.slice();
-    this._pacManDirection = pacManDirection;
+    this.pacManDirection = pacManDirection;
+    this.boardGraph = boardGraph;
     this.stopped = false;
     this.speed = 2.3;
   }
 
+  get pacManLocation() {
+    return this._pacManLocation;
+  }
   set pacManLocation(location: [number, number]) {
     this._pacManLocation[0] = location[0];
     this._pacManLocation[1] = location[1];
-  }
-
-  set pacManDirection(direction: Direction) {
-    this._pacManDirection = direction;
   }
 
   /**
@@ -184,7 +187,7 @@ abstract class Ghost extends MovableEntity {
     const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
 
     // Determine whether we are along the first edge (between routeVertices[0] and routeVertices[1])
-    const [firstVertex, secondVertex] = routeVertices.slice(1, 3).toArray();
+    const [firstVertex, secondVertex] = routeVertices.slice(0, 2).toArray();
     const [a, b] = firstVertex.toArray();
     const [c, d] = secondVertex.toArray();
 

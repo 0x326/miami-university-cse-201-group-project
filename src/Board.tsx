@@ -76,14 +76,15 @@ class Board extends React.Component<Props> {
     super(props);
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
+    this.buildBoard();
     this.pacMan = new PacMan(pacManStartingLocation, this.keyboardListener);
     this.ghosts = [
-      new Blinky(blinkyStartingLocation, pacManStartingLocation, this.pacMan.direction),
-      new Inky(inkyStartingLocation, pacManStartingLocation, this.pacMan.direction),
-      new Pinky(pinkyStaringLocation, pacManStartingLocation, this.pacMan.direction),
-      new Clyde(clydeStartingLocation, pacManStartingLocation, this.pacMan.direction)
+      new Blinky(blinkyStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Inky(inkyStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Pinky(pinkyStaringLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Clyde(clydeStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph)
     ];
-    this.resetBoard();
+    this.moveEntitiesToStartingLocation();
     this.score = 0;
   }
 
@@ -124,7 +125,7 @@ class Board extends React.Component<Props> {
   componentWillUnmount() {
   }
 
-  resetBoard(): void {
+  buildBoard(): void {
     this.pelletsEaten = 0;
     this.pelletsToEat = 0;
     // TODO: Populate board
@@ -180,7 +181,6 @@ class Board extends React.Component<Props> {
       }
     });
     this.mapGraph = mapGraph;
-    this.moveEntitiesToStartingLocation();
   }
 
   parseGraph() {
@@ -273,7 +273,7 @@ class Board extends React.Component<Props> {
     } else if (this.props.active) {
       if (this.pelletsEaten === this.pelletsToEat) {
         this.level++;
-        this.resetBoard();
+        this.buildBoard();
       }
       window.requestAnimationFrame((time) => this.updateGameState(time));
     }

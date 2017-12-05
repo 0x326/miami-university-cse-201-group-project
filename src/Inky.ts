@@ -1,7 +1,8 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction, directionSeq } from './MovableEntity';
-import { Seq } from 'immutable';
+import { Seq, List } from 'immutable';
+import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 
 /**
  * Course: CSE 201 A
@@ -19,8 +20,11 @@ class Inky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number], pacManLocation: [number, number], pacManDirection: Direction) {
-    super(initialLocation, pacManLocation, pacManDirection);
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: UndirectedWeightedGraph<List<number>>) {
+    super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
