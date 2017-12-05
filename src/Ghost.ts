@@ -117,7 +117,10 @@ abstract class Ghost extends MovableEntity {
 
     let closestVertexLocation = logicalLocation;
     // We are not a vertex if we only have two ways to go (ex: O--*--O)
-    if (numberOfOptions === 2) {
+    const isEdge = numberOfOptions === 2 && (
+      (options[Direction.North] === true && options[Direction.South] === true) ||
+      (options[Direction.East] === true && options[Direction.West] === true));
+    if (isEdge) {
       const [x, y] = logicalLocation;
       let minimumDistance: number = Infinity;
 

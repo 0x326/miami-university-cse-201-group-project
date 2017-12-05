@@ -203,12 +203,16 @@ class Board extends React.Component<Props> {
       const leftColumn = map[x - 1];
       const middleColumn = map[x];
       const rightColumn = map[x + 1];
+      const north = List([x, y - 1]);
+      const west = List([x - 1, y]);
+      const east = List([x + 1, y]);
+      const south = List([x, y + 1]);
 
       const movementOptions = Map<ImmutableLocation, boolean>([
-        [List([x, y - 1]), middleColumn && !(middleColumn[y - 1] instanceof Wall)],
-        [List([x - 1, y]), leftColumn && !(leftColumn[y] instanceof Wall)],
-        [List([x + 1, y]), rightColumn && !(rightColumn[y] instanceof Wall)],
-        [List([x, y + 1]), middleColumn && !(middleColumn[y + 1] instanceof Wall)],
+        [north, middleColumn && !(middleColumn[y - 1] instanceof Wall)],
+        [west, leftColumn && !(leftColumn[y] instanceof Wall)],
+        [east, rightColumn && !(rightColumn[y] instanceof Wall)],
+        [south, middleColumn && !(middleColumn[y + 1] instanceof Wall)],
       ]);
 
       // Should this location be represented as a vertex in the graph?
@@ -217,7 +221,10 @@ class Board extends React.Component<Props> {
       // 2: No - it can be removed
       // 3: Yes
       // 4: Yes
-      if (movementOptions.valueSeq().filter(val => val === true).count() !== 2) {
+      const isEdge = movementOptions.valueSeq().filter(val => val === true).count() === 2 && (
+        (movementOptions.get(north) === true && movementOptions.get(south) === true) ||
+        (movementOptions.get(east) === true && movementOptions.get(west) === true));
+      if (!isEdge) {
         vertices = vertices.add(location);
 
         const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
