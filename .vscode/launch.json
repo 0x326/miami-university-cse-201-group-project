@@ -2,6 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceRoot}/src"
+    },
+    {
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "name": "Launch Firefox",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/src"
+    },
+    // https://github.com/Microsoft/TypeScript-React-Starter/issues/46#issuecomment-330701643
+    {
       "name": "Debug CRA Tests",
       "type": "node",
       "request": "launch",
