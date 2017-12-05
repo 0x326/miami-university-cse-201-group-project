@@ -245,12 +245,10 @@ class Board extends React.Component<Props> {
 
   moveEntitiesToStartingLocation(): void {
     this.pacMan.logicalLocation = pacManStartingLocation;
-    this.ghosts = [
-      new Blinky(blinkyStartingLocation, pacManStartingLocation, this.pacMan.direction),
-      new Inky(inkyStartingLocation, pacManStartingLocation, this.pacMan.direction),
-      new Pinky(pinkyStaringLocation, pacManStartingLocation, this.pacMan.direction),
-      new Clyde(clydeStartingLocation, pacManStartingLocation, this.pacMan.direction)
-    ];
+    this.ghosts[0].logicalLocation = blinkyStartingLocation;
+    this.ghosts[1].logicalLocation = inkyStartingLocation;
+    this.ghosts[2].logicalLocation = pinkyStaringLocation;
+    this.ghosts[3].logicalLocation = clydeStartingLocation;
   }
 
   // TODO: Add time-since-last-update-parameter
