@@ -187,10 +187,10 @@ abstract class MovableEntity {
 }
 
 enum Direction {
-  North,
-  South,
-  East,
-  West
+  North = 2,
+  South = -2,
+  East = -1,
+  West = 1
 }
 
 const directionSeq = Seq([Direction.North, Direction.South, Direction.East, Direction.West]);

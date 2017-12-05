@@ -1,6 +1,7 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
+import { Seq } from 'immutable';
 
 /**
  * Course: CSE 201 A
@@ -16,23 +17,12 @@ class Clyde extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number], pacManLocation: [number, number]) {
-    super(initialLocation, pacManLocation);
+  constructor(initialLocation: [number, number], pacManLocation: [number, number], pacManDirection: Direction) {
+    super(initialLocation, pacManLocation, pacManDirection);
   }
 
-  chooseDirection(map: Drawable[][]): void {
-    const options = Clyde.getMovementOptions(map, this.logicalLocation);
-    if (options[this.direction] === false) {
-      if (options[Direction.East] === true) {
-        this.direction = Direction.East;
-      } else if (options[Direction.South] === true) {
-        this.direction = Direction.South;
-      } else if (options[Direction.West] === true) {
-        this.direction = Direction.West;
-      } else {
-        this.direction = Direction.North;
-      }
-    }
+  chooseClosestPacManVertex(map: Drawable[][]) {
+    return Clyde.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }
 

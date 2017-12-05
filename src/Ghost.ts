@@ -16,6 +16,7 @@ import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope } fro
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
   private _pacManLocation: [number, number];
+  private _pacManDirection: Direction;
   private boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
@@ -23,9 +24,10 @@ abstract class Ghost extends MovableEntity {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number], pacManLocation: [number, number]) {
+  constructor(initialLocation: [number, number], pacManLocation: [number, number], pacManDirection: Direction) {
     super(initialLocation);
     this._pacManLocation = <[number, number]> pacManLocation.slice();
+    this._pacManDirection = pacManDirection;
     this.stopped = false;
     this.speed = 2.3;
   }
@@ -33,6 +35,10 @@ abstract class Ghost extends MovableEntity {
   set pacManLocation(location: [number, number]) {
     this._pacManLocation[0] = location[0];
     this._pacManLocation[1] = location[1];
+  }
+
+  set pacManDirection(direction: Direction) {
+    this._pacManDirection = direction;
   }
 
   /**

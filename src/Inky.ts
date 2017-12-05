@@ -1,6 +1,7 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
+import { Seq } from 'immutable';
 
 /**
  * Course: CSE 201 A
@@ -16,23 +17,12 @@ class Inky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number], pacManLocation: [number, number]) {
-    super(initialLocation, pacManLocation);
+  constructor(initialLocation: [number, number], pacManLocation: [number, number], pacManDirection: Direction) {
+    super(initialLocation, pacManLocation, pacManDirection);
   }
 
-  chooseDirection(map: Drawable[][]): void {
-    const options = Inky.getMovementOptions(map, this.logicalLocation);
-    if (options[this.direction] === false) {
-      if (options[Direction.South] === true) {
-        this.direction = Direction.South;
-      } else if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else if (options[Direction.East] === true) {
-        this.direction = Direction.East;
-      } else {
-        this.direction = Direction.West;
-      }
-    }
+  chooseClosestPacManVertex(map: Drawable[][]) {
+    return Inky.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }
 
