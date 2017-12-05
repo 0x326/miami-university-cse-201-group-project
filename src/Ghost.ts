@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+// import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
 import { computeOrthogonalDistance } from './lib';
 
@@ -15,7 +15,7 @@ import { computeOrthogonalDistance } from './lib';
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
-  private boardGraph: UndirectedWeightedGraph<List<number>>;
+  // private boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
    * Creates a MovableEntity
@@ -71,8 +71,8 @@ abstract class Ghost extends MovableEntity {
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     super.draw(board, maxSize);
     let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
+      this.exactLocation[0] * maxSize - maxSize,
+      this.exactLocation[1] * maxSize - maxSize
     ];
 
     switch (this.state) {

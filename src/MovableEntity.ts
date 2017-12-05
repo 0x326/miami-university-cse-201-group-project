@@ -12,7 +12,7 @@ import { Seq } from 'immutable';
  */
 abstract class MovableEntity {
 
-  logicalLocation: [number, number];
+  exactLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
   /**
@@ -34,7 +34,7 @@ abstract class MovableEntity {
    * @param direction The initial direction that this entity is facing
    */
   constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
-    this.logicalLocation = initialLocation;
+    this.exactLocation = initialLocation;
     this.direction = direction;
   }
 
@@ -44,7 +44,7 @@ abstract class MovableEntity {
    * @return The current location
    */
   getLogicalLocation(): [number, number] {
-    return <[number, number]> this.logicalLocation.map(Math.round);
+    return <[number, number]> this.exactLocation.map(Math.round);
   }
 
   abstract chooseDirection(map: Drawable[][]): void;
@@ -83,9 +83,9 @@ abstract class MovableEntity {
 
     let maximumAllowableIncrement;
     if (this.direction === Direction.North || this.direction === Direction.South) {
-      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.logicalLocation[1]);
+      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.exactLocation[1]);
     } else {
-      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.logicalLocation[0]);
+      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.exactLocation[0]);
     }
     // Allow the entity to make full use of their logical coordinate
     // (Might permit a slight visual overlap if items are drawn edge-to-edge)
@@ -95,13 +95,13 @@ abstract class MovableEntity {
     const increment = Math.min(this.speed * timePassed / 1000, maximumAllowableIncrement);
 
     if (this.direction === Direction.North) {
-      this.logicalLocation[1] -= increment;
+      this.exactLocation[1] -= increment;
     } else if (this.direction === Direction.South) {
-      this.logicalLocation[1] += increment;
+      this.exactLocation[1] += increment;
     } else if (this.direction === Direction.West) {
-      this.logicalLocation[0] -= increment;
+      this.exactLocation[0] -= increment;
     } else {
-      this.logicalLocation[0] += increment;
+      this.exactLocation[0] += increment;
     }
   }
 
@@ -131,8 +131,8 @@ abstract class MovableEntity {
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize - maxSize,
-      this.logicalLocation[1] * maxSize - maxSize
+      this.exactLocation[0] * maxSize - maxSize,
+      this.exactLocation[1] * maxSize - maxSize
     ];
 
     board.fillStyle = '#9E9E9E';
