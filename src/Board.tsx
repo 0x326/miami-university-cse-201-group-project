@@ -183,11 +183,19 @@ class Board extends React.Component<Props> {
     this.mapGraph = mapGraph;
   }
 
-  parseGraph() {
-    let previousLocations = Stack<ImmutableLocation>();
+  parseGraph(): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
+    let vertices = Set<ImmutableLocation>();
+    let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
 
-    const parseGraph = (location: ImmutableLocation):
-      [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] => {
+    // In the case of a prolonged edge (such as a long tunnel),
+    // keeps track of the last seen vertex so that when we see another vertex,
+    // we remember which vertex directed us to it.
+    let lastKnownVertex: ImmutableLocation | undefined = undefined;
+
+    // To save on computational time, only visit each location once
+    let visitedLocations = Stack<ImmutableLocation>();
+
+    const parseGraph = (location: ImmutableLocation): void => {
 
       const map = this.stationaryEntities;
       const [x, y] = location.toArray();
@@ -197,16 +205,14 @@ class Board extends React.Component<Props> {
       const rightColumn = map[x + 1];
 
       const movementOptions = Map<ImmutableLocation, boolean>([
-        [List([x, y - 1]), middleColumn && middleColumn[y - 1] instanceof Wall],
-        [List([x - 1, y]), leftColumn && leftColumn[y] instanceof Wall],
-        [List([x + 1, y]), rightColumn && rightColumn[y] instanceof Wall],
-        [List([x, y + 1]), middleColumn && middleColumn[y + 1] instanceof Wall],
+        [List([x, y - 1]), middleColumn && !(middleColumn[y - 1] instanceof Wall)],
+        [List([x - 1, y]), leftColumn && !(leftColumn[y] instanceof Wall)],
+        [List([x + 1, y]), rightColumn && !(rightColumn[y] instanceof Wall)],
+        [List([x, y + 1]), middleColumn && !(middleColumn[y + 1] instanceof Wall)],
       ]);
 
-      let vertices = Set<ImmutableLocation>();
-      let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
-
       // Should this location be represented as a vertex in the graph?
+      // 0: Yes (but if this happens, it is likely an error)
       // 1: Yes
       // 2: No - it can be removed
       // 3: Yes
@@ -214,33 +220,44 @@ class Board extends React.Component<Props> {
       if (movementOptions.valueSeq().filter(val => val === true).count() !== 2) {
         vertices = vertices.add(location);
 
-        if (previousLocations.count() > 0) {
-          const previousLocation = previousLocations.last();
-          const [prevX, prevY] = previousLocation.toArray();
-          const [dx, dy] = [x - prevX, y - prevY].map(Math.abs);
+        const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
+          const [x0, y0] = otherLocation.toArray();
+          const [dx, dy] = [x - x0, y - y0].map(Math.abs);
           const cost = Math.max(dx, dy);  // One should be zero
-          edges = edges.add([previousLocation, location, cost]);
+          edges = edges.add([otherLocation, location, cost]);
         }
+
+        if (lastKnownVertex !== undefined) {
+          // Add lastKnown in the case we came here via a prolonged edge
+          // Note: if we happened to come from an adajacent vertex, this will be redundant
+          addEdgeFromCurrentLocation(lastKnownVertex);
+        }
+
+        // Link adajacent vertices with an edge
+        // tslint:disable:no-any
+        for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
+          if (isOpen === true && vertices.contains(adajacentLocation)) {
+            addEdgeFromCurrentLocation(adajacentLocation);
+          }
+        }
+
+        // Update lastKnownVertex for the next time we encounter a prolonged edge
+        lastKnownVertex = location;
       }
 
       // tslint:disable:no-any
-      for (const [newLocation, isWall] of movementOptions.entries() as any) {
-        if (!isWall && !previousLocations.contains(newLocation)) {
-          previousLocations = previousLocations.push(location);
-          const [newVertices, newEdges] = parseGraph(newLocation);
-          if (!newVertices.isEmpty()) {
-            vertices = vertices.union(newVertices);
-          }
-          if (!newEdges.isEmpty()) {
-            edges = edges.union(newEdges);
-          }
+      for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
+        if (isOpen && !visitedLocations.contains(adajacentLocation)) {
+          visitedLocations = visitedLocations.push(adajacentLocation);
+          parseGraph(adajacentLocation);
         }
       }
 
-      return [vertices, edges];
+      return;
     };
 
-    return parseGraph(List(pacManStartingLocation));
+    parseGraph(List(pacManStartingLocation));
+    return [vertices, edges];
   }
 
   moveEntitiesToStartingLocation(): void {
