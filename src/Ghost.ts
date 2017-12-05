@@ -161,7 +161,7 @@ abstract class Ghost extends MovableEntity {
     // Check to see whether Pac-Man is within sight
     const pacManLineSlope = slope(this._pacManLocation, this.logicalLocation);
     if (pacManLineSlope === 0 || pacManLineSlope === Infinity) {
-      const direction = computeDirection(this._pacManLocation, this.logicalLocation);
+      const direction = computeDirection(this.logicalLocation, this._pacManLocation);
 
       if (options[direction] === true) {
         const upcomingEntity = Ghost.findUpcomingEntity(map, this.logicalLocation, direction,
@@ -193,10 +193,10 @@ abstract class Ghost extends MovableEntity {
 
     if (isPointOnLine(this.logicalLocation, [c, d], [a, b])) {
       // First vertex is behind us now. Go to the second one
-      this.direction = computeDirection([c, d], this.logicalLocation);
+      this.direction = computeDirection(this.logicalLocation, [c, d]);
     } else {
       // We still need to go to the first vertex
-      this.direction = computeDirection([a, b], this.logicalLocation);
+      this.direction = computeDirection(this.logicalLocation, [a, b]);
     }
 
   }
