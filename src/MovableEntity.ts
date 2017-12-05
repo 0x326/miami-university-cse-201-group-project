@@ -46,6 +46,10 @@ abstract class MovableEntity {
   get logicalLocation() {
     return <[number, number]> this.exactLocation.map(Math.round);
   }
+  set logicalLocation(location: [number, number]) {
+    this.exactLocation[0] = location[0];
+    this.exactLocation[1] = location[1];
+  }
 
   abstract chooseDirection(map: Drawable[][]): void;
 

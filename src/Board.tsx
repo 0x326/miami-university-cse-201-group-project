@@ -244,7 +244,7 @@ class Board extends React.Component<Props> {
   }
 
   moveEntitiesToStartingLocation(): void {
-    this.pacMan.exactLocation = pacManStartingLocation;
+    this.pacMan.logicalLocation = pacManStartingLocation;
     this.ghosts = [
       new Blinky(blinkyStartingLocation),
       new Inky(inkyStartingLocation),
@@ -323,8 +323,7 @@ class Board extends React.Component<Props> {
       let [ghostX, ghostY] = ghost.logicalLocation;
       if (x === ghostX && y === ghostY) {
         if (ghost.isVunerable()) {
-          ghost.exactLocation[0] = ghostRespawningPoint[0];
-          ghost.exactLocation[1] = ghostRespawningPoint[1];
+          ghost.logicalLocation = ghostRespawningPoint;
           this.vulnerableGhosts = this.vulnerableGhosts.remove(ghost);
           ghost.makeDangerous();
           scoreIncrement += scoringTable.ghost;
