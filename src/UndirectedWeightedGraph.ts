@@ -60,9 +60,9 @@ class UndirectedWeightedGraph<Id> {
    * @param to The goal vertex
    */
   computeShortestRoute(from: Id, to: Id): List<Id> {
-    if (!this.vertices.keySeq().contains(from)) {
+    if (!this.hasVertex(from)) {
       throw `${from} is not in the graph`;
-    } else if (!this.vertices.keySeq().contains(to)) {
+    } else if (!this.hasVertex(to)) {
       throw `${to} is not in the graph`;
     }
 
@@ -160,10 +160,10 @@ class UndirectedWeightedGraph<Id> {
    * @param cost The cost of the edge
    */
   addEdge(a: Id, b: Id, cost: number) {
-    if (!this.vertices.keySeq().contains(a)) {
+    if (!this.hasVertex(a)) {
       throw `From vertex with id ${a} cannot be found`;
     }
-    if (!this.vertices.keySeq().contains(b)) {
+    if (!this.hasVertex(b)) {
       throw `To vertex with id ${b} cannot be found`;
     }
 
@@ -179,6 +179,10 @@ class UndirectedWeightedGraph<Id> {
 
     this.edges = this.edges.set(List([a, b]), edgeAB);
     this.edges = this.edges.set(List([b, a]), edgeBA);
+  }
+
+  hasVertex(vertex: Id) {
+    return this.vertices.keySeq().contains(vertex);
   }
 
 }
