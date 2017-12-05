@@ -261,6 +261,7 @@ class Board extends React.Component<Props> {
       this.pacMan.move(elapsedTime, this.stationaryEntities);
       for (let ghost of this.ghosts) {
         ghost.pacManLocation = this.pacMan.logicalLocation;
+        ghost.pacManDirection = this.pacMan.direction;
         ghost.move(elapsedTime, this.stationaryEntities);
       }
 
