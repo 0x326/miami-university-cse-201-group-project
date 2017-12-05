@@ -34,7 +34,7 @@ abstract class MovableEntity {
    * @param direction The initial direction that this entity is facing
    */
   constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
-    this.exactLocation = initialLocation;
+    this.exactLocation = <[number, number]> initialLocation.slice();
     this.direction = direction;
   }
 
