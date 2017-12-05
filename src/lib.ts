@@ -88,11 +88,28 @@ function slope(linePoint2: [number, number], linePoint1: [number, number]) {
   return dx / dy;
 }
 
+function movePoint(point: [number, number], direction: Direction, amount: number = 1): [number, number] {
+  let [x, y] = point;
+
+  if (direction === Direction.North) {
+    y -= amount;
+  } else if (direction === Direction.South) {
+    y += amount;
+  } else if (direction === Direction.East) {
+    x += amount;
+  } else {
+    x -= amount;
+  }
+
+  return [x, y];
+}
+
 export {
   createMultiDimensionalArray,
   initializeMutliDimensionalArray,
   computeOrthogonalDistance,
   computeDirection,
   isPointOnLine,
-  slope
+  slope,
+  movePoint
 };

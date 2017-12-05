@@ -1,6 +1,7 @@
 import Drawable from './Drawable';
 import Wall from './Wall';
 import { Seq } from 'immutable';
+import { movePoint } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -98,15 +99,7 @@ abstract class MovableEntity {
 
     const increment = Math.min(this.speed * timePassed / 1000, maximumAllowableIncrement);
 
-    if (this.direction === Direction.North) {
-      this.exactLocation[1] -= increment;
-    } else if (this.direction === Direction.South) {
-      this.exactLocation[1] += increment;
-    } else if (this.direction === Direction.West) {
-      this.exactLocation[0] -= increment;
-    } else {
-      this.exactLocation[0] += increment;
-    }
+    this.exactLocation = movePoint(this.exactLocation, this.direction, increment);
   }
 
   /**
@@ -170,15 +163,7 @@ abstract class MovableEntity {
         return [columnNumber, rowNumber];
       }
 
-      if (direction === Direction.North) {
-        rowNumber--;
-      } else if (direction === Direction.South) {
-        rowNumber++;
-      } else if (direction === Direction.East) {
-        columnNumber++;
-      } else {
-        columnNumber--;
-      }
+      [columnNumber, rowNumber] = movePoint([columnNumber, rowNumber], direction);
     }
 
     return undefined;
