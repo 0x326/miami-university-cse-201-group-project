@@ -66,7 +66,8 @@ abstract class MovableEntity {
 
     let upcomingWall: [number, number] | undefined;
     if (this.direction !== this.lastDirection) {
-      upcomingWall = this.findUpcomingEntity(map, this.direction, entity => entity instanceof Wall);
+      upcomingWall = MovableEntity.findUpcomingEntity(map, this.getLogicalLocation(), this.direction,
+                                                      entity => entity instanceof Wall);
       if (upcomingWall === undefined) {
         upcomingWall = [Infinity, Infinity];
       }
@@ -151,8 +152,11 @@ abstract class MovableEntity {
     board.stroke();
   }
 
-  protected findUpcomingEntity(map: Drawable[][], direction: Direction, criteria: (entity: Drawable) => boolean): [number, number] | undefined {
-    const [logicalColumn, logicalRow] = this.getLogicalLocation();
+  protected static findUpcomingEntity(map: Drawable[][],
+                                      logicalLocation: [number, number],
+                                      direction: Direction,
+                                      criteria: (entity: Drawable) => boolean): [number, number] | undefined {
+    const [logicalColumn, logicalRow] = logicalLocation;
 
     let columnNumber = logicalColumn;
     let rowNumber = logicalRow;

@@ -93,19 +93,20 @@ abstract class Ghost extends MovableEntity {
     board.fill();
   }
 
-  findClosestVertex(map: Drawable[][]) {
-    const options = Ghost.getMovementOptions(map, this.logicalLocation);
+  static findClosestVertex(map: Drawable[][], logicalLocation: [number, number]) {
+    const options = Ghost.getMovementOptions(map, logicalLocation);
     // tslint:disable:no-any
     const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
     const numberOfOptions = optionsArray.length;
 
-    let closestVertexLocation = this.logicalLocation;
+    let closestVertexLocation = logicalLocation;
     if (numberOfOptions === 2) {
-      const [x, y] = this.logicalLocation;
+      const [x, y] = logicalLocation;
       let minimumDistance: number = Infinity;
 
       const updateMinimumDistance = (direction: Direction) => {
-        const nextWall = this.findUpcomingEntity(map, direction, entity => entity instanceof Wall);
+        const nextWall = Ghost.findUpcomingEntity(map, logicalLocation, direction,
+                                                  entity => entity instanceof Wall);
         if (nextWall === undefined) {
           return;
         }
