@@ -21,7 +21,7 @@ class Pinky extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = Pinky.getMovementOptions(map, this.exactLocation);
+    const options = Pinky.getMovementOptions(map, this.logicalLocation);
     if (options[this.direction] === false) {
       if (options[Direction.West] === true) {
         this.direction = Direction.West;

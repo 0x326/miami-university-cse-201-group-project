@@ -21,7 +21,7 @@ class Clyde extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = Clyde.getMovementOptions(map, this.exactLocation);
+    const options = Clyde.getMovementOptions(map, this.logicalLocation);
     if (options[this.direction] === false) {
       if (options[Direction.East] === true) {
         this.direction = Direction.East;
