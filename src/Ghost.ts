@@ -3,7 +3,7 @@ import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
-import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope } from './lib';
+import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope, movePoint } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -130,7 +130,7 @@ abstract class Ghost extends MovableEntity {
         if (nextWall === undefined) {
           return;
         }
-        const [a, b] = nextWall;
+        const [a, b] = movePoint(nextWall, -direction);
         const distance = computeOrthogonalDistance([a, b], [x, y]);
         if (distance !== undefined && distance < minimumDistance) {
           closestVertexLocation = [a, b];
