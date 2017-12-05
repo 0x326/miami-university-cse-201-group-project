@@ -129,7 +129,7 @@ abstract class Ghost extends MovableEntity {
         }
         const [a, b] = nextWall;
         const distance = computeOrthogonalDistance([a, b], [x, y]);
-        if (distance < minimumDistance) {
+        if (distance !== undefined && distance < minimumDistance) {
           closestVertexLocation = [a, b];
           minimumDistance = distance;
         }
@@ -169,8 +169,11 @@ abstract class Ghost extends MovableEntity {
         if (upcomingEntity !== undefined) {
           const [a, b] = upcomingEntity;
 
-          const distanceToWall = Math.abs(computeOrthogonalDistance([a, b], this.logicalLocation));
-          const distanceToPacMan = Math.abs(computeOrthogonalDistance(this._pacManLocation, this.logicalLocation));
+          // computeOrthogonalDistance should never return undefined in our case
+          // (if it does, it is an bug). For type safety, default values are given that,
+          // if used, should make the if expression false
+          const distanceToWall = Math.abs(computeOrthogonalDistance([a, b], this.logicalLocation) || 0);
+          const distanceToPacMan = Math.abs(computeOrthogonalDistance(this._pacManLocation, this.logicalLocation) || Infinity);
 
           if (distanceToPacMan < distanceToWall) {
             // Pac-Man is within sight! Follow him

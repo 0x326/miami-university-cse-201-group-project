@@ -37,7 +37,7 @@ function computeOrthogonalDistance(point2: [number, number], point1: [number, nu
   const dy = y2 - y1;
 
   if (dx !== 0 && dy !== 0) {
-    throw 'Points do not lay on an orthogonal axis';
+    return undefined;
   } else if (dx !== 0) {
     return dx;
   } else {
