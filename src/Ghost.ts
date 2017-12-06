@@ -225,11 +225,12 @@ abstract class Ghost extends MovableEntity {
     // Determine whether we are along the first edge (between routeVertices[0] and routeVertices[1])
     const [firstVertex, secondVertex] = routeVertices.slice(0, 2).toArray();
     const [a, b] = firstVertex.toArray();
-    const [c, d] = secondVertex.toArray();
 
-    if (isPointOnLine(this.logicalLocation, [c, d], [a, b])) {
-      // First vertex is behind us now. Go to the second one
-      this.direction = computeDirection(this.logicalLocation, [c, d]);
+    if (secondVertex !== undefined && isPointOnLine(this.logicalLocation,
+                                                    secondVertex.toJS(),
+                                                    [a, b])) {
+      // Since the second vertex is in sight, we can focus on it
+      this.direction = computeDirection(this.logicalLocation, secondVertex.toJS());
     } else {
       // We still need to go to the first vertex
       this.direction = computeDirection(this.logicalLocation, [a, b]);
