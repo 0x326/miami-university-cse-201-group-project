@@ -8,6 +8,9 @@
  */
 class KeyboardListener {
   registeredKeys: Map<string, (isPressed: boolean) => void>;
+  private target: EventTarget;
+  private keyDownHandler: (keypressEvent: KeyboardEvent) => void;
+  private keyUpHandler: (keypressEvent: KeyboardEvent) => void;
 
   /**
    * Creates a MovableEntity
@@ -15,19 +18,24 @@ class KeyboardListener {
    * @param initialLocation The starting location of this entity.
    */
   constructor(target: EventTarget) {
+    this.target = target;
     this.registeredKeys = new Map();
-    target.addEventListener('keydown', (keypressEvent: KeyboardEvent) => {
+    this.keyDownHandler = (keypressEvent: KeyboardEvent) => {
       let key = keypressEvent.key;
       if (this.registeredKeys[key]) {
+        keypressEvent.preventDefault();
         this.registeredKeys[key](true);
       }
-    });
-    target.addEventListener('keyup', (keypressEvent: KeyboardEvent) => {
+    }
+    this.keyUpHandler = (keypressEvent: KeyboardEvent) => {
       let key = keypressEvent.key;
       if (this.registeredKeys[key]) {
+        keypressEvent.preventDefault();
         this.registeredKeys[key](false);
       }
-    });
+    }
+    target.addEventListener('keydown', this.keyDownHandler);
+    target.addEventListener('keyup', this.keyUpHandler);
   }
 
   registerKey(key: string, callback: (isPressed: boolean) => void): void {
@@ -36,6 +44,11 @@ class KeyboardListener {
 
   unregisterKey(key: string) {
     this.registeredKeys.delete(key);
+  }
+
+  detachFromTarget(): void {
+    this.target.removeEventListener('keydown', this.keyDownHandler);
+    this.target.removeEventListener('keyup', this.keyUpHandler);
   }
 }
 

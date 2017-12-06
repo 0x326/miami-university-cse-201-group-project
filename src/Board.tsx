@@ -123,6 +123,7 @@ class Board extends React.Component<Props> {
   }
 
   componentWillUnmount() {
+    this.keyboardListener.detachFromTarget();
   }
 
   buildBoard(): void {
