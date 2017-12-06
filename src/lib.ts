@@ -30,7 +30,9 @@ function initializeMutliDimensionalArray<T>(array: Array<any>, initializer: (pos
   }
 }
 
-function computeOrthogonalDistance(from: [number, number], to: [number, number]) {
+type Point = [number, number];
+
+function computeOrthogonalDistance(from: Point, to: Point) {
   const [x1, y1] = from;
   const [x2, y2] = to;
   const dx = x2 - x1;
@@ -45,7 +47,7 @@ function computeOrthogonalDistance(from: [number, number], to: [number, number])
   }
 }
 
-function computeDirection(from: [number, number], to: [number, number]) {
+function computeDirection(from: Point, to: Point) {
   const [x1, y1] = from;
   const [x2, y2] = to;
   const dx = x2 - x1;
@@ -63,14 +65,14 @@ function computeDirection(from: [number, number], to: [number, number]) {
   }
 }
 
-function isPointOnLine(testPoint: [number, number], linePoint1: [number, number], linePoint2: [number, number], precision: number = 1e-6) {
+function isPointOnLine(testPoint: Point, linePoint1: Point, linePoint2: Point, precision: number = 1e-6) {
   const [x1, y1] = linePoint1;
   const [x2, y2] = linePoint2;
   const dx = x2 - x1;
   const dy = y2 - y1;
 
   const [a, b] = testPoint;
-  const slope = dx / dy;
+  const slope = dy / dx;
 
   if (slope === Infinity) {
     return Math.abs(a - x1) < precision;
@@ -79,7 +81,7 @@ function isPointOnLine(testPoint: [number, number], linePoint1: [number, number]
   }
 }
 
-function slope(linePoint1: [number, number], linePoint2: [number, number]) {
+function slope(linePoint1: Point, linePoint2: Point) {
   const [x1, y1] = linePoint1;
   const [x2, y2] = linePoint2;
   const dx = x2 - x1;
@@ -88,7 +90,7 @@ function slope(linePoint1: [number, number], linePoint2: [number, number]) {
   return dx / dy;
 }
 
-function movePoint(point: [number, number], direction: Direction, amount: number = 1): [number, number] {
+function movePoint(point: Point, direction: Direction, amount: number = 1): Point {
   let [x, y] = point;
 
   if (direction === Direction.North) {
@@ -110,7 +112,7 @@ function movePoint(point: [number, number], direction: Direction, amount: number
  * @param minuend The left side
  * @param subtrahend The right side
  */
-function subtractPoints(minuend: [number, number], subtrahend: [number, number]): [number, number] {
+function subtractPoints(minuend: Point, subtrahend: Point): Point {
   const [a, b] = minuend;
   const [c, d] = subtrahend;
 
