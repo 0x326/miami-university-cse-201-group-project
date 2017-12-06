@@ -4,6 +4,8 @@ import { Direction } from './MovableEntity';
 import { Seq, List } from 'immutable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 
+const ClydeImage = require('./Images/Clyde.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -16,9 +18,10 @@ class Clyde extends Ghost {
 
   private timer: number;
   private mode = Behavior.Normal;
+  protected normalSpriteURI: string = ClydeImage;
 
   /**
-   * Creates a MovableEntity
+   * Creates an Clyde object
    *
    * @param initialLocation The starting location of this entity.
    */

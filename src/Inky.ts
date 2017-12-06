@@ -4,6 +4,8 @@ import { Direction, directionSeq } from './MovableEntity';
 import { Seq, List } from 'immutable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 
+const InkyImage = require('./Images/Inky.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -16,9 +18,10 @@ class Inky extends Ghost {
 
   private timer: number;
   private isRunningAway = false;
+  protected normalSpriteURI: string = InkyImage;
 
   /**
-   * Creates a MovableEntity
+   * Creates an Inky object
    *
    * @param initialLocation The starting location of this entity.
    */

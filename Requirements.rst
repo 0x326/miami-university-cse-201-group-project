@@ -46,7 +46,7 @@ Gameplay Requirements
 
 * Four ghosts try to catch PacMan
 
-  * Ghosts are mutli-colored
+  * Ghosts are multi-colored
   * Ghosts chase PacMan with specific algorithms
 
     * Red ghost (Blinky) actively chases PacMan.
