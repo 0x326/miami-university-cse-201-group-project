@@ -66,6 +66,12 @@ class UndirectedWeightedGraph<Id> {
       throw `${to} is not in the graph`;
     }
 
+    if (from === to) {
+      // There's no where to go.
+      // No point in running the algorithm
+      return List(from);
+    }
+
     let costTable = Map<Id, NetCost<Id>>(this.vertices.keySeq().map(key => [key, new NetCost]));
     costTable = costTable.update(from, costCalculation => {
       costCalculation.cost = 0;
