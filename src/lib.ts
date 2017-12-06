@@ -53,7 +53,8 @@ function computeDirection(from: Point, to: Point) {
   const dx = x2 - x1;
   const dy = y2 - y1;
 
-  const theta = Math.atan2(dy, dx);
+  // In computer displays, the y-axis is inverted, hence -dy
+  const theta = Math.atan2(-dy, dx);
   if (-Math.PI / 4 < theta && theta <= Math.PI / 4) {
     return Direction.East;
   } else if (Math.PI / 4 < theta && theta <= 3 * Math.PI / 4) {
