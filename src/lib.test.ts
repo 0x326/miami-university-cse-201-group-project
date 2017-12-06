@@ -27,7 +27,7 @@ describe('computeDirection', () => {
     expect(computeDirection([-100, 1], [0, 0])).toBe(Direction.East);
   });
 
-  it('works', () => {
+  it('works for real data', () => {
     expect(computeDirection([14, 31], [14, 15])).toBe(Direction.North);
   })
 
@@ -35,11 +35,13 @@ describe('computeDirection', () => {
 
 describe('isPointOnLine', () => {
 
-  it('works', () => {
+  it('works for simple examples', () => {
     expect(isPointOnLine([2,2], [1,1], [3, 3])).toBe(true);
     expect(isPointOnLine([1,1], [2,2], [3, 3])).toBe(true);
     expect(isPointOnLine([0,0], [2,1], [4, 2])).toBe(true);
+  });
 
+  it('works for real data', () => {
     expect(isPointOnLine([15, 19], [15, 21], [15, 19])).toBe(true);
   });
 
