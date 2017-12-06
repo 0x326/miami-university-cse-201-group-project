@@ -28,3 +28,13 @@ describe('computeDirection', () => {
   });
 
 });
+
+describe('isPointOnLine', () => {
+
+  it('works', () => {
+    expect(isPointOnLine([2,2], [1,1], [3, 3])).toBe(true);
+    expect(isPointOnLine([1,1], [2,2], [3, 3])).toBe(true);
+    expect(isPointOnLine([0,0], [2,1], [4, 2])).toBe(true);
+  });
+
+});
