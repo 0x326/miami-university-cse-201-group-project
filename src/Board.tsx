@@ -112,6 +112,10 @@ class Board extends React.Component<Props> {
 
   componentDidMount() {
     this.keyboardListener.attach(document);
+    this.pacMan.mount();
+    for (const ghost of this.ghosts) {
+      ghost.mount();
+    }
     if (this.props.active) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     }
@@ -124,6 +128,10 @@ class Board extends React.Component<Props> {
   }
 
   componentWillUnmount() {
+    this.pacMan.unmount();
+    for (const ghost of this.ghosts) {
+      ghost.unmount();
+    }
     this.keyboardListener.detach();
   }
 

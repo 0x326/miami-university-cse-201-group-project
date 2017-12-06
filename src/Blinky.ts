@@ -25,6 +25,14 @@ class Blinky extends Ghost {
     super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
+  mount(): void {
+    // Nothing to mount
+  }
+
+  unmount(): void {
+    // Nothing to unmount
+  }
+
   chooseClosestPacManVertex(map: Drawable[][]) {
     return Blinky.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }

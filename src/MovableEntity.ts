@@ -40,6 +40,20 @@ abstract class MovableEntity {
   }
 
   /**
+   * Sets up any timers that may be used by the object.
+   *
+   * Analogous to React's `componentDidMount()`.
+   */
+  abstract mount(): void;
+
+  /**
+   * Tears down any timers that were setup in `mount()`
+   *
+   * Analogous to React's `componentWillUnmount()`.
+   */
+  abstract unmount(): void;
+
+  /**
    * Gets the current logical location of this MovableEntity.
    *
    * @return The current location

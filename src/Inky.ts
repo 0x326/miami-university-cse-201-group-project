@@ -13,6 +13,8 @@ import UndirectedWeightedGraph from './UndirectedWeightedGraph';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Inky extends Ghost {
+
+  private timer: number;
   private isRunningAway = false;
 
   /**
@@ -25,6 +27,16 @@ class Inky extends Ghost {
               pacManDirection: Direction,
               boardGraph: UndirectedWeightedGraph<List<number>>) {
     super(initialLocation, pacManLocation, pacManDirection, boardGraph);
+  }
+
+  mount(): void {
+    this.timer = window.setInterval(() => {
+      this.isRunningAway = !this.isRunningAway;
+    });
+  }
+
+  unmount(): void {
+    window.clearInterval(this.timer);
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
