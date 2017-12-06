@@ -30,9 +30,10 @@ class Inky extends Ghost {
   }
 
   mount(): void {
+    const stateDuration = 3000;
     this.timer = window.setInterval(() => {
       this.isRunningAway = !this.isRunningAway;
-    });
+    }, stateDuration);
   }
 
   unmount(): void {
