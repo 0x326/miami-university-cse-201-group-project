@@ -75,7 +75,7 @@ function isPointOnLine(testPoint: Point, linePoint1: Point, linePoint2: Point, p
   const [a, b] = testPoint;
   const slope = dy / dx;
 
-  if (slope === Infinity) {
+  if (Math.abs(slope) === Infinity) {
     return Math.abs(a - x1) < precision;
   } else {
     return Math.abs((b - y1) - slope * (a - x1)) < precision;
