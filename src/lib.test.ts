@@ -27,6 +27,10 @@ describe('computeDirection', () => {
     expect(computeDirection([-100, 1], [0, 0])).toBe(Direction.East);
   });
 
+  it('works', () => {
+    expect(computeDirection([14, 31], [14, 15])).toBe(Direction.North);
+  })
+
 });
 
 describe('isPointOnLine', () => {
