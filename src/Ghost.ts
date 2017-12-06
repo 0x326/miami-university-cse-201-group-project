@@ -3,7 +3,7 @@ import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
 import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import Wall from './Wall';
-import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope, movePoint } from './lib';
+import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope, movePoint, subtractPoints } from './lib';
 
 /**
  * Course: CSE 201 A
@@ -20,6 +20,11 @@ abstract class Ghost extends MovableEntity {
   boardGraph: UndirectedWeightedGraph<List<number>>;
 
   /**
+   * Used to enforce strict adherance to the grid
+   */
+  private lastLogicalLocation: [number, number];
+
+  /**
    * Creates a MovableEntity
    *
    * @param initialLocation The starting location of this entity.
@@ -29,11 +34,31 @@ abstract class Ghost extends MovableEntity {
               pacManDirection: Direction,
               boardGraph: UndirectedWeightedGraph<List<number>>) {
     super(initialLocation);
+    this.lastLogicalLocation = initialLocation;
     this._pacManLocation = <[number, number]> pacManLocation.slice();
     this.pacManDirection = pacManDirection;
     this.boardGraph = boardGraph;
     this.stopped = false;
     this.speed = 2.3;
+  }
+
+  get logicalLocation() {
+    const locationDivergence = subtractPoints(this.exactLocation, this.lastLogicalLocation);
+    const distance = Math.max(...locationDivergence.map(val => Math.abs(val)));
+
+    if (distance >= 1) {
+      // Update this.lastLogicalLocation
+      const directionOfChange = computeDirection(this.lastLogicalLocation, this.exactLocation);
+      this.lastLogicalLocation = movePoint(this.lastLogicalLocation,
+                                           directionOfChange,
+                                           Math.floor(distance));
+    }
+
+    return this.lastLogicalLocation;
+  }
+
+  set logicalLocation(location: [number, number]) {
+    super.logicalLocation = location;
   }
 
   get pacManLocation() {
