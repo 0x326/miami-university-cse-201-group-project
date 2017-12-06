@@ -30,9 +30,32 @@ class Clyde extends Ghost {
   }
 
   mount(): void {
-    this.timer = window.setInterval(() => {
-      this.mode = (this.mode + 1) % 3;
-    });
+    const stateDuration = 5000;
+    let timeSinceLastMajorTransition = performance.now();
+
+    const makeNormal = () => {
+      this.mode = Behavior.Normal;
+      this.timer = window.setTimeout(makeAbnormal, stateDuration);
+    };
+
+    const makeAbnormal = () => {
+      if (this.mode === Behavior.Normal) {
+        timeSinceLastMajorTransition = performance.now();
+        this.mode = Behavior.HeadingNorth;
+      } else {
+        this.mode = -this.mode;
+      }
+
+      const now = performance.now();
+      if (now - timeSinceLastMajorTransition > stateDuration) {
+        makeNormal();
+        timeSinceLastMajorTransition = now;
+      } else {
+        this.timer = window.setTimeout(makeAbnormal, 500);
+      }
+    }
+
+    makeNormal();
   }
 
   unmount(): void {
@@ -68,7 +91,7 @@ class Clyde extends Ghost {
 enum Behavior {
   Normal = 0,
   HeadingNorth = 1,
-  HeadingWest = 2
+  HeadingWest = -1
 }
 
 export default Clyde;
