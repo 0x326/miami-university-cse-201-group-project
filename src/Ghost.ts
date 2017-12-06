@@ -145,14 +145,19 @@ abstract class Ghost extends MovableEntity {
             updateMinimumDistance(direction);
           }
         });
-      } else {
-        // Otherwise, try all directions
-        directionSeq.forEach(direction => {
-          if (direction !== undefined && options[direction] === true) {
-            updateMinimumDistance(direction);
-          }
-        });
+
+        if (minimumDistance !== Infinity) {
+          // We actually found a vertex in a preferred direction
+          return List(closestVertexLocation);
+        }
       }
+
+      // Try all directions
+      directionSeq.forEach(direction => {
+        if (direction !== undefined && options[direction] === true) {
+          updateMinimumDistance(direction);
+        }
+      });
     }
 
     return List(closestVertexLocation);
