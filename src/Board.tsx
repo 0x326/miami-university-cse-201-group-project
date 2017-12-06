@@ -74,7 +74,7 @@ class Board extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    this.keyboardListener = new KeyboardListener(document);
+    this.keyboardListener = new KeyboardListener();
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
     this.buildBoard();
     this.pacMan = new PacMan(pacManStartingLocation, this.keyboardListener);
@@ -111,6 +111,7 @@ class Board extends React.Component<Props> {
   }
 
   componentDidMount() {
+    this.keyboardListener.attach(document);
     if (this.props.active) {
       window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
     }
@@ -123,7 +124,7 @@ class Board extends React.Component<Props> {
   }
 
   componentWillUnmount() {
-    this.keyboardListener.detachFromTarget();
+    this.keyboardListener.detach();
   }
 
   buildBoard(): void {
