@@ -14,6 +14,8 @@ const PinkyImage = require('./Images/Pinky.png');
  */
 class Pinky extends Ghost {
   protected normalSpriteURI: string = PinkyImage;
+  // used for telling the ghost when to exit the spawn box
+  private timeWhenStartedMoving: number = performance.now();
 
   /**
    * Creates an Pinky object
@@ -22,11 +24,26 @@ class Pinky extends Ghost {
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
+    this.timeWhenStartedMoving = performance.now();
+    this.direction = Direction.West;
   }
 
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);
-    if (options[this.direction] === false) {
+    const timeMoving = performance.now() - this.timeWhenStartedMoving;
+    
+    // initial ghost movement, moves back and forth for six seconds
+    if (timeMoving < 6000) {
+        // magical numbers that make this work
+        if (timeMoving % 601 < 30) {
+            this.direction = Direction.West;
+        }
+        else if (timeMoving % 300 < 30) {
+            this.direction = Direction.East;
+        }
+    }
+    
+    else if (options[this.direction] === false) {
       if (options[Direction.West] === true) {
         this.direction = Direction.West;
       } else if (options[Direction.East] === true) {

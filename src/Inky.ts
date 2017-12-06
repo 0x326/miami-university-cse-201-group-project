@@ -14,6 +14,8 @@ const InkyImage = require('./Images/Inky.png');
  */
 class Inky extends Ghost {
   protected normalSpriteURI: string = InkyImage;
+  // used for telling the ghost when to exit the spawn box
+  private timeWhenStartedMoving: number = performance.now();
 
   /**
    * Creates an Inky object
@@ -22,11 +24,26 @@ class Inky extends Ghost {
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
+    this.timeWhenStartedMoving = performance.now();
+    this.direction = Direction.West;
   }
 
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);
-    if (options[this.direction] === false) {
+    const timeMoving = performance.now() - this.timeWhenStartedMoving;
+    
+    // initial ghost movement, moves back and forth for three seconds
+    if (timeMoving < 3000) {
+        // magical numbers that make this work
+        if (timeMoving % 601 < 30) {
+            this.direction = Direction.West;
+        }
+        else if (timeMoving % 300 < 30) {
+            this.direction = Direction.East;
+        }
+    }
+    
+    else if (options[this.direction] === false) {
       if (options[Direction.South] === true) {
         this.direction = Direction.South;
       } else if (options[Direction.North] === true) {

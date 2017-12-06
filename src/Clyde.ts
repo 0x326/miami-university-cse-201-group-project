@@ -14,6 +14,8 @@ const ClydeImage = require('./Images/Clyde.png');
  */
 class Clyde extends Ghost {
   protected normalSpriteURI: string = ClydeImage;
+  // used for telling the ghost when to exit the spawn box
+  private timeWhenStartedMoving: number = performance.now();
 
   /**
    * Creates an Clyde object
@@ -22,11 +24,26 @@ class Clyde extends Ghost {
    */
   constructor(initialLocation: [number, number]) {
     super(initialLocation);
+    this.timeWhenStartedMoving = performance.now();
+    this.direction = Direction.West;
   }
 
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);
-    if (options[this.direction] === false) {
+    const timeMoving = performance.now() - this.timeWhenStartedMoving;
+    
+    // initial ghost movement, moves back and forth for nine seconds
+    if (timeMoving < 9000) {
+        // magical numbers that make this work
+        if (timeMoving % 601 < 30) {
+            this.direction = Direction.West;
+        }
+        else if (timeMoving % 300 < 30) {
+            this.direction = Direction.East;
+        }
+    }
+    
+    else if (options[this.direction] === false) {
       if (options[Direction.East] === true) {
         this.direction = Direction.East;
       } else if (options[Direction.South] === true) {
