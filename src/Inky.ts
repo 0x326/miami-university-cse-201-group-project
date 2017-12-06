@@ -47,7 +47,7 @@ class Inky extends Ghost {
   chooseDirection(map: Drawable[][]): void {
     super.chooseDirection(map);
 
-    if (!this.isRunningAway) {
+    if (this.isRunningAway) {
       // Choose any other valid option than the one selected
       const options = Inky.getMovementOptions(map, this.logicalLocation);
       this.direction = directionSeq.filter(direction => direction !== this.direction)
