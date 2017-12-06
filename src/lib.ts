@@ -30,9 +30,9 @@ function initializeMutliDimensionalArray<T>(array: Array<any>, initializer: (pos
   }
 }
 
-function computeOrthogonalDistance(point2: [number, number], point1: [number, number]) {
-  const [x1, y1] = point1;
-  const [x2, y2] = point2;
+function computeOrthogonalDistance(from: [number, number], to: [number, number]) {
+  const [x1, y1] = from;
+  const [x2, y2] = to;
   const dx = x2 - x1;
   const dy = y2 - y1;
 
@@ -46,8 +46,8 @@ function computeOrthogonalDistance(point2: [number, number], point1: [number, nu
 }
 
 function computeDirection(from: [number, number], to: [number, number]) {
-  const [x1, y1] = to;
-  const [x2, y2] = from;
+  const [x1, y1] = from;
+  const [x2, y2] = to;
   const dx = x2 - x1;
   const dy = y2 - y1;
 
@@ -56,14 +56,14 @@ function computeDirection(from: [number, number], to: [number, number]) {
     return Direction.East;
   } else if (Math.PI / 4 < theta && theta <= 3 * Math.PI / 4) {
     return Direction.North;
-  } else if (-3 * Math.PI < theta && theta <= -Math.PI / 4) {
+  } else if (-3 * Math.PI / 4 < theta && theta <= -Math.PI / 4) {
     return Direction.South;
   } else {
     return Direction.West;
   }
 }
 
-function isPointOnLine(testPoint: [number, number], linePoint2: [number, number], linePoint1: [number, number], precision: number = 1e-6) {
+function isPointOnLine(testPoint: [number, number], linePoint1: [number, number], linePoint2: [number, number], precision: number = 1e-6) {
   const [x1, y1] = linePoint1;
   const [x2, y2] = linePoint2;
   const dx = x2 - x1;
@@ -79,7 +79,7 @@ function isPointOnLine(testPoint: [number, number], linePoint2: [number, number]
   }
 }
 
-function slope(linePoint2: [number, number], linePoint1: [number, number]) {
+function slope(linePoint1: [number, number], linePoint2: [number, number]) {
   const [x1, y1] = linePoint1;
   const [x2, y2] = linePoint2;
   const dx = x2 - x1;
