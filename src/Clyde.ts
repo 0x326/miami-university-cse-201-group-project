@@ -39,6 +39,27 @@ class Clyde extends Ghost {
     window.clearInterval(this.timer);
   }
 
+  chooseDirection(map: Drawable[][]): void {
+    if (this.mode === Behavior.Normal) {
+      super.chooseDirection(map);
+    } else {
+      const options = Clyde.getMovementOptions(map, this.logicalLocation);
+
+      if (this.mode === Behavior.HeadingNorth && options[Direction.North] === true) {
+        // We prefer north (even if others were options too)
+        this.direction = Direction.North;
+      } else if (this.mode === Behavior.HeadingWest && options[Direction.West] === true) {
+        // We prefer west (even if others were options too)
+        this.direction = Direction.West;
+      } else if (options[Direction.North] === true) {
+        // Since we can't get our preference, we'll take what we can get
+        this.direction = Direction.North;
+      } else if (options[Direction.West] === true) {
+        this.direction = Direction.West;
+      }
+    }
+  }
+
   chooseClosestPacManVertex(map: Drawable[][]) {
     return Clyde.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
