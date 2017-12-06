@@ -104,6 +104,19 @@ function movePoint(point: [number, number], direction: Direction, amount: number
   return [x, y];
 }
 
+/**
+ * minuend - subtrahend = difference
+ *
+ * @param minuend The left side
+ * @param subtrahend The right side
+ */
+function subtractPoints(minuend: [number, number], subtrahend: [number, number]): [number, number] {
+  const [a, b] = minuend;
+  const [c, d] = subtrahend;
+
+  return [a - c, b - d];
+}
+
 export {
   createMultiDimensionalArray,
   initializeMutliDimensionalArray,
@@ -111,5 +124,6 @@ export {
   computeDirection,
   isPointOnLine,
   slope,
-  movePoint
+  movePoint,
+  subtractPoints
 };
