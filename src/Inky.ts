@@ -35,10 +35,10 @@ class Inky extends Ghost {
 
     // initial ghost movement, moves back and forth for three seconds
     if (timeMoving < waitingTime) {
-      // magical numbers that make this work
-      if (timeMoving % 601 < 30) {
+      // Ghosts move back and forth every quarter of a second
+      if (Math.floor(timeMoving / 250) % 2 == 0) {
         this.direction = Direction.West;
-      } else if (timeMoving % 300 < 30) {
+      } else {
         this.direction = Direction.East;
       }
     } else if (options[this.direction] === false) {
