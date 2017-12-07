@@ -2,6 +2,7 @@
   text-align: center;
   background-color: black;
   color: #f8f9ed;
+  font-family: "Phosphate", sans-serif;
 }
 
 .title {
@@ -25,7 +26,6 @@
   padding-top: 79px;
   padding-bottom: 77px;
   font-size: 60px;
-  font-family: "Phosphate", sans-serif;
   text-align: center;
   color: #f5ff77;
 }
