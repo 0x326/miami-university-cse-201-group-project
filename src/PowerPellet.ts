@@ -20,9 +20,14 @@ class PowerPellet implements Drawable {
    */
   draw(board: CanvasRenderingContext2D, location: [number, number], maxSize: number, neighboringEntities: Neighbors): void {
     if (performance.now() % 400 > 200) {
+      const center = [
+        location[0] + maxSize / 2,
+        location[1] + maxSize / 2
+      ];
+
       board.fillStyle = '#673AB7';
       board.beginPath();
-      board.arc(location[0], location[1], maxSize / 2, 0, 2 * Math.PI);
+      board.arc(center[0], center[1], maxSize / 2, 0, 2 * Math.PI);
       board.fill();
     }
   }
