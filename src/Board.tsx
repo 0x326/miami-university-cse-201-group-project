@@ -432,9 +432,9 @@ class Board extends React.Component<Props, State> {
       }
 
       this.detectCollisions();
-      this.repaintCanvas();
       // TODO: Determine when the game has ended
     }
+    this.repaintCanvas();
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
