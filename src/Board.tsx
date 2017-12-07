@@ -223,45 +223,65 @@ class Board extends React.Component<Props, State> {
   resetBoard(): void {
     this.pelletsEaten = 0;
     this.pelletsToEat = 0;
-    // TODO: Populate board
-    for (let x = 8; x <= 20; x++) {
-      this.stationaryEntities[x][8] = new Wall;
-      this.stationaryEntities[x][10] = new Wall;
-      this.stationaryEntities[x][14] = new Wall;
-      this.stationaryEntities[x][20] = new Wall;
-    }
-    for (let y = 8; y <= 20; y++) {
-      this.stationaryEntities[8][y] = new Wall;
-      this.stationaryEntities[20][y] = new Wall;
-    }
-    delete this.stationaryEntities[9][10];
-    delete this.stationaryEntities[19][10];
-    delete this.stationaryEntities[9][14];
-    delete this.stationaryEntities[19][14];
-    for (let y = 12; y <= 13; y++) {
-      this.stationaryEntities[10][y] = new Wall;
-      this.stationaryEntities[18][y] = new Wall;
-    }
-    this.stationaryEntities[14][11] = new Wall;
-    this.stationaryEntities[14][12] = new Wall;
-    delete this.stationaryEntities[15][20];
 
-    this.stationaryEntities[9][9] = new PowerPellet;
-    this.stationaryEntities[19][9] = new PowerPellet;
-    this.stationaryEntities[9][19] = new PowerPellet;
-    this.stationaryEntities[19][19] = new PowerPellet;
-    this.pelletsToEat += 4;
+    let selectedMazeChunks: {
+      topLeft: Chunk | undefined,
+      topRight: Chunk | undefined,
+      centerLeft: Chunk | undefined,
+      centerRight: Chunk | undefined,
+      bottomLeft: Chunk | undefined,
+      bottomRight: Chunk | undefined
+    } = {
+      topLeft: undefined,
+      topRight: undefined,
+      centerLeft: undefined,
+      centerRight: undefined,
+      bottomLeft: undefined,
+      bottomRight: undefined
+    };
 
-    for (let y = 10; y <= 18; y++) {
-      this.stationaryEntities[9][y] = new Pellet;
-      this.stationaryEntities[19][y] = new Pellet;
-      this.pelletsToEat += 2;
+    for (const chunkArea in this.boardChunks) {
+      if (this.boardChunks.hasOwnProperty(chunkArea)) {
+        const boardChunksArea: List<Drawable[][]> = this.boardChunks[chunkArea];
+        const selectedIndex = Math.floor(boardChunksArea.count() * Math.random());
+        const selectedChunk = boardChunksArea.get(selectedIndex);
+        selectedMazeChunks[chunkArea] = selectedChunk;
+      }
     }
-    for (let x = 10; x <= 18; x++) {
-      this.stationaryEntities[x][9] = new Pellet;
-      this.stationaryEntities[x][19] = new Pellet;
-      this.pelletsToEat += 2;
+
+    const chunkOffset = {
+      topLeft: [0, 0],
+      topRight: [chunkColumns, 0],
+      centerLeft: [0, chunkRows],
+      centerRight: [chunkColumns, chunkRows],
+      bottomLeft: [0, 2 * chunkRows],
+      bottomRight: [chunkColumns, 2 * chunkRows]
+    };
+
+    for (const chunkArea in selectedMazeChunks) {
+      if (selectedMazeChunks.hasOwnProperty(chunkArea)) {
+        const chunk: Chunk | undefined = selectedMazeChunks[chunkArea];
+        if (chunk !== undefined) {
+          const offset: [number, number] = chunkOffset[chunkArea];
+          const [xOffset, yOffset] = offset;
+
+          for (let i = 0; i < chunkColumns; i++) {
+            for (let j = 0; j < chunkRows; j++) {
+              const entity = chunk[i][j];
+
+              if (entity instanceof Pellet || entity instanceof PowerPellet) {
+                this.pelletsToEat++;
+              }
+
+              if (entity !== undefined) {
+                this.stationaryEntities[xOffset + i][yOffset + j] = entity;
+              }
+            }
+          }
+        }
+      }
     }
+
     this.moveEntitiesToStartingLocation();
   }
 
