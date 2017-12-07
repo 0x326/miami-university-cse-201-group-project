@@ -3,5 +3,10 @@
 }
 
 .scoreList {
-  list-style-type: disc;
+  list-style-type: none;
+}
+
+ol {
+  padding-left: 40px;
+  padding-right: 40px;
 }
