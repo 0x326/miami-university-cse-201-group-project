@@ -402,7 +402,8 @@ class Board extends React.Component<Props, State> {
   static parseMap(fileContents: string): Chunk {
     const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
 
-    for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries()) {
+    // tslint:disable:no-any
+    for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries() as any) {
       for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
         let item: Drawable;
 
