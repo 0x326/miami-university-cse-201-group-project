@@ -145,6 +145,9 @@ class App extends React.Component<Props, State> {
                 </li>
               ))}
             </ol>
+            <div>
+              High: {this.state.finalScores.max()}
+            </div>
           </div>
           <div className="footer">
             <button
