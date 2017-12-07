@@ -93,13 +93,13 @@ class Board extends React.Component<Props, State> {
 
   loadResources: Promise<undefined>;
 
-  boardChunks: {
-    topLeft: List<Chunk>,
-    topRight: List<Chunk>,
-    middleLeft: List<Chunk>,
-    middleRight: List<Chunk>,
-    bottomLeft: List<Chunk>,
-    bottomRight: List<Chunk>
+  boardChunks = {
+    topLeft: List<Chunk>(),
+    topRight: List<Chunk>(),
+    centerLeft: List<Chunk>(),
+    centerRight: List<Chunk>(),
+    bottomLeft: List<Chunk>(),
+    bottomRight: List<Chunk>()
   };
   stationaryEntities: Drawable[][];
   pacMan: PacMan;
@@ -172,16 +172,31 @@ class Board extends React.Component<Props, State> {
     if (this.props.active) {
      if (!this.state.resourcesLoaded) {
         this.loadResources = new Promise((resolve, reject) => {
+          const baseURL = window.location.origin;
+          let chunkAreaPromises = [];
+
           for (const chunkArea in mazeChunks) {
             if (mazeChunks.hasOwnProperty(chunkArea)) {
-              const chunkURIs: string[] = mazeChunks[chunkArea];
-              for (const chunkURI of chunkURIs) {
-                const parseChunkPromise = Request(chunkURI)
-                  .then(csv => false /* Call this.parseCSV() */);
+              const chunkURLs: string[] = mazeChunks[chunkArea];
+              let parseChunkPromises: Promise<Drawable[][]>[] = [];
+
+              for (const chunkURL of chunkURLs) {
+                const parseChunkPromise = Request(baseURL + chunkURL)
+                  .then(csv => Board.parseMap(csv));
+
+                parseChunkPromises.push(parseChunkPromise);
               }
+
+              const chunkAreaPromise = Promise.all(parseChunkPromises)
+                .then(chunks => chunks.forEach(chunk => {
+                  this.boardChunks[chunkArea] = this.boardChunks[chunkArea].push(chunk);
+              }));
+
+              chunkAreaPromises.push(chunkAreaPromise);
             }
           }
-          resolve();
+
+          Promise.all(chunkAreaPromises).then(() => resolve());
         });
 
         this.loadResources.then(() => {
