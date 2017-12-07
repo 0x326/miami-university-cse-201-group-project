@@ -35,7 +35,7 @@ class App extends React.Component<Props, State> {
     if (this.state.gameState === GameState.TitleScreen) {
       return (
         <div className="App title">
-          <h1>
+          <h1 className="header">
             Pac-Man
           </h1>
           <div>

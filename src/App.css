@@ -5,6 +5,10 @@
   font-family: "Phosphate", sans-serif;
 }
 
+.header {
+  color: #f5ff77;
+}
+
 .title {
   padding-top: 75px;
   padding-bottom: 107px;
@@ -12,7 +16,6 @@
   font-family: "Phosphate", sans-serif;
   text-align: center;
   background-color: #000526;
-  color: #f5ff77;
 }
 
 .gameOver {
@@ -27,7 +30,6 @@
   padding-bottom: 77px;
   font-size: 60px;
   text-align: center;
-  color: #f5ff77;
 }
 
 .gameOver .center {
