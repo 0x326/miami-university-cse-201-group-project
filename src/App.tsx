@@ -64,7 +64,7 @@ class App extends React.Component<Props, State> {
           <div className="center">
             <div className="board">
               <Board
-                width="13cm"
+                width="11cm"
                 height="13cm"
                 active={!this.state.gameOver}
                 onScoreChange={(newScore: number) => this.setState({
@@ -138,11 +138,16 @@ class App extends React.Component<Props, State> {
             <div>
               Your scores:
             </div>
-            <ul>
-              {this.state.finalScores.map((score) => (
-                <li>{score}</li>
+            <ol className="scoreList">
+              {this.state.finalScores.map((score, index) => (
+                <li key={index}>
+                  Game {index !== undefined ? index + 1 : '?'}: {score}
+                </li>
               ))}
-            </ul>
+            </ol>
+            <div>
+              High: {this.state.finalScores.max()}
+            </div>
           </div>
           <div className="footer">
             <button

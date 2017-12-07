@@ -7,7 +7,10 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts-ts": "2.7.0",
-    "units-css": "0x326/units"
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "units-css": "0x326/units",
+    "zlib": "^1.0.5"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -22,6 +25,8 @@
     "@types/node": "^8.0.34",
     "@types/react": "^16.0.10",
     "@types/react-dom": "^16.0.1",
+    "@types/request": "^2.0.8",
+    "@types/request-promise-native": "^1.0.10",
     "tslint": "^5.8.0"
   }
 }
