@@ -139,8 +139,10 @@ class App extends React.Component<Props, State> {
               Your scores:
             </div>
             <ol className="scoreList">
-              {this.state.finalScores.map((score) => (
-                <li>{score}</li>
+              {this.state.finalScores.map((score, index) => (
+                <li key={index}>
+                  {score}
+                </li>
               ))}
             </ol>
           </div>
