@@ -49,6 +49,7 @@ class NetCost<Id> {
 class UndirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
   private edges: Map<List<Id>, DirectedEdge<Id>> = Map();
+  private previouslyComputedTables: Map<Id, Map<Id, NetCost<Id>>> = Map();
 
   /**
    * Computes the shortest path between the given vertices.
@@ -72,71 +73,79 @@ class UndirectedWeightedGraph<Id> {
       return List(from);
     }
 
-    let costTable = Map<Id, NetCost<Id>>(this.vertices.keySeq().map(key => [key, new NetCost]));
-    costTable = costTable.update(from, costCalculation => {
-      costCalculation.cost = 0;
-      costCalculation.isOptimal = true;
-      return costCalculation;
-    });
+    let costTable = this.previouslyComputedTables.get(from);
 
-    let currentVertex = from;
-    let reachableNonOptimalVertices = Infinity;
-    while (reachableNonOptimalVertices !== 0) {
-      const vertexEdges = this.vertices.get(currentVertex).edges;
-      const costIncrement = costTable.get(currentVertex).cost;
+    if (costTable === undefined) {
+      // Table has not been previously computed
+      costTable = Map<Id, NetCost<Id>>(this.vertices.keySeq().map(key => [key, new NetCost]));
+      costTable = costTable.update(from, costCalculation => {
+        costCalculation.cost = 0;
+        costCalculation.isOptimal = true;
+        return costCalculation;
+      });
 
-      reachableNonOptimalVertices = 0;
-      // tslint:disable:no-any
-      // Immutable.js Set objects are incorrectly typed in its index.d.ts
-      // Use ``any`` to override type errors
-      for (const edge of vertexEdges.values() as any) {
-        if (edge !== undefined && !costTable.get(edge.to.id).isOptimal) {
-          const otherVertex = edge.to;
-          if (edge.cost + costIncrement < costTable.get(otherVertex.id).cost) {
-            // Update value in table
-            costTable = costTable.update(otherVertex.id, cost => {
-              cost.cost = edge.cost + costIncrement;
-              // Keep track of which edge caused this value to change
-              cost.associatedEdge = edge;
-              return cost;
-            });
+      let currentVertex = from;
+      let reachableNonOptimalVertices = Infinity;
+      while (reachableNonOptimalVertices !== 0) {
+        const vertexEdges = this.vertices.get(currentVertex).edges;
+        const costIncrement = costTable.get(currentVertex).cost;
 
-            reachableNonOptimalVertices++;
+        reachableNonOptimalVertices = 0;
+        // tslint:disable:no-any
+        // Immutable.js Set objects are incorrectly typed in its index.d.ts
+        // Use ``any`` to override type errors
+        for (const edge of vertexEdges.values() as any) {
+          if (edge !== undefined && !costTable.get(edge.to.id).isOptimal) {
+            const otherVertex = edge.to;
+            if (edge.cost + costIncrement < costTable.get(otherVertex.id).cost) {
+              // Update value in table
+              costTable = costTable.update(otherVertex.id, cost => {
+                cost.cost = edge.cost + costIncrement;
+                // Keep track of which edge caused this value to change
+                cost.associatedEdge = edge;
+                return cost;
+              });
+
+              reachableNonOptimalVertices++;
+            }
           }
+        }
+
+        // Select lowest cost
+        let minimumCalculation: number = Infinity;
+        let minimumCalculationKey: Id | undefined = undefined;
+        // tslint:disable:no-any
+        // Immutable.js Map objects are incorrectly typed in its index.d.ts
+        // Use ``any`` to override type errors
+        for (const [key, calc] of costTable.entries() as any) {
+          if (key !== undefined && calc !== undefined && !calc.isOptimal) {
+            if (calc.cost < minimumCalculation) {
+              minimumCalculation = calc.cost;
+              minimumCalculationKey = key;
+            }
+          }
+        }
+
+        // minimumCalculationKey === undefined implies reachableNonOptimalVertices === 0
+        // So, if the above is the case, we should be exiting the loop
+        if (minimumCalculationKey !== undefined) {
+          costTable = costTable.update(minimumCalculationKey, calc => {
+            if (calc === undefined) {
+              throw new Error(`minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`);
+            }
+            calc.isOptimal = true;
+            currentVertex = <Id> minimumCalculationKey;
+            return calc;
+          });
         }
       }
 
-      // Select lowest cost
-      let minimumCalculation: number = Infinity;
-      let minimumCalculationKey: Id | undefined = undefined;
-      // tslint:disable:no-any
-      // Immutable.js Map objects are incorrectly typed in its index.d.ts
-      // Use ``any`` to override type errors
-      for (const [key, calc] of costTable.entries() as any) {
-        if (key !== undefined && calc !== undefined && !calc.isOptimal) {
-          if (calc.cost < minimumCalculation) {
-            minimumCalculation = calc.cost;
-            minimumCalculationKey = key;
-          }
-        }
-      }
-
-      // minimumCalculationKey === undefined implies reachableNonOptimalVertices === 0
-      // So, if the above is the case, we should be exiting the loop
-      if (minimumCalculationKey !== undefined) {
-        costTable = costTable.update(minimumCalculationKey, calc => {
-          if (calc === undefined) {
-            throw new Error(`minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`);
-          }
-          calc.isOptimal = true;
-          currentVertex = <Id> minimumCalculationKey;
-          return calc;
-        });
-      }
+      // Store table for next time
+      this.previouslyComputedTables = this.previouslyComputedTables.set(from, costTable);
     }
 
     let route = List<Id>([to]);
-    currentVertex = to;
+    let currentVertex = to;
     while (!route.contains(from)) {
       const optimalEdge = costTable.get(currentVertex).associatedEdge;
       if (optimalEdge === undefined) {
@@ -159,6 +168,7 @@ class UndirectedWeightedGraph<Id> {
   addVertex(id: Id): void {
     const vertex = new Vertex(id);
     this.vertices = this.vertices.set(id, vertex);
+    this.previouslyComputedTables = Map();
   }
 
   /**
@@ -189,6 +199,8 @@ class UndirectedWeightedGraph<Id> {
 
     this.edges = this.edges.set(List([a, b]), edgeAB);
     this.edges = this.edges.set(List([b, a]), edgeBA);
+
+    this.previouslyComputedTables = Map();
   }
 
   hasVertex(vertex: Id) {
