@@ -31,19 +31,16 @@ class Pinky extends Ghost {
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);
     const timeMoving = performance.now() - this.timeWhenStartedMoving;
-    
+
     // initial ghost movement, moves back and forth for six seconds
     if (timeMoving < 6000) {
-        // magical numbers that make this work
-        if (timeMoving % 601 < 30) {
-            this.direction = Direction.West;
-        }
-        else if (timeMoving % 300 < 30) {
-            this.direction = Direction.East;
-        }
-    }
-    
-    else if (options[this.direction] === false) {
+      // magical numbers that make this work
+      if (timeMoving % 601 < 30) {
+        this.direction = Direction.West;
+      } else if (timeMoving % 300 < 30) {
+        this.direction = Direction.East;
+      }
+    } else if (options[this.direction] === false) {
       if (options[Direction.West] === true) {
         this.direction = Direction.West;
       } else if (options[Direction.East] === true) {
