@@ -141,7 +141,7 @@ class App extends React.Component<Props, State> {
             <ol className="scoreList">
               {this.state.finalScores.map((score, index) => (
                 <li key={index}>
-                  {score}
+                  Game {index !== undefined ? index + 1 : '?'}: {score}
                 </li>
               ))}
             </ol>
