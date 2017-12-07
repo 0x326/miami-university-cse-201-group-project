@@ -418,7 +418,7 @@ class Board extends React.Component<Props, State> {
     const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
 
     // tslint:disable:no-any
-    for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries() as any) {
+    for (const [lineNumber, lineContents] of fileContents.split(/\r?\n/).entries() as any) {
       for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
         let item: Drawable;
 
