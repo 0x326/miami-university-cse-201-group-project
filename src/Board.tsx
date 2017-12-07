@@ -339,8 +339,8 @@ class Board extends React.Component<Props, State> {
       delete this.stationaryEntities[x][y];
 
       // TODO: Calculate time until recovery
-      const timeUntilRecovery = 5000;
-      const timeUntilWarning = timeUntilRecovery - 1000;
+      const timeUntilRecovery = 5000 - this.level * 200;
+      const timeUntilWarning = timeUntilRecovery - (1000 + this.level * 200);
 
       // Clear previous timers
       if (this.ghostWarningTimer) {
