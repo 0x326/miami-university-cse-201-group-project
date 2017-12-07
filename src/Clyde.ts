@@ -2,6 +2,8 @@ import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 
+const ClydeImage = require('./Images/Clyde.png');
+
 /**
  * Course: CSE 201 A
  * Instructor: Dr. Kiper
@@ -11,8 +13,10 @@ import { Direction } from './MovableEntity';
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Clyde extends Ghost {
+  protected normalSpriteURI: string = ClydeImage;
+
   /**
-   * Creates a MovableEntity
+   * Creates an Clyde object
    *
    * @param initialLocation The starting location of this entity.
    */
@@ -23,14 +27,14 @@ class Clyde extends Ghost {
   chooseDirection(map: Drawable[][]): void {
     const options = this.getMovementOptions(map);
     if (options[this.direction] === false) {
-      if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else if (options[Direction.West] === true) {
-        this.direction = Direction.West;
+      if (options[Direction.East] === true) {
+        this.direction = Direction.East;
       } else if (options[Direction.South] === true) {
         this.direction = Direction.South;
+      } else if (options[Direction.West] === true) {
+        this.direction = Direction.West;
       } else {
-        this.direction = Direction.East;
+        this.direction = Direction.North;
       }
     }
   }

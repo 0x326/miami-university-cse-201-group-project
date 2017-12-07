@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Set } from 'immutable';
+import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
 import Blinky from './Blinky';
@@ -15,9 +16,9 @@ import KeyboardListener from './KeyboardListener';
 
 const scoringTable = {
   // TODO: Adjust scores
-  'pellet': 1,
-  'powerPellet': 2,
-  'ghost': 5
+  'pellet': 10,
+  'powerPellet': 50,
+  'ghost': 250
 };
 
 const ghostRespawningPoint = [14, 16];
@@ -44,8 +45,8 @@ interface Props {
  */
 class Board extends React.Component<Props, State> {
   // 27 X 31 board
-  static logicalColumns = 27;
-  static logicalRows = 31;
+  static logicalColumns = 28;
+  static logicalRows = 33;
 
   loadResources: Promise<undefined>;
 
@@ -55,8 +56,10 @@ class Board extends React.Component<Props, State> {
 
   timeOfLastUpdate: number = 0;
 
+  level: number = 1;
   score: number;
-  gameActive: boolean = false;
+  pelletsEaten: number = 0;
+  pelletsToEat: number = 0;
   gameFinished: boolean = false;
 
   canvasContext: CanvasRenderingContext2D;
@@ -73,16 +76,6 @@ class Board extends React.Component<Props, State> {
     };
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    // TODO: Populate board
-    for (let i = 0; i < 10; i++) {
-      this.stationaryEntities[i][5] = new Wall;
-    }
-    for (let i = 5; i < 15; i++) {
-      this.stationaryEntities[i][10] = new Pellet;
-    }
-    for (let i = 10; i < 20; i++) {
-      this.stationaryEntities[i][20] = new PowerPellet;
-    }
     this.pacMan = new PacMan([14, 22], this.keyboardListener);
     this.ghosts = [
       new Blinky([14, 19]),
@@ -90,10 +83,12 @@ class Board extends React.Component<Props, State> {
       new Pinky([14, 16]),
       new Clyde([18, 16])
     ];
+    this.resetBoard();
     this.score = 0;
   }
 
   render() {
+    const pixelRatio = window.devicePixelRatio || 1;
     if (!this.state.resourcesLoaded) {
       return (
         <div>
@@ -103,8 +98,12 @@ class Board extends React.Component<Props, State> {
     } else {
       return (
         <canvas
-          width={this.props.width}
-          height={this.props.height}
+          width={unitsCssConvert('px', this.props.width) * pixelRatio}
+          height={unitsCssConvert('px', this.props.height) * pixelRatio}
+          style={{
+            width: this.props.width,
+            height: this.props.height
+          }}
           ref={(elem) => {
             if (elem !== null) {
               let context = elem.getContext('2d');
@@ -119,9 +118,8 @@ class Board extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.gameActive = this.props.active;
-    if (this.gameActive) {
-      if (!this.state.resourcesLoaded) {
+    if (this.props.active) {
+     if (!this.state.resourcesLoaded) {
         this.loadResources = new Promise((resolve, reject) => {
           // TODO: Load resources
           resolve();
@@ -140,18 +138,69 @@ class Board extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
-    if (prevProps.active === true && !this.gameActive) {
-      this.gameActive = true;
+    if (this.props.active === true && prevProps.active !== true) {
       if (this.state.resourcesLoaded) {
         window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
       }
-    } else if (prevProps.active === false) {
-      this.gameActive = false;
     }
   }
 
   componentWillUnmount() {
-    this.gameActive = false;
+  }
+
+  resetBoard(): void {
+    this.pelletsEaten = 0;
+    this.pelletsToEat = 0;
+    // TODO: Populate board
+    for (let x = 8; x <= 20; x++) {
+      this.stationaryEntities[x][8] = new Wall;
+      this.stationaryEntities[x][10] = new Wall;
+      this.stationaryEntities[x][14] = new Wall;
+      this.stationaryEntities[x][20] = new Wall;
+    }
+    for (let y = 8; y <= 20; y++) {
+      this.stationaryEntities[8][y] = new Wall;
+      this.stationaryEntities[20][y] = new Wall;
+    }
+    delete this.stationaryEntities[9][10];
+    delete this.stationaryEntities[19][10];
+    delete this.stationaryEntities[9][14];
+    delete this.stationaryEntities[19][14];
+    for (let y = 12; y <= 13; y++) {
+      this.stationaryEntities[10][y] = new Wall;
+      this.stationaryEntities[18][y] = new Wall;
+    }
+    this.stationaryEntities[14][11] = new Wall;
+    this.stationaryEntities[14][12] = new Wall;
+    delete this.stationaryEntities[15][20];
+
+    this.stationaryEntities[9][9] = new PowerPellet;
+    this.stationaryEntities[19][9] = new PowerPellet;
+    this.stationaryEntities[9][19] = new PowerPellet;
+    this.stationaryEntities[19][19] = new PowerPellet;
+    this.pelletsToEat += 4;
+
+    for (let y = 10; y <= 18; y++) {
+      this.stationaryEntities[9][y] = new Pellet;
+      this.stationaryEntities[19][y] = new Pellet;
+      this.pelletsToEat += 2;
+    }
+    for (let x = 10; x <= 18; x++) {
+      this.stationaryEntities[x][9] = new Pellet;
+      this.stationaryEntities[x][19] = new Pellet;
+      this.pelletsToEat += 2;
+    }
+    this.moveEntitiesToStartingLocation();
+  }
+
+  moveEntitiesToStartingLocation(): void {
+    this.pacMan.logicalLocation = [14, 22];
+    this.ghosts = [
+      new Blinky([14, 19]),
+      new Inky([10, 16]),
+      new Pinky([14, 16]),
+      new Clyde([18, 16])
+    ];
   }
 
   // TODO: Add time-since-last-update-parameter
@@ -171,7 +220,11 @@ class Board extends React.Component<Props, State> {
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
-    } else if (this.gameActive) {
+    } else if (this.props.active) {
+      if (this.pelletsEaten === this.pelletsToEat) {
+        this.level++;
+        this.resetBoard();
+      }
       window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
@@ -186,9 +239,11 @@ class Board extends React.Component<Props, State> {
       throw 'pacMan is on a wall';
     } else if (stationaryItem instanceof Pellet) {
       scoreIncrement += scoringTable.pellet;
+      this.pelletsEaten++;
       delete this.stationaryEntities[x][y];
     } else if (stationaryItem instanceof PowerPellet) {
       scoreIncrement += scoringTable.powerPellet;
+      this.pelletsEaten++;
       delete this.stationaryEntities[x][y];
 
       // TODO: Calculate time until recovery
