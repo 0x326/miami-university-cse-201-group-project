@@ -25,11 +25,11 @@ const scoringTable = {
 type Location = [number, number];
 type ImmutableLocation = List<number>;
 
-const pacManStartingLocation: Location = [14, 22];
-const blinkyStartingLocation: Location = [14, 19];
-const inkyStartingLocation: Location = [10, 16];
+const pacManStartingLocation: Location = [14, 19];
+const blinkyStartingLocation: Location = [14, 13];
+const inkyStartingLocation: Location = [12, 16];
 const pinkyStaringLocation: Location = [14, 16];
-const clydeStartingLocation: Location = [18, 16];
+const clydeStartingLocation: Location = [15, 16];
 const ghostRespawningPoint: Location = [14, 16];
 
 const mazeChunks = {
