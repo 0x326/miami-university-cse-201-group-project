@@ -24,7 +24,6 @@
 .gameOver .header {
   padding-top: 79px;
   padding-bottom: 77px;
-  color: #f8f9ed;
   font-size: 60px;
   font-family: "Phosphate", sans-serif;
   text-align: center;
@@ -34,12 +33,10 @@
 .gameOver .center {
   padding-top: 50px;
   padding-bottom: 50px;
-  color: #f8f9ed;
 }
 
 .scoreList {
   list-style-type: none;
-  color: #f8f9ed;
 }
 
 ol {
