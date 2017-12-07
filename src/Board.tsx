@@ -339,6 +339,10 @@ class Board extends React.Component<Props, State> {
       const map = this.stationaryEntities;
       const [x, y] = location.toArray();
 
+      if (x < 0 || Board.logicalColumns < x || y < 0 || Board.logicalRows < y) {
+        throw new Error('location of out bounds');
+      }
+
       const leftColumn = map[x - 1];
       const middleColumn = map[x];
       const rightColumn = map[x + 1];
