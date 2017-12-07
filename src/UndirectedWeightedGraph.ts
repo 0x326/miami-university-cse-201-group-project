@@ -80,10 +80,12 @@ class UndirectedWeightedGraph<Id> {
     });
 
     let currentVertex = from;
-    while (!costTable.every(calculation => calculation !== undefined && calculation.isOptimal)) {
+    let reachableNonOptimalVertices = Infinity;
+    while (reachableNonOptimalVertices !== 0) {
       const vertexEdges = this.vertices.get(currentVertex).edges;
       const costIncrement = costTable.get(currentVertex).cost;
 
+      reachableNonOptimalVertices = 0;
       // tslint:disable:no-any
       // Immutable.js Set objects are incorrectly typed in its index.d.ts
       // Use ``any`` to override type errors
@@ -98,6 +100,8 @@ class UndirectedWeightedGraph<Id> {
               cost.associatedEdge = edge;
               return cost;
             });
+
+            reachableNonOptimalVertices++;
           }
         }
       }
@@ -117,18 +121,18 @@ class UndirectedWeightedGraph<Id> {
         }
       }
 
-      if (minimumCalculationKey === undefined) {
-        throw new Error('minimumCalculationKey === undefined');
+      // minimumCalculationKey === undefined implies reachableNonOptimalVertices === 0
+      // So, if the above is the case, we should be exiting the loop
+      if (minimumCalculationKey !== undefined) {
+        costTable = costTable.update(minimumCalculationKey, calc => {
+          if (calc === undefined) {
+            throw new Error(`minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`);
+          }
+          calc.isOptimal = true;
+          currentVertex = <Id> minimumCalculationKey;
+          return calc;
+        });
       }
-
-      costTable = costTable.update(minimumCalculationKey, calc => {
-        if (calc === undefined) {
-          throw new Error(`minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`);
-        }
-        calc.isOptimal = true;
-        currentVertex = <Id> minimumCalculationKey;
-        return calc;
-      });
     }
 
     let route = List<Id>([to]);
@@ -136,7 +140,7 @@ class UndirectedWeightedGraph<Id> {
     while (!route.contains(from)) {
       const optimalEdge = costTable.get(currentVertex).associatedEdge;
       if (optimalEdge === undefined) {
-        throw new Error('Optimal calculation does not have an associatedEdge');
+        throw new Error(`A route between from ${from} to ${to} cannot be formed`);
       }
 
       currentVertex = optimalEdge.from.id;
