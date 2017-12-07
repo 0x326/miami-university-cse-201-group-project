@@ -1,9 +1,45 @@
 .App {
   text-align: center;
+  background-color: black;
+  color: #f8f9ed;
+}
+
+.title {
+  padding-top: 75px;
+  padding-bottom: 107px;
+  font-size: 60px;
+  font-family: "Phosphate", sans-serif;
+  text-align: center;
+  background-color: #000526;
+  color: #f5ff77;
+}
+
+.gameOverBackground {
+  padding-top: 75px;
+  padding-bottom: 107px;
+  background-color: #000526;
+  text-align: center;
+}
+
+.gameOverHeader {
+  padding-top: 79px;
+  padding-bottom: 77px;
+  color: #f8f9ed; 
+  font-size: 60px;
+  font-family: "Phosphate", sans-serif;
+  text-align: center;
+  color: #f5ff77;
+}
+
+.gameOverCenter {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  color: #f8f9ed; 
 }
 
 .scoreList {
   list-style-type: none;
+  color: #f8f9ed; 
 }
 
 ol {
