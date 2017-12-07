@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Set } from 'immutable';
+import * as Request from 'request-promise-native';
 import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
@@ -19,6 +20,39 @@ const scoringTable = {
   'pellet': 10,
   'powerPellet': 50,
   'ghost': 250
+};
+
+const mazeChunks = {
+  topLeft: [
+    require('./maps/top-left-1.csv') as string,
+    require('./maps/top-left-2.csv') as string,
+    require('./maps/top-left-3.csv') as string,
+    require('./maps/top-left-4.csv') as string
+  ],
+  topRight: [
+    require('./maps/top-right-1.csv') as string,
+    require('./maps/top-right-2.csv') as string,
+    require('./maps/top-right-3.csv') as string,
+    require('./maps/top-right-4.csv') as string
+  ],
+  centerLeft: [
+    require('./maps/center-left.csv') as string
+  ],
+  centerRight: [
+    require('./maps/center-right.csv') as string
+  ],
+  bottomLeft: [
+    require('./maps/bottom-left-1.csv') as string,
+    require('./maps/bottom-left-2.csv') as string,
+    require('./maps/bottom-left-3.csv') as string,
+    require('./maps/bottom-left-4.csv') as string
+  ],
+  bottomRight: [
+    require('./maps/bottom-right-1.csv') as string,
+    require('./maps/bottom-right-2.csv') as string,
+    require('./maps/bottom-right-3.csv') as string,
+    require('./maps/bottom-right-4.csv') as string
+  ]
 };
 
 const ghostRespawningPoint = [14, 16];
@@ -121,7 +155,15 @@ class Board extends React.Component<Props, State> {
     if (this.props.active) {
      if (!this.state.resourcesLoaded) {
         this.loadResources = new Promise((resolve, reject) => {
-          // TODO: Load resources
+          for (const chunkArea in mazeChunks) {
+            if (mazeChunks.hasOwnProperty(chunkArea)) {
+              const chunkURIs: string[] = mazeChunks[chunkArea];
+              for (const chunkURI of chunkURIs) {
+                const parseChunkPromise = Request(chunkURI)
+                  .then(csv => false /* Call this.parseCSV() */);
+              }
+            }
+          }
           resolve();
         });
 
