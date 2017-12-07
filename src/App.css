@@ -14,7 +14,6 @@
   padding-bottom: 107px;
   font-size: 60px;
   font-family: "Phosphate", sans-serif;
-  text-align: center;
   background-color: #000526;
 }
 
@@ -22,14 +21,12 @@
   padding-top: 75px;
   padding-bottom: 107px;
   background-color: #000526;
-  text-align: center;
 }
 
 .gameOver .header {
   padding-top: 79px;
   padding-bottom: 77px;
   font-size: 60px;
-  text-align: center;
 }
 
 .gameOver .center {
