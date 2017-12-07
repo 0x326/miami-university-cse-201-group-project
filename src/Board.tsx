@@ -125,12 +125,12 @@ class Board extends React.Component<Props, State> {
     };
     this.keyboardListener = new KeyboardListener(document);
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    this.pacMan = new PacMan([14, 22], this.keyboardListener);
+    this.pacMan = new PacMan([14, 19], this.keyboardListener);
     this.ghosts = [
-      new Blinky([14, 19]),
-      new Inky([10, 16]),
+      new Blinky([14, 13]),
+      new Inky([12, 16]),
       new Pinky([14, 16]),
-      new Clyde([18, 16])
+      new Clyde([15, 16])
     ];
     this.score = 0;
   }
@@ -286,12 +286,12 @@ class Board extends React.Component<Props, State> {
   }
 
   moveEntitiesToStartingLocation(): void {
-    this.pacMan.logicalLocation = [14, 22];
+    this.pacMan.logicalLocation = [14, 19];
     this.ghosts = [
-      new Blinky([14, 19]),
-      new Inky([10, 16]),
+      new Blinky([14, 13]),
+      new Inky([12, 16]),
       new Pinky([14, 16]),
-      new Clyde([18, 16])
+      new Clyde([15, 16])
     ];
   }
 
