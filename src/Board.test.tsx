@@ -1,4 +1,19 @@
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import Board from './Board';
+
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <Board
+      width="11cm"
+      height="13cm"
+      active={true}
+      onScoreChange={(newScore: number) => undefined}
+      onGameFinish={() => undefined}
+    />,
+    div);
+});
 
 const sampleCsvFiles = {
 
