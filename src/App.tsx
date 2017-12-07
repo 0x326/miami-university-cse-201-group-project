@@ -94,7 +94,7 @@ class App extends React.Component<Props, State> {
       );
     } else if (this.state.gameState === GameState.GameOver) {
       return (
-        <div className="gameOver">
+        <div className="App gameOver">
           <div className="header">
             Game Over
           </div>
