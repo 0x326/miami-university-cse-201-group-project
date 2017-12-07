@@ -28,7 +28,7 @@ const ghostRespawningPoint = [14, 16];
  * A chunk is a sixth of the logical grid (2 X 3 partition)
  */
 type Chunk = Drawable[][];
-const chunkColumns = 13;
+const chunkColumns = 14;
 const chunkRows = 11;
 
 interface Props {
