@@ -61,9 +61,9 @@ class UndirectedWeightedGraph<Id> {
    */
   computeShortestRoute(from: Id, to: Id): List<Id> {
     if (!this.hasVertex(from)) {
-      throw `${from} is not in the graph`;
+      throw new Error(`${from} is not in the graph`);
     } else if (!this.hasVertex(to)) {
-      throw `${to} is not in the graph`;
+      throw new Error(`${to} is not in the graph`);
     }
 
     if (from === to) {
@@ -118,12 +118,12 @@ class UndirectedWeightedGraph<Id> {
       }
 
       if (minimumCalculationKey === undefined) {
-        throw 'minimumCalculationKey === undefined';
+        throw new Error('minimumCalculationKey === undefined');
       }
 
       costTable = costTable.update(minimumCalculationKey, calc => {
         if (calc === undefined) {
-          throw `minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`;
+          throw new Error(`minimumCalculationKey=${minimumCalculationKey} is not a key to costTable`);
         }
         calc.isOptimal = true;
         currentVertex = <Id> minimumCalculationKey;
@@ -136,7 +136,7 @@ class UndirectedWeightedGraph<Id> {
     while (!route.contains(from)) {
       const optimalEdge = costTable.get(currentVertex).associatedEdge;
       if (optimalEdge === undefined) {
-        throw 'Optimal calculation does not have an associatedEdge';
+        throw new Error('Optimal calculation does not have an associatedEdge');
       }
 
       currentVertex = optimalEdge.from.id;
@@ -167,10 +167,10 @@ class UndirectedWeightedGraph<Id> {
    */
   addEdge(a: Id, b: Id, cost: number) {
     if (!this.hasVertex(a)) {
-      throw `From vertex with id ${a} cannot be found`;
+      throw new Error(`From vertex with id ${a} cannot be found`);
     }
     if (!this.hasVertex(b)) {
-      throw `To vertex with id ${b} cannot be found`;
+      throw new Error(`To vertex with id ${b} cannot be found`);
     }
 
     const vertexA = this.vertices.get(a);

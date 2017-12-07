@@ -115,7 +115,7 @@ abstract class Ghost extends MovableEntity {
       }
       window.setTimeout(blinker, this.flashingInterval);
     } else {
-      throw new Error();
+      throw new Error('Ghost is already blinking');
     }
   }
 

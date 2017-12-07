@@ -321,7 +321,7 @@ class Board extends React.Component<Props> {
     let scoreIncrement = 0;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
-      throw 'pacMan is on a wall';
+      throw new Error('pacMan is on a wall');
     } else if (stationaryItem instanceof Pellet) {
       scoreIncrement += scoringTable.pellet;
       this.pelletsEaten++;
