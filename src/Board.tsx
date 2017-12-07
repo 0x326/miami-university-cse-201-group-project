@@ -414,9 +414,10 @@ class Board extends React.Component<Props, State> {
           bottomRight: rightColumn ? rightColumn[rowNumber - 1] : undefined,
         };
 
+        // Top-left corner
         let drawLocation: [number, number] = [
-          columnNumber * boundingBoxSize - boundingBoxSize,
-          rowNumber * boundingBoxSize - boundingBoxSize
+          columnNumber * boundingBoxSize,
+          rowNumber * boundingBoxSize
         ];
         item.draw(this.canvasContext, drawLocation, boundingBoxSize, neighbors);
       }
