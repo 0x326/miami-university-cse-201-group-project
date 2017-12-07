@@ -138,11 +138,11 @@ class App extends React.Component<Props, State> {
             <div>
               Your scores:
             </div>
-            <ul>
+            <ol className="scoreList">
               {this.state.finalScores.map((score) => (
                 <li>{score}</li>
               ))}
-            </ul>
+            </ol>
           </div>
           <div className="footer">
             <button
