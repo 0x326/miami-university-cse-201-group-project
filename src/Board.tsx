@@ -325,24 +325,10 @@ class Board extends React.Component<Props> {
    * @param fileContents The contents of the CSV map file
    */
   static parseMap(fileContents: string): Chunk {
-    // A comma-separated value file (CSV file) is a text-based
-    // representation of an Excel spreadsheet
-
-    // Between each row is the newline character
-    // Between every column of each row is a comma
-    // So, in order to parse a CSV file, we need to "split" the file contents by
-    // new-line then by comma
     const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
 
     for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries()) {
-      // TODO: Split lineContents by commas
       for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
-        // TODO: Identify what cellContent represents
-        // Note:
-        // X = Wall
-        // O = Power Pellet
-        // . = Pellet
-
         let item: Drawable;
 
         if (cellContent === '') {
@@ -362,7 +348,6 @@ class Board extends React.Component<Props> {
         } else if (lineNumber >= chunk[columnNumber].length) {
           throw new Error(`Chunk has more lines than the ${chunkRows} expected`);
         }
-        // TODO: Use columnNumber and lineNumber to place it in chunk
 
         chunk[columnNumber][lineNumber] = item;
       }
