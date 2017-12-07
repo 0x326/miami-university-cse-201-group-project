@@ -7,6 +7,11 @@
 
 .header {
   color: #f5ff77;
+  padding-bottom: 5px;
+}
+
+.footer {
+  padding-top: 50px;
 }
 
 .title {
@@ -17,21 +22,16 @@
   background-color: #000526;
 }
 
-.gameOver {
+.gameOver, .listScores {
   padding-top: 75px;
   padding-bottom: 107px;
   background-color: #000526;
 }
 
-.gameOver .header {
+.gameOver .header, .listScores .header {
   padding-top: 79px;
   padding-bottom: 77px;
   font-size: 60px;
-}
-
-.gameOver .center {
-  padding-top: 50px;
-  padding-bottom: 50px;
 }
 
 .scoreList {
