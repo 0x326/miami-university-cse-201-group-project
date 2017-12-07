@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Set } from 'immutable';
+import { Set, List } from 'immutable';
 import * as Request from 'request-promise-native';
 import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
@@ -57,6 +57,15 @@ const mazeChunks = {
 
 const ghostRespawningPoint = [14, 16];
 
+/**
+ * A portion of a a logical grid.
+ *
+ * A chunk is a sixth of the logical grid (2 X 3 partition)
+ */
+type Chunk = Drawable[][];
+const chunkColumns = 14;
+const chunkRows = 11;
+
 interface State {
   resourcesLoaded: boolean;
 }
@@ -84,6 +93,14 @@ class Board extends React.Component<Props, State> {
 
   loadResources: Promise<undefined>;
 
+  boardChunks: {
+    topLeft: List<Chunk>,
+    topRight: List<Chunk>,
+    middleLeft: List<Chunk>,
+    middleRight: List<Chunk>,
+    bottomLeft: List<Chunk>,
+    bottomRight: List<Chunk>
+  };
   stationaryEntities: Drawable[][];
   pacMan: PacMan;
   ghosts: Ghost[];
@@ -375,6 +392,43 @@ class Board extends React.Component<Props, State> {
       ghost.draw(this.canvasContext, boundingBoxSize);
     }
     this.pacMan.draw(this.canvasContext, boundingBoxSize);
+  }
+
+  /**
+   * Converts a map file (CSV format) to a Chunk representation.
+   *
+   * @param fileContents The contents of the CSV map file
+   */
+  static parseMap(fileContents: string): Chunk {
+    const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
+
+    for (const [lineNumber, lineContents] of fileContents.split(/\n/).entries()) {
+      for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
+        let item: Drawable;
+
+        if (cellContent === '') {
+          continue;
+        } else if (cellContent === 'X') {
+          item = new Wall;
+        } else if (cellContent === '.') {
+          item = new Pellet;
+        } else if (cellContent === 'O') {
+          item = new PowerPellet;
+        } else {
+          throw new Error(`Invalid map character '${cellContent}'`);
+        }
+
+        if (columnNumber >= chunk.length) {
+          throw new Error(`Chunk more columns than the ${chunkColumns} expected`);
+        } else if (lineNumber >= chunk[columnNumber].length) {
+          throw new Error(`Chunk has more lines than the ${chunkRows} expected`);
+        }
+
+        chunk[columnNumber][lineNumber] = item;
+      }
+    }
+
+    return chunk;
   }
 }
 
