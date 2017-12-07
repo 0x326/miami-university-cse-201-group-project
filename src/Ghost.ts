@@ -254,7 +254,17 @@ abstract class Ghost extends MovableEntity {
       // We still need to go to the first vertex
       this.direction = computeDirection(this.logicalLocation, [a, b]);
     }
-
+    // if a PowerPellet is eaten, the ghosts flee from PacMan
+    if (this.state === VulnerabilityState.Vulnerable || 
+        this.state === VulnerabilityState.VulnerableBlinking) {
+        
+        const options = Ghost.getMovementOptions(map, this.logicalLocation)
+        
+        // as long as there is no wall, go the opposite direction
+        if (options[-this.direction] === true) {
+            this.direction = -this.direction;
+        }
+    }
   }
 
   abstract chooseClosestPacManVertex(map: Drawable[][]): List<number>;

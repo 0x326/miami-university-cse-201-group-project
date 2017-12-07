@@ -166,7 +166,8 @@ class Board extends React.Component<Props> {
     this.stationaryEntities[19][9] = new PowerPellet;
     this.stationaryEntities[9][19] = new PowerPellet;
     this.stationaryEntities[19][19] = new PowerPellet;
-    this.pelletsToEat += 4;
+    this.stationaryEntities[9][22] = new PowerPellet;  
+    this.pelletsToEat += 5;
 
     for (let y = 10; y <= 18; y++) {
       this.stationaryEntities[9][y] = new Pellet;
