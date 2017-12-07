@@ -91,8 +91,6 @@ class Board extends React.Component<Props, State> {
   static logicalColumns = 28;
   static logicalRows = 33;
 
-  loadResources: Promise<undefined>;
-
   boardChunks = {
     topLeft: List<Chunk>(),
     topRight: List<Chunk>(),
@@ -171,7 +169,7 @@ class Board extends React.Component<Props, State> {
   componentDidMount() {
     if (this.props.active) {
      if (!this.state.resourcesLoaded) {
-        this.loadResources = new Promise((resolve, reject) => {
+        const resourcesLoadedPromise = new Promise((resolve, reject) => {
           const baseURL = window.location.origin;
           let chunkAreaPromises = [];
 
@@ -199,7 +197,7 @@ class Board extends React.Component<Props, State> {
           Promise.all(chunkAreaPromises).then(() => resolve());
         });
 
-        this.loadResources.then(() => {
+        resourcesLoadedPromise.then(() => {
           this.setState({
             resourcesLoaded: true
           });
