@@ -130,7 +130,7 @@ class App extends React.Component<Props, State> {
       );
     } else if (this.state.gameState === GameState.ListScores) {
       return (
-        <div className="App gameOver">
+        <div className="App listScores">
           <div className="header">
             Game Over
           </div>
