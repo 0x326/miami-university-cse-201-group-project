@@ -132,7 +132,6 @@ class Board extends React.Component<Props, State> {
       new Pinky([14, 16]),
       new Clyde([18, 16])
     ];
-    this.resetBoard();
     this.score = 0;
   }
 
@@ -201,6 +200,7 @@ class Board extends React.Component<Props, State> {
           this.setState({
             resourcesLoaded: true
           });
+          this.resetBoard();
           window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
         });
       } else {
