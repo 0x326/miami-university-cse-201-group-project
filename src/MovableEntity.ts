@@ -146,13 +146,14 @@ abstract class MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
+    // Top-left corner
     let drawLocation: [number, number] = [
-      this.exactLocation[0] * maxSize - maxSize,
-      this.exactLocation[1] * maxSize - maxSize
+      this.exactLocation[0] * maxSize,
+      this.exactLocation[1] * maxSize
     ];
 
     board.beginPath();
-    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
+    board.drawImage(this.sprite, drawLocation[0], drawLocation[1], maxSize, maxSize);
   }
 
   protected static findUpcomingEntity(map: Drawable[][],
