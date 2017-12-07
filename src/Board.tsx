@@ -343,20 +343,31 @@ class Board extends React.Component<Props> {
         // O = Power Pellet
         // . = Pellet
 
-        let item : Drawable = new Wall;
+        let item: Drawable;
 
-        if(cellContent === "O"){
+        if (cellContent === '') {
+          continue;
+        } else if (cellContent === 'X') {
+          item = new Wall;
+        } else if (cellContent === '.') {
+          item = new Pellet;
+        } else if (cellContent === 'O') {
           item = new PowerPellet;
+        } else {
+          throw new Error(`Invalid map character '${cellContent}'`);
         }
 
-        if(cellContent === "."){
-           item = new Pellet;
+        if (columnNumber >= chunk.length) {
+          throw new Error(`Chunk more columns than the ${chunkColumns} expected`);
+        } else if (lineNumber >= chunk[columnNumber].length) {
+          throw new Error(`Chunk has more lines than the ${chunkRows} expected`);
         }
-        
         // TODO: Use columnNumber and lineNumber to place it in chunk
+
         chunk[columnNumber][lineNumber] = item;
       }
     }
+
     return chunk;
   }
 }
