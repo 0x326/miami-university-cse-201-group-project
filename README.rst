@@ -42,7 +42,7 @@ Then, build the project::
 
 Finally, upload to a web server or start your own with Serve_::
 
-   serve ./
+   serve build/
 
 Contributing
 ------------
