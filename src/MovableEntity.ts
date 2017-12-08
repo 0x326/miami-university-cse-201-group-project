@@ -159,14 +159,14 @@ abstract class MovableEntity {
   protected static findUpcomingEntity(map: Drawable[][],
                                       logicalLocation: [number, number],
                                       direction: Direction,
-                                      criteria: (entity: Drawable) => boolean): [number, number] | undefined {
+                                      criteria: (entity: Drawable, location?: [number, number]) => boolean): [number, number] | undefined {
     const [logicalColumn, logicalRow] = logicalLocation;
 
     let columnNumber = logicalColumn;
     let rowNumber = logicalRow;
     while (0 <= columnNumber && columnNumber < map.length &&
       0 <= rowNumber && rowNumber < map[columnNumber].length) {
-      if (criteria(map[columnNumber][rowNumber])) {
+      if (criteria(map[columnNumber][rowNumber], [columnNumber, rowNumber])) {
         return [columnNumber, rowNumber];
       }
 

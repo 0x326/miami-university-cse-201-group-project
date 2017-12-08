@@ -155,26 +155,20 @@ abstract class Ghost extends MovableEntity {
 
   static findClosestVertex(map: Drawable[][], logicalLocation: [number, number], preferredDirections= Seq<Direction>([])) {
     const options = Ghost.getMovementOptions(map, logicalLocation);
-    // tslint:disable:no-any
-    const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
-    const numberOfOptions = optionsArray.length;
 
     let closestVertexLocation = logicalLocation;
     // We are not a vertex if we only have two ways to go (ex: O--*--O)
-    const isEdge = numberOfOptions === 2 && (
-      (options[Direction.North] === true && options[Direction.South] === true) ||
-      (options[Direction.East] === true && options[Direction.West] === true));
-    if (isEdge) {
+    if (Ghost.isEdge(map, logicalLocation)) {
       const [x, y] = logicalLocation;
       let minimumDistance: number = Infinity;
 
       const updateMinimumDistance = (direction: Direction) => {
-        const nextWall = Ghost.findUpcomingEntity(map, logicalLocation, direction,
-                                                  entity => entity instanceof Wall);
-        if (nextWall === undefined) {
+        const nextVertex = Ghost.findUpcomingEntity(map, logicalLocation, direction,
+                                                   (entity, location) => location !== undefined && !Ghost.isEdge(map, location));
+        if (nextVertex === undefined) {
           return;
         }
-        const [a, b] = movePoint(nextWall, -direction);
+        const [a, b] = nextVertex;
         const distance = computeOrthogonalDistance([a, b], [x, y]);
         if (distance !== undefined && distance < minimumDistance) {
           closestVertexLocation = [a, b];
@@ -258,6 +252,18 @@ abstract class Ghost extends MovableEntity {
   }
 
   abstract chooseClosestPacManVertex(map: Drawable[][]): List<number>;
+
+  private static isEdge(map: Drawable[][], logicalLocation: [number, number]) {
+    const options = Ghost.getMovementOptions(map, logicalLocation);
+    // tslint:disable:no-any
+    const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
+    const numberOfOptions = optionsArray.length;
+
+    // We are not a vertex if we only have two ways to go (ex: O--*--O)
+    return numberOfOptions === 2 && (
+      (options[Direction.North] === true && options[Direction.South] === true) ||
+      (options[Direction.East] === true && options[Direction.West] === true));
+  }
 
 }
 
