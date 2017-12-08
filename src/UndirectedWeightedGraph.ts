@@ -105,9 +105,9 @@ class UndirectedWeightedGraph<Id> {
                 cost.associatedEdge = edge;
                 return cost;
               });
-
-              reachableNonOptimalVertices++;
             }
+
+            reachableNonOptimalVertices++;
           }
         }
 
