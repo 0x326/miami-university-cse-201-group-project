@@ -34,8 +34,8 @@ class App extends React.Component<Props, State> {
   render() {
     if (this.state.gameState === GameState.TitleScreen) {
       return (
-        <div className="App">
-          <h1>
+        <div className="App title">
+          <h1 className="header">
             Pac-Man
           </h1>
           <div>
@@ -94,13 +94,13 @@ class App extends React.Component<Props, State> {
       );
     } else if (this.state.gameState === GameState.GameOver) {
       return (
-        <div className="App">
+        <div className="App gameOver">
           <div className="header">
             Game Over
           </div>
           <div className="center">
             <div>
-              Your score is {this.state.score}
+              Your score is {this.state.score}.
             </div>
             <div>
               Play Again?
@@ -130,7 +130,7 @@ class App extends React.Component<Props, State> {
       );
     } else if (this.state.gameState === GameState.ListScores) {
       return (
-        <div className="App">
+        <div className="App listScores">
           <div className="header">
             Game Over
           </div>
