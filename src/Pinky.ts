@@ -44,7 +44,6 @@ class Pinky extends Ghost {
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = Pinky.getMovementOptions(map, this.logicalLocation);
     const timeMoving = performance.now() - this.timeWhenStartedMoving;
     const waitingTime = 6000;
 
@@ -56,16 +55,8 @@ class Pinky extends Ghost {
       } else {
         this.direction = Direction.East;
       }
-    } else if (options[this.direction] === false) {
-      if (options[Direction.West] === true) {
-        this.direction = Direction.West;
-      } else if (options[Direction.East] === true) {
-        this.direction = Direction.East;
-      } else if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else {
-        this.direction = Direction.South;
-      }
+    } else {
+      super.chooseDirection(map);
     }
   }
 }
