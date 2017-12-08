@@ -68,10 +68,7 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
       // 2: No - it can be removed
       // 3: Yes
       // 4: Yes
-      const isEdge = movementOptions.valueSeq().filter(val => val === true).count() === 2 && (
-        (movementOptions.get(north) === true && movementOptions.get(south) === true) ||
-        (movementOptions.get(east) === true && movementOptions.get(west) === true));
-      if (!isEdge) {
+      if (this.isEdge([x, y])) {
         vertices = vertices.add(location);
 
         const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
