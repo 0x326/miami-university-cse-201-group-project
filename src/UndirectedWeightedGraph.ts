@@ -166,6 +166,11 @@ class UndirectedWeightedGraph<Id> {
    * @param id An id for the vertex
    */
   addVertex(id: Id): void {
+    if (this.hasVertex(id)) {
+      // Do nothing
+      return;
+    }
+
     const vertex = new Vertex(id);
     this.vertices = this.vertices.set(id, vertex);
     this.previouslyComputedTables = Map();
@@ -189,6 +194,15 @@ class UndirectedWeightedGraph<Id> {
 
     const vertexA = this.vertices.get(a);
     const vertexB = this.vertices.get(b);
+
+    if (this.edges.keySeq().contains(List([a, b]))) {
+      // Vertices are already connected via an edge
+      // const edgeAB = this.edges.get(List([a, b]));
+      // const edgeBA = this.edges.get(List([b, a]));
+
+      // Do nothing
+      return;
+    }
 
     // Add edge to vertexA
     const edgeAB = new DirectedEdge(vertexA, vertexB, cost);
