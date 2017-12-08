@@ -1,3 +1,4 @@
+import { Map } from 'immutable';
 import MovableEntity, { Direction } from './MovableEntity';
 import Drawable from './Drawable';
 import KeyboardListener from './KeyboardListener';
@@ -40,6 +41,8 @@ class PacMan extends MovableEntity {
     'd': Direction.East
   };
 
+  private keyboard: KeyboardListener;
+  private keyListeners: Map<string, (isPressed: boolean) => void> = Map();
   // used for determining what animation sprite to display
   private timeWhenStartedMoving: number = performance.now();
 
@@ -50,9 +53,9 @@ class PacMan extends MovableEntity {
    */
   constructor(initialLocation: [number, number], keyboardListener: KeyboardListener) {
     super(initialLocation);
-    this.direction = Direction.North;
+    this.keyboard = keyboardListener;
     for (let key in PacMan.KeyMap) {
-      keyboardListener.registerKey(key, (isPressed: boolean) => {
+      this.keyListeners = this.keyListeners.set(key, (isPressed: boolean) => {
         if (PacMan.KeyMap[key] === this.direction) {
           this.stopped = !isPressed;
         } else if (isPressed) {
@@ -95,6 +98,20 @@ class PacMan extends MovableEntity {
   chooseDirection(map: Drawable[][]): void {
     // Do nothing
     // Direction is decided by keyboard
+  }
+
+  mount(): void {
+    // tslint:disable:no-any
+    for (const [key, callback] of this.keyListeners.entries() as any) {
+      this.keyboard.registerKey(key, callback);
+    }
+  }
+
+  unmount(): void {
+    // tslint:disable:no-any
+    for (const key of this.keyListeners.keys() as any) {
+      this.keyboard.unregisterKey(key);
+    }
   }
 }
 

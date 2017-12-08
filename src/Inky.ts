@@ -1,6 +1,8 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
-import { Direction } from './MovableEntity';
+import { Direction, directionSeq } from './MovableEntity';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
 
 const InkyImage = require('./Images/Inky.png');
 
@@ -13,6 +15,9 @@ const InkyImage = require('./Images/Inky.png');
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
 class Inky extends Ghost {
+
+  private timer: number;
+  private isRunningAway = false;
   protected normalSpriteURI: string = InkyImage;
   // used for telling the ghost when to exit the spawn box
   private timeWhenStartedMoving: number = performance.now();
@@ -22,14 +27,32 @@ class Inky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
-    super(initialLocation);
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: MapGraph) {
+    super(initialLocation, pacManLocation, pacManDirection, boardGraph);
+  }
+
+  mount(): void {
     this.timeWhenStartedMoving = performance.now();
-    this.direction = Direction.West;
+    const stateDuration = 3000;
+    this.timer = window.setInterval(() => {
+      this.isRunningAway = !this.isRunningAway;
+    },                              stateDuration);
+  }
+
+  unmount(): void {
+    window.clearInterval(this.timer);
+  }
+
+  chooseClosestPacManVertex() {
+    return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = this.getMovementOptions(map);
+    super.chooseDirection(map);
+
     const timeMoving = performance.now() - this.timeWhenStartedMoving;
     const waitingTime = 3000;
 
@@ -41,16 +64,12 @@ class Inky extends Ghost {
       } else {
         this.direction = Direction.East;
       }
-    } else if (options[this.direction] === false) {
-      if (options[Direction.South] === true) {
-        this.direction = Direction.South;
-      } else if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else if (options[Direction.East] === true) {
-        this.direction = Direction.East;
-      } else {
-        this.direction = Direction.West;
-      }
+    } else if (this.isRunningAway) {
+      // Choose any other valid option than the one selected
+      const options = Inky.getMovementOptions(map, this.logicalLocation);
+      this.direction = directionSeq.filter(direction => direction !== this.direction)
+        .filter(direction => direction !== undefined && options[direction] === true)
+        .first();
     }
   }
 }

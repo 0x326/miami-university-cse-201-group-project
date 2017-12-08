@@ -1,6 +1,7 @@
 import Ghost from './Ghost';
-import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
 
 const BlinkyImage = require('./Images/Blinky.png');
 
@@ -20,23 +21,23 @@ class Blinky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
-    super(initialLocation);
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: MapGraph) {
+    super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
-  chooseDirection(map: Drawable[][]): void {
-    const options = this.getMovementOptions(map);
-    if (options[this.direction] === false) {
-      if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else if (options[Direction.West] === true) {
-        this.direction = Direction.West;
-      } else if (options[Direction.South] === true) {
-        this.direction = Direction.South;
-      } else {
-        this.direction = Direction.East;
-      }
-    }
+  mount(): void {
+    // Nothing to mount
+  }
+
+  unmount(): void {
+    // Nothing to unmount
+  }
+
+  chooseClosestPacManVertex() {
+    return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }
 
