@@ -112,7 +112,7 @@ abstract class Ghost extends MovableEntity {
           this.isFlashingWhite = !this.isFlashingWhite;
           window.setTimeout(blinker, this.flashingInterval);
         }
-      }
+      };
       window.setTimeout(blinker, this.flashingInterval);
     } else {
       throw new Error();
@@ -259,16 +259,16 @@ abstract class Ghost extends MovableEntity {
       this.direction = computeDirection(this.logicalLocation, [a, b]);
     }
     // if a PowerPellet is eaten, the ghosts flee from PacMan
-    if (this.state === VulnerabilityState.Vulnerable || 
+    if (this.state === VulnerabilityState.Vulnerable ||
         this.state === VulnerabilityState.VulnerableBlinking) {
-        
+
       this.speed = slowSpeed;
-        const options = Ghost.getMovementOptions(map, this.logicalLocation)
-        
-        // as long as there is no wall, go the opposite direction
-        if (options[-this.direction] === true) {
-            this.direction = -this.direction;
-        }
+      const options = Ghost.getMovementOptions(map, this.logicalLocation);
+
+      // as long as there is no wall, go the opposite direction
+      if (options[-this.direction] === true) {
+        this.direction = -this.direction;
+      }
     }
   }
 

@@ -166,7 +166,7 @@ class Board extends React.Component<Props> {
     this.stationaryEntities[19][9] = new PowerPellet;
     this.stationaryEntities[9][19] = new PowerPellet;
     this.stationaryEntities[19][19] = new PowerPellet;
-    this.stationaryEntities[9][22] = new PowerPellet;  
+    this.stationaryEntities[9][22] = new PowerPellet;
     this.pelletsToEat += 5;
 
     for (let y = 10; y <= 18; y++) {
@@ -239,12 +239,12 @@ class Board extends React.Component<Props> {
         vertices = vertices.add(location);
 
         const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
-          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS())
+          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS());
           if (orthogonalDistance !== undefined) {
             const cost = Math.abs(orthogonalDistance);
             edges = edges.add([otherLocation, location, cost]);
           }
-        }
+        };
 
         if (lastKnownVertex !== undefined) {
           // Add lastKnown in the case we came here via a prolonged edge

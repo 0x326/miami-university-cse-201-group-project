@@ -56,7 +56,7 @@ class Clyde extends Ghost {
       } else {
         this.timer = window.setTimeout(makeAbnormal, 500);
       }
-    }
+    };
 
     makeNormal();
   }
