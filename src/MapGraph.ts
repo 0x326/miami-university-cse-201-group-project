@@ -26,7 +26,7 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     });
   }
 
-  parseGraph(startingLocation: List<number>): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
+  private parseGraph(startingLocation: List<number>): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
     let vertices = Set<ImmutableLocation>();
     let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
 
