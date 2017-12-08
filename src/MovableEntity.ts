@@ -1,5 +1,8 @@
 import Drawable from './Drawable';
 import Wall from './Wall';
+import { Seq } from 'immutable';
+import { movePoint } from './lib';
+import MazeMapGraph from './MapGraph';
 
 /**
  * Course: CSE 201 A
@@ -11,7 +14,7 @@ import Wall from './Wall';
  */
 abstract class MovableEntity {
 
-  logicalLocation: [number, number];
+  exactLocation: [number, number];
   direction: Direction;
   stopped: boolean = true;
 
@@ -38,17 +41,35 @@ abstract class MovableEntity {
    * @param direction The initial direction that this entity is facing
    */
   constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
-    this.logicalLocation = initialLocation;
+    this.exactLocation = <[number, number]> initialLocation.slice();
     this.direction = direction;
   }
+
+  /**
+   * Sets up any timers that may be used by the object.
+   *
+   * Analogous to React's `componentDidMount()`.
+   */
+  abstract mount(): void;
+
+  /**
+   * Tears down any timers that were setup in `mount()`
+   *
+   * Analogous to React's `componentWillUnmount()`.
+   */
+  abstract unmount(): void;
 
   /**
    * Gets the current logical location of this MovableEntity.
    *
    * @return The current location
    */
-  getLogicalLocation(): [number, number] {
-    return <[number, number]> this.logicalLocation.map(Math.round);
+  get logicalLocation() {
+    return <[number, number]> this.exactLocation.map(Math.round);
+  }
+  set logicalLocation(location: [number, number]) {
+    this.exactLocation[0] = location[0];
+    this.exactLocation[1] = location[1];
   }
 
   abstract chooseDirection(map: Drawable[][]): void;
@@ -68,9 +89,18 @@ abstract class MovableEntity {
 
     this.chooseDirection(map);
 
-    const [upcomingWallColumn, upcomingWallRow] = this.direction !== this.lastDirection ?
-                                                  this.findUpcomingWall(map) :
-                                                  this.lastUpcomingWall;
+    let upcomingWall: [number, number] | undefined;
+    if (this.direction !== this.lastDirection) {
+      upcomingWall = MazeMapGraph.findUpcomingEntity(map, this.logicalLocation, this.direction,
+                                                     entity => entity instanceof Wall);
+      if (upcomingWall === undefined) {
+        upcomingWall = [Infinity, Infinity];
+      }
+    } else {
+      upcomingWall = this.lastUpcomingWall;
+    }
+
+    const [upcomingWallColumn, upcomingWallRow] = upcomingWall;
 
     // Remember result of search for next time
     this.lastUpcomingWall = [upcomingWallColumn, upcomingWallRow];
@@ -78,9 +108,9 @@ abstract class MovableEntity {
 
     let maximumAllowableIncrement;
     if (this.direction === Direction.North || this.direction === Direction.South) {
-      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.logicalLocation[1]);
+      maximumAllowableIncrement = Math.abs(upcomingWallRow - this.exactLocation[1]);
     } else {
-      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.logicalLocation[0]);
+      maximumAllowableIncrement = Math.abs(upcomingWallColumn - this.exactLocation[0]);
     }
     // Allow the entity to make full use of their logical coordinate
     // (Might permit a slight visual overlap if items are drawn edge-to-edge)
@@ -89,23 +119,14 @@ abstract class MovableEntity {
 
     const increment = Math.min(this.speed * timePassed / 1000, maximumAllowableIncrement);
 
-    if (this.direction === Direction.North) {
-      this.logicalLocation[1] -= increment;
-    } else if (this.direction === Direction.South) {
-      this.logicalLocation[1] += increment;
-    } else if (this.direction === Direction.West) {
-      this.logicalLocation[0] -= increment;
-    } else {
-      this.logicalLocation[0] += increment;
-    }
+    this.exactLocation = movePoint(this.exactLocation, this.direction, increment);
   }
 
   /**
    * Checks to see which adjacent cells this entity can legally move
    * @param map The grid of stationary entities
    */
-  getMovementOptions(map: Drawable[][]) {
-    const logicalLocation = this.getLogicalLocation();
+  static getMovementOptions(map: Drawable[][], logicalLocation: [number, number]) {
     const leftColumn = map[logicalLocation[0] - 1];
     const middleColumn = map[logicalLocation[0]];
     const rightColumn = map[logicalLocation[0] + 1];
@@ -128,47 +149,24 @@ abstract class MovableEntity {
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     // Top-left corner
     let drawLocation: [number, number] = [
-      this.logicalLocation[0] * maxSize,
-      this.logicalLocation[1] * maxSize
+      this.exactLocation[0] * maxSize,
+      this.exactLocation[1] * maxSize
     ];
 
     board.beginPath();
     board.drawImage(this.sprite, drawLocation[0], drawLocation[1], maxSize, maxSize);
   }
 
-  private findUpcomingWall(map: Drawable[][]): [number, number] {
-    const [logicalColumn, logicalRow] = this.getLogicalLocation();
-
-    let columnNumber = logicalColumn;
-    let rowNumber = logicalRow;
-    while (0 <= columnNumber && columnNumber < map.length &&
-      0 <= rowNumber && rowNumber < map[columnNumber].length) {
-      if (map[columnNumber][rowNumber] instanceof Wall) {
-        break;
-      }
-
-      if (this.direction === Direction.North) {
-        rowNumber--;
-      } else if (this.direction === Direction.South) {
-        rowNumber++;
-      } else if (this.direction === Direction.East) {
-        columnNumber++;
-      } else {
-        columnNumber--;
-      }
-    }
-
-    return [columnNumber, rowNumber];
-  }
-
 }
 
 enum Direction {
-  North,
-  South,
-  East,
-  West
+  North = -2,
+  South = 2,
+  East = 1,
+  West = -1
 }
 
+const directionSeq = Seq([Direction.North, Direction.South, Direction.East, Direction.West]);
+
 export default MovableEntity;
-export { Direction };
+export { Direction, directionSeq };

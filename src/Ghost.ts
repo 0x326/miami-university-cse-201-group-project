@@ -1,4 +1,10 @@
-import MovableEntity from './MovableEntity';
+import { List } from 'immutable';
+import MovableEntity, { Direction } from './MovableEntity';
+import Drawable from './Drawable';
+import MapGraph from './MapGraph';
+import Wall from './Wall';
+import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope, movePoint, subtractPoints } from './lib';
+import MazeMapGraph from './MapGraph';
 
 const VulnerableImg = require('./Images/Vulnerable.png');
 const BlinkingImg = require('./Images/Blinking.png');
@@ -13,6 +19,14 @@ const BlinkingImg = require('./Images/Blinking.png');
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
+  private _pacManLocation: [number, number];
+  pacManDirection: Direction;
+  boardGraph: MapGraph;
+
+  /**
+   * Used to enforce strict adherance to the grid
+   */
+  private lastLogicalLocation: [number, number];
   /**
    * Time to switch from blue to white (or vice versa) in milliseconds.
    */
@@ -26,10 +40,44 @@ abstract class Ghost extends MovableEntity {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: MapGraph) {
     super(initialLocation);
+    this.lastLogicalLocation = initialLocation;
+    this._pacManLocation = <[number, number]> pacManLocation.slice();
+    this.pacManDirection = pacManDirection;
+    this.boardGraph = boardGraph;
     this.stopped = false;
     this.speed = 2.3;
+  }
+
+  get logicalLocation() {
+    const locationDivergence = subtractPoints(this.exactLocation, this.lastLogicalLocation);
+    const distance = Math.max(...locationDivergence.map(val => Math.abs(val)));
+
+    if (distance >= 1) {
+      // Update this.lastLogicalLocation
+      const directionOfChange = computeDirection(this.lastLogicalLocation, this.exactLocation);
+      this.lastLogicalLocation = movePoint(this.lastLogicalLocation,
+                                           directionOfChange,
+                                           Math.floor(distance));
+    }
+
+    return this.lastLogicalLocation;
+  }
+
+  set logicalLocation(location: [number, number]) {
+    super.logicalLocation = location;
+  }
+
+  get pacManLocation() {
+    return this._pacManLocation;
+  }
+  set pacManLocation(location: [number, number]) {
+    this._pacManLocation[0] = location[0];
+    this._pacManLocation[1] = location[1];
   }
 
   /**
@@ -68,7 +116,7 @@ abstract class Ghost extends MovableEntity {
       };
       window.setTimeout(blinker, this.flashingInterval);
     } else {
-      throw new Error();
+      throw new Error('Ghost is already blinking');
     }
   }
 
@@ -105,6 +153,59 @@ abstract class Ghost extends MovableEntity {
     }
     super.draw(board, maxSize);
   }
+
+  chooseDirection(map: Drawable[][]): void {
+    const options = Ghost.getMovementOptions(map, this.logicalLocation);
+
+    // Check to see whether Pac-Man is within sight
+    const pacManLineSlope = slope(this._pacManLocation, this.logicalLocation);
+    if (pacManLineSlope === 0 || pacManLineSlope === Infinity) {
+      const direction = computeDirection(this.logicalLocation, this._pacManLocation);
+
+      if (options[direction] === true) {
+        const upcomingEntity = MazeMapGraph.findUpcomingEntity(map, this.logicalLocation, direction,
+                                                               entity => entity instanceof Wall);
+        if (upcomingEntity !== undefined) {
+          const [a, b] = upcomingEntity;
+
+          // computeOrthogonalDistance should never return undefined in our case
+          // (if it does, it is an bug). For type safety, default values are given that,
+          // if used, should make the if expression false
+          const distanceToWall = Math.abs(computeOrthogonalDistance([a, b], this.logicalLocation) || 0);
+          const distanceToPacMan = Math.abs(computeOrthogonalDistance(this._pacManLocation, this.logicalLocation) || Infinity);
+
+          if (distanceToPacMan < distanceToWall) {
+            // Pac-Man is within sight! Follow him
+            this.direction = direction;
+            return;
+          }
+        }
+      }
+    }
+
+    // Compute route
+    const ghostVertex = this.boardGraph.findClosestVertex(this.logicalLocation);
+    const pacManVertex = this.chooseClosestPacManVertex();
+    const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
+
+    // Determine whether we are along the first edge (between routeVertices[0] and routeVertices[1])
+    const [firstVertex, secondVertex] = routeVertices.slice(0, 2).toArray();
+    const [a, b] = firstVertex.toArray();
+
+    if (secondVertex !== undefined && isPointOnLine(this.logicalLocation,
+                                                    secondVertex.toJS(),
+                                                    [a, b])) {
+      // Since the second vertex is in sight, we can focus on it
+      this.direction = computeDirection(this.logicalLocation, secondVertex.toJS());
+    } else {
+      // We still need to go to the first vertex
+      this.direction = computeDirection(this.logicalLocation, [a, b]);
+    }
+
+  }
+
+  abstract chooseClosestPacManVertex(): List<number>;
+
 }
 
 enum VulnerabilityState {

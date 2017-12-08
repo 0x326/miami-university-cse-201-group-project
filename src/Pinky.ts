@@ -1,6 +1,8 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
 
 const PinkyImage = require('./Images/Pinky.png');
 
@@ -22,14 +24,26 @@ class Pinky extends Ghost {
    *
    * @param initialLocation The starting location of this entity.
    */
-  constructor(initialLocation: [number, number]) {
-    super(initialLocation);
+  constructor(initialLocation: [number, number],
+              pacManLocation: [number, number],
+              pacManDirection: Direction,
+              boardGraph: MapGraph) {
+    super(initialLocation, pacManLocation, pacManDirection, boardGraph);
+  }
+
+  mount(): void {
     this.timeWhenStartedMoving = performance.now();
-    this.direction = Direction.West;
+  }
+
+  unmount(): void {
+    // Nothing to unmount
+  }
+
+  chooseClosestPacManVertex() {
+    return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([this.pacManDirection]));
   }
 
   chooseDirection(map: Drawable[][]): void {
-    const options = this.getMovementOptions(map);
     const timeMoving = performance.now() - this.timeWhenStartedMoving;
     const waitingTime = 6000;
 
@@ -41,16 +55,8 @@ class Pinky extends Ghost {
       } else {
         this.direction = Direction.East;
       }
-    } else if (options[this.direction] === false) {
-      if (options[Direction.West] === true) {
-        this.direction = Direction.West;
-      } else if (options[Direction.East] === true) {
-        this.direction = Direction.East;
-      } else if (options[Direction.North] === true) {
-        this.direction = Direction.North;
-      } else {
-        this.direction = Direction.South;
-      }
+    } else {
+      super.chooseDirection(map);
     }
   }
 }
