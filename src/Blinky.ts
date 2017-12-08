@@ -1,8 +1,9 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
-import { Seq, List } from 'immutable';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
+import MazeMapGraph from './MapGraph';
 
 const BlinkyImage = require('./Images/Blinky.png');
 
@@ -25,7 +26,7 @@ class Blinky extends Ghost {
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],
               pacManDirection: Direction,
-              boardGraph: UndirectedWeightedGraph<List<number>>) {
+              boardGraph: MapGraph) {
     super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
@@ -38,7 +39,7 @@ class Blinky extends Ghost {
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
-    return Blinky.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
+    return MazeMapGraph.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }
 

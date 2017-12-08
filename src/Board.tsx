@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Set, List, Map, Stack } from 'immutable';
+import { Set, List } from 'immutable';
 import * as Request from 'request-promise-native';
 import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
@@ -12,9 +12,9 @@ import Drawable, { Neighbors } from './Drawable';
 import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
-import { createMultiDimensionalArray, computeOrthogonalDistance } from './lib';
+import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import MazeMapGraph from './MapGraph';
 
 const scoringTable = {
   'pellet': 10,
@@ -23,7 +23,6 @@ const scoringTable = {
 };
 
 type Location = [number, number];
-type ImmutableLocation = List<number>;
 
 const pacManStartingLocation: Location = [14, 19];
 const blinkyStartingLocation: Location = [14, 13];
@@ -108,7 +107,7 @@ class Board extends React.Component<Props, State> {
     bottomRight: List<Chunk>()
   };
   stationaryEntities: Drawable[][];
-  mapGraph: UndirectedWeightedGraph<List<number>>;
+  mapGraph: MazeMapGraph;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -302,113 +301,12 @@ class Board extends React.Component<Props, State> {
       }
     }
 
-    // (window as any).a = this.parseGraph().map(val => val.toJS());
-    const [mapVertices, mapEdges] = this.parseGraph();
-    const mapGraph = new UndirectedWeightedGraph<List<number>>();
-    mapVertices.valueSeq().forEach(vertex => vertex !== undefined &&
-      mapGraph.addVertex(vertex));
-    mapEdges.valueSeq().forEach(tuple => {
-      if (tuple !== undefined) {
-        const [vertexA, vertexB, cost] = tuple;
-        mapGraph.addEdge(vertexA, vertexB, cost);
-      }
-    });
-    this.mapGraph = mapGraph;
-
+    this.mapGraph = new MazeMapGraph(this.stationaryEntities, List(pacManStartingLocation));
     this.moveEntitiesToStartingLocation();
 
     for (const ghost of this.ghosts) {
       ghost.boardGraph = this.mapGraph;
     }
-  }
-
-  parseGraph(): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
-    let vertices = Set<ImmutableLocation>();
-    let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
-
-    // In the case of a prolonged edge (such as a long tunnel),
-    // keeps track of the last seen vertex so that when we see another vertex,
-    // we remember which vertex directed us to it.
-    let lastKnownVertex: ImmutableLocation | undefined = undefined;
-
-    // To save on computational time, only visit each location once
-    let visitedLocations = Stack<ImmutableLocation>();
-
-    const parseGraph = (location: ImmutableLocation): void => {
-
-      const map = this.stationaryEntities;
-      const [x, y] = location.toArray();
-
-      if (x < 0 || Board.logicalColumns < x || y < 0 || Board.logicalRows < y) {
-        throw new Error('location of out bounds');
-      }
-
-      const leftColumn = map[x - 1];
-      const middleColumn = map[x];
-      const rightColumn = map[x + 1];
-      const north = List([x, y - 1]);
-      const west = List([x - 1, y]);
-      const east = List([x + 1, y]);
-      const south = List([x, y + 1]);
-
-      const movementOptions = Map<ImmutableLocation, boolean>([
-        [north, middleColumn && !(middleColumn[y - 1] instanceof Wall)],
-        [west, leftColumn && !(leftColumn[y] instanceof Wall)],
-        [east, rightColumn && !(rightColumn[y] instanceof Wall)],
-        [south, middleColumn && !(middleColumn[y + 1] instanceof Wall)],
-      ]);
-
-      // Should this location be represented as a vertex in the graph?
-      // 0: Yes (but if this happens, it is likely an error)
-      // 1: Yes
-      // 2: No - it can be removed
-      // 3: Yes
-      // 4: Yes
-      const isEdge = movementOptions.valueSeq().filter(val => val === true).count() === 2 && (
-        (movementOptions.get(north) === true && movementOptions.get(south) === true) ||
-        (movementOptions.get(east) === true && movementOptions.get(west) === true));
-      if (!isEdge) {
-        vertices = vertices.add(location);
-
-        const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
-          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS())
-          if (orthogonalDistance !== undefined) {
-            const cost = Math.abs(orthogonalDistance);
-            edges = edges.add([otherLocation, location, cost]);
-          }
-        }
-
-        if (lastKnownVertex !== undefined) {
-          // Add lastKnown in the case we came here via a prolonged edge
-          // Note: if we happened to come from an adajacent vertex, this will be redundant
-          addEdgeFromCurrentLocation(lastKnownVertex);
-        }
-
-        // Link adajacent vertices with an edge
-        // tslint:disable:no-any
-        for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-          if (isOpen === true && vertices.contains(adajacentLocation)) {
-            addEdgeFromCurrentLocation(adajacentLocation);
-          }
-        }
-
-        // Update lastKnownVertex for the next time we encounter a prolonged edge
-        lastKnownVertex = location;
-      }
-
-      // tslint:disable:no-any
-      for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-        if (isOpen && !visitedLocations.contains(adajacentLocation)) {
-          visitedLocations = visitedLocations.push(adajacentLocation);
-          parseGraph(adajacentLocation);
-        }
-      }
-
-      return;
-    };
-
-    parseGraph(List(pacManStartingLocation));
-    return [vertices, edges];
   }
 
   moveEntitiesToStartingLocation(): void {

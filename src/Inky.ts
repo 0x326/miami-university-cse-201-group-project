@@ -1,8 +1,9 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction, directionSeq } from './MovableEntity';
-import { Seq, List } from 'immutable';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
+import MazeMapGraph from './MapGraph';
 
 const InkyImage = require('./Images/Inky.png');
 
@@ -30,7 +31,7 @@ class Inky extends Ghost {
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],
               pacManDirection: Direction,
-              boardGraph: UndirectedWeightedGraph<List<number>>) {
+              boardGraph: MapGraph) {
     super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
@@ -47,7 +48,7 @@ class Inky extends Ghost {
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
-    return Inky.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
+    return MazeMapGraph.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
 
   chooseDirection(map: Drawable[][]): void {

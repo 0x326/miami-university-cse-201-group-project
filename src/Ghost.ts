@@ -1,9 +1,10 @@
-import { List, Seq } from 'immutable';
-import MovableEntity, { Direction, directionSeq } from './MovableEntity';
+import { List } from 'immutable';
+import MovableEntity, { Direction } from './MovableEntity';
 import Drawable from './Drawable';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import MapGraph from './MapGraph';
 import Wall from './Wall';
 import { computeOrthogonalDistance, computeDirection, isPointOnLine, slope, movePoint, subtractPoints } from './lib';
+import MazeMapGraph from './MapGraph';
 
 const VulnerableImg = require('./Images/Vulnerable.png');
 const BlinkingImg = require('./Images/Blinking.png');
@@ -20,7 +21,7 @@ abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
   private _pacManLocation: [number, number];
   pacManDirection: Direction;
-  boardGraph: UndirectedWeightedGraph<List<number>>;
+  boardGraph: MapGraph;
 
   /**
    * Used to enforce strict adherance to the grid
@@ -42,7 +43,7 @@ abstract class Ghost extends MovableEntity {
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],
               pacManDirection: Direction,
-              boardGraph: UndirectedWeightedGraph<List<number>>) {
+              boardGraph: MapGraph) {
     super(initialLocation);
     this.lastLogicalLocation = initialLocation;
     this._pacManLocation = <[number, number]> pacManLocation.slice();
@@ -153,54 +154,6 @@ abstract class Ghost extends MovableEntity {
     super.draw(board, maxSize);
   }
 
-  static findClosestVertex(map: Drawable[][], logicalLocation: [number, number], preferredDirections= Seq<Direction>([])) {
-    const options = Ghost.getMovementOptions(map, logicalLocation);
-
-    let closestVertexLocation = logicalLocation;
-    // We are not a vertex if we only have two ways to go (ex: O--*--O)
-    if (Ghost.isEdge(map, logicalLocation)) {
-      const [x, y] = logicalLocation;
-      let minimumDistance: number = Infinity;
-
-      const updateMinimumDistance = (direction: Direction) => {
-        const nextVertex = Ghost.findUpcomingEntity(map, logicalLocation, direction,
-                                                   (entity, location) => location !== undefined && !Ghost.isEdge(map, location));
-        if (nextVertex === undefined) {
-          return;
-        }
-        const [a, b] = nextVertex;
-        const distance = computeOrthogonalDistance([a, b], [x, y]);
-        if (distance !== undefined && distance < minimumDistance) {
-          closestVertexLocation = [a, b];
-          minimumDistance = distance;
-        }
-      };
-
-      if (!preferredDirections.isEmpty()) {
-        // Give preferance to user-specified directions
-        preferredDirections.forEach(direction => {
-          if (direction !== undefined && options[direction] === true) {
-            updateMinimumDistance(direction);
-          }
-        });
-
-        if (minimumDistance !== Infinity) {
-          // We actually found a vertex in a preferred direction
-          return List(closestVertexLocation);
-        }
-      }
-
-      // Try all directions
-      directionSeq.forEach(direction => {
-        if (direction !== undefined && options[direction] === true) {
-          updateMinimumDistance(direction);
-        }
-      });
-    }
-
-    return List(closestVertexLocation);
-  }
-
   chooseDirection(map: Drawable[][]): void {
     const options = Ghost.getMovementOptions(map, this.logicalLocation);
 
@@ -210,8 +163,8 @@ abstract class Ghost extends MovableEntity {
       const direction = computeDirection(this.logicalLocation, this._pacManLocation);
 
       if (options[direction] === true) {
-        const upcomingEntity = Ghost.findUpcomingEntity(map, this.logicalLocation, direction,
-                                                        entity => entity instanceof Wall);
+        const upcomingEntity = MazeMapGraph.findUpcomingEntity(map, this.logicalLocation, direction,
+                                                               entity => entity instanceof Wall);
         if (upcomingEntity !== undefined) {
           const [a, b] = upcomingEntity;
 
@@ -231,7 +184,7 @@ abstract class Ghost extends MovableEntity {
     }
 
     // Compute route
-    const ghostVertex = Ghost.findClosestVertex(map, this.logicalLocation);
+    const ghostVertex = MazeMapGraph.findClosestVertex(map, this.logicalLocation);
     const pacManVertex = this.chooseClosestPacManVertex(map);
     const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
 
@@ -252,18 +205,6 @@ abstract class Ghost extends MovableEntity {
   }
 
   abstract chooseClosestPacManVertex(map: Drawable[][]): List<number>;
-
-  private static isEdge(map: Drawable[][], logicalLocation: [number, number]) {
-    const options = Ghost.getMovementOptions(map, logicalLocation);
-    // tslint:disable:no-any
-    const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
-    const numberOfOptions = optionsArray.length;
-
-    // We are not a vertex if we only have two ways to go (ex: O--*--O)
-    return numberOfOptions === 2 && (
-      (options[Direction.North] === true && options[Direction.South] === true) ||
-      (options[Direction.East] === true && options[Direction.West] === true));
-  }
 
 }
 

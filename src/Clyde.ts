@@ -1,8 +1,9 @@
 import Ghost from './Ghost';
 import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
-import { Seq, List } from 'immutable';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import { Seq } from 'immutable';
+import MapGraph from './MapGraph';
+import MazeMapGraph from './MapGraph';
 
 const ClydeImage = require('./Images/Clyde.png');
 
@@ -30,7 +31,7 @@ class Clyde extends Ghost {
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],
               pacManDirection: Direction,
-              boardGraph: UndirectedWeightedGraph<List<number>>) {
+              boardGraph: MapGraph) {
     super(initialLocation, pacManLocation, pacManDirection, boardGraph);
   }
 
@@ -59,7 +60,7 @@ class Clyde extends Ghost {
       } else {
         this.timer = window.setTimeout(makeAbnormal, 500);
       }
-    }
+    };
 
     makeNormal();
   }
@@ -101,7 +102,7 @@ class Clyde extends Ghost {
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
-    return Clyde.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
+    return MazeMapGraph.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }
 
