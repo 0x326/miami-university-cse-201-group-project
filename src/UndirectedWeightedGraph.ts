@@ -115,7 +115,7 @@ class UndirectedWeightedGraph<Id> {
         // Use ``any`` to override type errors
         for (const [key, calc] of costTable.entries() as any) {
           if (key !== undefined && calc !== undefined && !calc.isOptimal) {
-            if (calc.cost < minimumCalculation) {
+            if (calc.cost <= minimumCalculation) {
               minimumCalculation = calc.cost;
               minimumCalculationKey = key;
             }
