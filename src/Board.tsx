@@ -338,12 +338,12 @@ class Board extends React.Component<Props, State> {
       this.pelletsEaten++;
       delete this.stationaryEntities[x][y];
 
-      let timeUntilRecovery = 5000
+      let timeUntilRecovery = 5000;
       if(this.level < 10){
         timeUntilRecovery = timeUntilRecovery - this.level * 200;
       }
 
-      let timeUntilWarning = 4000
+      let timeUntilWarning = 4000;
       if(this.level < 10){
         timeUntilWarning = timeUntilWarning + this.level * 200;
       }
