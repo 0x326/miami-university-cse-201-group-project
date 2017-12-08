@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Set, List, Map, Stack } from 'immutable';
+import { Set, List } from 'immutable';
+import * as Request from 'request-promise-native';
 import { convert as unitsCssConvert } from 'units-css';
 import PacMan from './PacMan';
 import Ghost from './Ghost';
@@ -11,9 +12,9 @@ import Drawable, { Neighbors } from './Drawable';
 import Wall from './Wall';
 import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
-import { createMultiDimensionalArray, computeOrthogonalDistance } from './lib';
+import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
-import UndirectedWeightedGraph from './UndirectedWeightedGraph';
+import MazeMapGraph from './MapGraph';
 
 const scoringTable = {
   'pellet': 10,
@@ -22,14 +23,59 @@ const scoringTable = {
 };
 
 type Location = [number, number];
-type ImmutableLocation = List<number>;
 
-const pacManStartingLocation: Location = [14, 22];
-const blinkyStartingLocation: Location = [14, 19];
-const inkyStartingLocation: Location = [10, 16];
+const pacManStartingLocation: Location = [14, 19];
+const blinkyStartingLocation: Location = [14, 13];
+const inkyStartingLocation: Location = [12, 16];
 const pinkyStaringLocation: Location = [14, 16];
-const clydeStartingLocation: Location = [18, 16];
+const clydeStartingLocation: Location = [15, 16];
 const ghostRespawningPoint: Location = [14, 16];
+
+const mazeChunks = {
+  topLeft: [
+    require('./maps/top-left-1.csv') as string,
+    require('./maps/top-left-2.csv') as string,
+    require('./maps/top-left-3.csv') as string,
+    require('./maps/top-left-4.csv') as string
+  ],
+  topRight: [
+    require('./maps/top-right-1.csv') as string,
+    require('./maps/top-right-2.csv') as string,
+    require('./maps/top-right-3.csv') as string,
+    require('./maps/top-right-4.csv') as string
+  ],
+  centerLeft: [
+    require('./maps/center-left.csv') as string
+  ],
+  centerRight: [
+    require('./maps/center-right.csv') as string
+  ],
+  bottomLeft: [
+    require('./maps/bottom-left-1.csv') as string,
+    require('./maps/bottom-left-2.csv') as string,
+    require('./maps/bottom-left-3.csv') as string,
+    require('./maps/bottom-left-4.csv') as string
+  ],
+  bottomRight: [
+    require('./maps/bottom-right-1.csv') as string,
+    require('./maps/bottom-right-2.csv') as string,
+    require('./maps/bottom-right-3.csv') as string,
+    require('./maps/bottom-right-4.csv') as string
+  ]
+};
+
+/**
+ * A portion of a a logical grid.
+ *
+ * A chunk is a sixth of the logical grid (2 X 3 partition)
+ */
+type Chunk = Drawable[][];
+const chunkColumns = 14;
+const chunkRows = 11;
+
+interface State {
+  resourcesLoaded: boolean;
+}
 
 interface Props {
   width: string;
@@ -47,13 +93,21 @@ interface Props {
  *
  * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
  */
-class Board extends React.Component<Props> {
+class Board extends React.Component<Props, State> {
   // 27 X 31 board
   static logicalColumns = 28;
   static logicalRows = 33;
 
+  boardChunks = {
+    topLeft: List<Chunk>(),
+    topRight: List<Chunk>(),
+    centerLeft: List<Chunk>(),
+    centerRight: List<Chunk>(),
+    bottomLeft: List<Chunk>(),
+    bottomRight: List<Chunk>()
+  };
   stationaryEntities: Drawable[][];
-  mapGraph: UndirectedWeightedGraph<List<number>>;
+  mapGraph: MazeMapGraph;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -74,9 +128,11 @@ class Board extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
+    this.state = {
+      resourcesLoaded: false
+    };
     this.keyboardListener = new KeyboardListener();
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    this.buildBoard();
     this.pacMan = new PacMan(pacManStartingLocation, this.keyboardListener);
     this.ghosts = [
       new Blinky(blinkyStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
@@ -90,24 +146,32 @@ class Board extends React.Component<Props> {
 
   render() {
     const pixelRatio = window.devicePixelRatio || 1;
-    return (
-      <canvas
-        width={unitsCssConvert('px', this.props.width) * pixelRatio}
-        height={unitsCssConvert('px', this.props.height) * pixelRatio}
-        style={{
-          width: this.props.width,
-          height: this.props.height
-        }}
-        ref={(elem) => {
-          if (elem !== null) {
-            let context = elem.getContext('2d');
-            if (context !== null) {
-              this.canvasContext = context;
+    if (!this.state.resourcesLoaded) {
+      return (
+        <div>
+          Loading resources...
+        </div>
+      );
+    } else {
+      return (
+        <canvas
+          width={unitsCssConvert('px', this.props.width) * pixelRatio}
+          height={unitsCssConvert('px', this.props.height) * pixelRatio}
+          style={{
+            width: this.props.width,
+            height: this.props.height
+          }}
+          ref={(elem) => {
+            if (elem !== null) {
+              let context = elem.getContext('2d');
+              if (context !== null) {
+                this.canvasContext = context;
+              }
             }
-          }
-        }}
-      />
-    );
+          }}
+        />
+      );
+    }
   }
 
   componentDidMount() {
@@ -117,13 +181,53 @@ class Board extends React.Component<Props> {
       ghost.mount();
     }
     if (this.props.active) {
-      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+     if (!this.state.resourcesLoaded) {
+        const resourcesLoadedPromise = new Promise((resolve, reject) => {
+          const baseURL = window.location.origin;
+          let chunkAreaPromises = [];
+
+          for (const chunkArea in mazeChunks) {
+            if (mazeChunks.hasOwnProperty(chunkArea)) {
+              const chunkURLs: string[] = mazeChunks[chunkArea];
+              let parseChunkPromises: Promise<Drawable[][]>[] = [];
+
+              for (const chunkURL of chunkURLs) {
+                const parseChunkPromise = Request(baseURL + chunkURL)
+                  .then(csv => Board.parseMap(csv));
+
+                parseChunkPromises.push(parseChunkPromise);
+              }
+
+              const chunkAreaPromise = Promise.all(parseChunkPromises)
+                .then(chunks => chunks.forEach(chunk => {
+                  this.boardChunks[chunkArea] = this.boardChunks[chunkArea].push(chunk);
+              }));
+
+              chunkAreaPromises.push(chunkAreaPromise);
+            }
+          }
+
+          Promise.all(chunkAreaPromises).then(() => resolve());
+        });
+
+        resourcesLoadedPromise.then(() => {
+          this.setState({
+            resourcesLoaded: true
+          });
+          this.buildBoard();
+          window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+        });
+      } else {
+        window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      }
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: {}) {
     if (this.props.active === true && prevProps.active !== true) {
-      window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      if (this.state.resourcesLoaded) {
+        window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
+      }
     }
   }
 
@@ -138,145 +242,71 @@ class Board extends React.Component<Props> {
   buildBoard(): void {
     this.pelletsEaten = 0;
     this.pelletsToEat = 0;
-    // TODO: Populate board
-    for (let x = 8; x <= 20; x++) {
-      this.stationaryEntities[x][8] = new Wall;
-      this.stationaryEntities[x][10] = new Wall;
-      this.stationaryEntities[x][14] = new Wall;
-      this.stationaryEntities[x][20] = new Wall;
-      this.stationaryEntities[x][24] = new Wall;
-    }
-    for (let y = 8; y <= 24; y++) {
-      this.stationaryEntities[8][y] = new Wall;
-      this.stationaryEntities[20][y] = new Wall;
-    }
-    delete this.stationaryEntities[9][10];
-    delete this.stationaryEntities[19][10];
-    delete this.stationaryEntities[9][14];
-    delete this.stationaryEntities[19][14];
-    for (let y = 12; y <= 13; y++) {
-      this.stationaryEntities[10][y] = new Wall;
-      this.stationaryEntities[18][y] = new Wall;
-    }
-    this.stationaryEntities[14][11] = new Wall;
-    this.stationaryEntities[14][12] = new Wall;
-    delete this.stationaryEntities[15][20];
 
-    this.stationaryEntities[9][9] = new PowerPellet;
-    this.stationaryEntities[19][9] = new PowerPellet;
-    this.stationaryEntities[9][19] = new PowerPellet;
-    this.stationaryEntities[19][19] = new PowerPellet;
-    this.stationaryEntities[9][22] = new PowerPellet;
-    this.pelletsToEat += 5;
-
-    for (let y = 10; y <= 18; y++) {
-      this.stationaryEntities[9][y] = new Pellet;
-      this.stationaryEntities[19][y] = new Pellet;
-      this.pelletsToEat += 2;
-    }
-    for (let x = 10; x <= 18; x++) {
-      this.stationaryEntities[x][9] = new Pellet;
-      this.stationaryEntities[x][19] = new Pellet;
-      this.pelletsToEat += 2;
-    }
-
-    // (window as any).a = this.parseGraph().map(val => val.toJS());
-    const [mapVertices, mapEdges] = this.parseGraph();
-    const mapGraph = new UndirectedWeightedGraph<List<number>>();
-    mapVertices.valueSeq().forEach(vertex => vertex !== undefined &&
-      mapGraph.addVertex(vertex));
-    mapEdges.valueSeq().forEach(tuple => {
-      if (tuple !== undefined) {
-        const [vertexA, vertexB, cost] = tuple;
-        mapGraph.addEdge(vertexA, vertexB, cost);
-      }
-    });
-    this.mapGraph = mapGraph;
-  }
-
-  parseGraph(): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
-    let vertices = Set<ImmutableLocation>();
-    let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
-
-    // In the case of a prolonged edge (such as a long tunnel),
-    // keeps track of the last seen vertex so that when we see another vertex,
-    // we remember which vertex directed us to it.
-    let lastKnownVertex: ImmutableLocation | undefined = undefined;
-
-    // To save on computational time, only visit each location once
-    let visitedLocations = Stack<ImmutableLocation>();
-
-    const parseGraph = (location: ImmutableLocation): void => {
-
-      const map = this.stationaryEntities;
-      const [x, y] = location.toArray();
-
-      const leftColumn = map[x - 1];
-      const middleColumn = map[x];
-      const rightColumn = map[x + 1];
-      const north = List([x, y - 1]);
-      const west = List([x - 1, y]);
-      const east = List([x + 1, y]);
-      const south = List([x, y + 1]);
-
-      const movementOptions = Map<ImmutableLocation, boolean>([
-        [north, middleColumn && !(middleColumn[y - 1] instanceof Wall)],
-        [west, leftColumn && !(leftColumn[y] instanceof Wall)],
-        [east, rightColumn && !(rightColumn[y] instanceof Wall)],
-        [south, middleColumn && !(middleColumn[y + 1] instanceof Wall)],
-      ]);
-
-      // Should this location be represented as a vertex in the graph?
-      // 0: Yes (but if this happens, it is likely an error)
-      // 1: Yes
-      // 2: No - it can be removed
-      // 3: Yes
-      // 4: Yes
-      const isEdge = movementOptions.valueSeq().filter(val => val === true).count() === 2 && (
-        (movementOptions.get(north) === true && movementOptions.get(south) === true) ||
-        (movementOptions.get(east) === true && movementOptions.get(west) === true));
-      if (!isEdge) {
-        vertices = vertices.add(location);
-
-        const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
-          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS());
-          if (orthogonalDistance !== undefined) {
-            const cost = Math.abs(orthogonalDistance);
-            edges = edges.add([otherLocation, location, cost]);
-          }
-        };
-
-        if (lastKnownVertex !== undefined) {
-          // Add lastKnown in the case we came here via a prolonged edge
-          // Note: if we happened to come from an adajacent vertex, this will be redundant
-          addEdgeFromCurrentLocation(lastKnownVertex);
-        }
-
-        // Link adajacent vertices with an edge
-        // tslint:disable:no-any
-        for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-          if (isOpen === true && vertices.contains(adajacentLocation)) {
-            addEdgeFromCurrentLocation(adajacentLocation);
-          }
-        }
-
-        // Update lastKnownVertex for the next time we encounter a prolonged edge
-        lastKnownVertex = location;
-      }
-
-      // tslint:disable:no-any
-      for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-        if (isOpen && !visitedLocations.contains(adajacentLocation)) {
-          visitedLocations = visitedLocations.push(adajacentLocation);
-          parseGraph(adajacentLocation);
-        }
-      }
-
-      return;
+    let selectedMazeChunks: {
+      topLeft: Chunk | undefined,
+      topRight: Chunk | undefined,
+      centerLeft: Chunk | undefined,
+      centerRight: Chunk | undefined,
+      bottomLeft: Chunk | undefined,
+      bottomRight: Chunk | undefined
+    } = {
+      topLeft: undefined,
+      topRight: undefined,
+      centerLeft: undefined,
+      centerRight: undefined,
+      bottomLeft: undefined,
+      bottomRight: undefined
     };
 
-    parseGraph(List(pacManStartingLocation));
-    return [vertices, edges];
+    for (const chunkArea in this.boardChunks) {
+      if (this.boardChunks.hasOwnProperty(chunkArea)) {
+        const boardChunksArea: List<Drawable[][]> = this.boardChunks[chunkArea];
+        const selectedIndex = Math.floor(boardChunksArea.count() * Math.random());
+        const selectedChunk = boardChunksArea.get(selectedIndex);
+        selectedMazeChunks[chunkArea] = selectedChunk;
+      }
+    }
+
+    const chunkOffset = {
+      topLeft: [0, 0],
+      topRight: [chunkColumns, 0],
+      centerLeft: [0, chunkRows],
+      centerRight: [chunkColumns, chunkRows],
+      bottomLeft: [0, 2 * chunkRows],
+      bottomRight: [chunkColumns, 2 * chunkRows]
+    };
+
+    for (const chunkArea in selectedMazeChunks) {
+      if (selectedMazeChunks.hasOwnProperty(chunkArea)) {
+        const chunk: Chunk | undefined = selectedMazeChunks[chunkArea];
+        if (chunk !== undefined) {
+          const offset: [number, number] = chunkOffset[chunkArea];
+          const [xOffset, yOffset] = offset;
+
+          for (let i = 0; i < chunkColumns; i++) {
+            for (let j = 0; j < chunkRows; j++) {
+              const entity = chunk[i][j];
+
+              if (entity instanceof Pellet || entity instanceof PowerPellet) {
+                this.pelletsToEat++;
+              }
+
+              if (entity !== undefined) {
+                this.stationaryEntities[xOffset + i][yOffset + j] = entity;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    this.mapGraph = new MazeMapGraph(this.stationaryEntities, List(pacManStartingLocation));
+    this.moveEntitiesToStartingLocation();
+
+    for (const ghost of this.ghosts) {
+      ghost.boardGraph = this.mapGraph;
+    }
   }
 
   moveEntitiesToStartingLocation(): void {
@@ -300,9 +330,9 @@ class Board extends React.Component<Props> {
       }
 
       this.detectCollisions();
-      this.repaintCanvas();
       // TODO: Determine when the game has ended
     }
+    this.repaintCanvas();
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
@@ -322,7 +352,7 @@ class Board extends React.Component<Props> {
     let scoreIncrement = 0;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
-      throw 'pacMan is on a wall';
+      throw new Error('pacMan is on a wall');
     } else if (stationaryItem instanceof Pellet) {
       scoreIncrement += scoringTable.pellet;
       this.pelletsEaten++;
@@ -407,9 +437,10 @@ class Board extends React.Component<Props> {
           bottomRight: rightColumn ? rightColumn[rowNumber - 1] : undefined,
         };
 
+        // Top-left corner
         let drawLocation: [number, number] = [
-          columnNumber * boundingBoxSize - boundingBoxSize,
-          rowNumber * boundingBoxSize - boundingBoxSize
+          columnNumber * boundingBoxSize,
+          rowNumber * boundingBoxSize
         ];
         item.draw(this.canvasContext, drawLocation, boundingBoxSize, neighbors);
       }
@@ -418,6 +449,44 @@ class Board extends React.Component<Props> {
       ghost.draw(this.canvasContext, boundingBoxSize);
     }
     this.pacMan.draw(this.canvasContext, boundingBoxSize);
+  }
+
+  /**
+   * Converts a map file (CSV format) to a Chunk representation.
+   *
+   * @param fileContents The contents of the CSV map file
+   */
+  static parseMap(fileContents: string): Chunk {
+    const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);
+
+    // tslint:disable:no-any
+    for (const [lineNumber, lineContents] of fileContents.split(/\r?\n/).entries() as any) {
+      for (const [columnNumber, cellContent] of lineContents.split(/,/).entries()) {
+        let item: Drawable;
+
+        if (cellContent === '') {
+          continue;
+        } else if (cellContent === 'X') {
+          item = new Wall;
+        } else if (cellContent === '.') {
+          item = new Pellet;
+        } else if (cellContent === 'O') {
+          item = new PowerPellet;
+        } else {
+          throw new Error(`Invalid map character '${cellContent}'`);
+        }
+
+        if (columnNumber >= chunk.length) {
+          throw new Error(`Chunk more columns than the ${chunkColumns} expected`);
+        } else if (lineNumber >= chunk[columnNumber].length) {
+          throw new Error(`Chunk has more lines than the ${chunkRows} expected`);
+        }
+
+        chunk[columnNumber][lineNumber] = item;
+      }
+    }
+
+    return chunk;
   }
 }
 

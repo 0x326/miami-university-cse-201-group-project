@@ -2,6 +2,7 @@ import Drawable from './Drawable';
 import Wall from './Wall';
 import { Seq } from 'immutable';
 import { movePoint } from './lib';
+import MazeMapGraph from './MapGraph';
 
 /**
  * Course: CSE 201 A
@@ -90,8 +91,8 @@ abstract class MovableEntity {
 
     let upcomingWall: [number, number] | undefined;
     if (this.direction !== this.lastDirection) {
-      upcomingWall = MovableEntity.findUpcomingEntity(map, this.logicalLocation, this.direction,
-                                                      entity => entity instanceof Wall);
+      upcomingWall = MazeMapGraph.findUpcomingEntity(map, this.logicalLocation, this.direction,
+                                                     entity => entity instanceof Wall);
       if (upcomingWall === undefined) {
         upcomingWall = [Infinity, Infinity];
       }
@@ -146,33 +147,14 @@ abstract class MovableEntity {
    *              The image drawn should be proportional to mazSize to support scaling.
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
+    // Top-left corner
     let drawLocation: [number, number] = [
-      this.exactLocation[0] * maxSize - maxSize,
-      this.exactLocation[1] * maxSize - maxSize
+      this.exactLocation[0] * maxSize,
+      this.exactLocation[1] * maxSize
     ];
 
     board.beginPath();
-    board.drawImage(this.sprite, (drawLocation[0] - (maxSize / 2)), (drawLocation[1] - (maxSize / 2)), maxSize, maxSize);
-  }
-
-  protected static findUpcomingEntity(map: Drawable[][],
-                                      logicalLocation: [number, number],
-                                      direction: Direction,
-                                      criteria: (entity: Drawable) => boolean): [number, number] | undefined {
-    const [logicalColumn, logicalRow] = logicalLocation;
-
-    let columnNumber = logicalColumn;
-    let rowNumber = logicalRow;
-    while (0 <= columnNumber && columnNumber < map.length &&
-      0 <= rowNumber && rowNumber < map[columnNumber].length) {
-      if (criteria(map[columnNumber][rowNumber])) {
-        return [columnNumber, rowNumber];
-      }
-
-      [columnNumber, rowNumber] = movePoint([columnNumber, rowNumber], direction);
-    }
-
-    return undefined;
+    board.drawImage(this.sprite, drawLocation[0], drawLocation[1], maxSize, maxSize);
   }
 
 }
