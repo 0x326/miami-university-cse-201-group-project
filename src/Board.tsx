@@ -14,13 +14,22 @@ import Pellet from './Pellet';
 import PowerPellet from './PowerPellet';
 import { createMultiDimensionalArray } from './lib';
 import KeyboardListener from './KeyboardListener';
+import MazeMapGraph from './MapGraph';
 
 const scoringTable = {
-  // TODO: Adjust scores
   'pellet': 10,
   'powerPellet': 50,
   'ghost': 250
 };
+
+type Location = [number, number];
+
+const pacManStartingLocation: Location = [14, 19];
+const blinkyStartingLocation: Location = [14, 13];
+const inkyStartingLocation: Location = [12, 16];
+const pinkyStaringLocation: Location = [14, 16];
+const clydeStartingLocation: Location = [15, 16];
+const ghostRespawningPoint: Location = [14, 16];
 
 const mazeChunks = {
   topLeft: [
@@ -54,8 +63,6 @@ const mazeChunks = {
     require('./maps/bottom-right-4.csv') as string
   ]
 };
-
-const ghostRespawningPoint = [14, 16];
 
 /**
  * A portion of a a logical grid.
@@ -100,6 +107,7 @@ class Board extends React.Component<Props, State> {
     bottomRight: List<Chunk>()
   };
   stationaryEntities: Drawable[][];
+  mapGraph: MazeMapGraph;
   pacMan: PacMan;
   ghosts: Ghost[];
 
@@ -118,20 +126,21 @@ class Board extends React.Component<Props, State> {
   ghostWarningTimer: number;
   ghostRecoveryTimer: number;
 
-  constructor() {
-    super();
+  constructor(props: Props) {
+    super(props);
     this.state = {
       resourcesLoaded: false
     };
-    this.keyboardListener = new KeyboardListener(document);
+    this.keyboardListener = new KeyboardListener();
     this.stationaryEntities = createMultiDimensionalArray([Board.logicalColumns, Board.logicalRows]);
-    this.pacMan = new PacMan([14, 19], this.keyboardListener);
+    this.pacMan = new PacMan(pacManStartingLocation, this.keyboardListener);
     this.ghosts = [
-      new Blinky([14, 13]),
-      new Inky([12, 16]),
-      new Pinky([14, 16]),
-      new Clyde([15, 16])
+      new Blinky(blinkyStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Inky(inkyStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Pinky(pinkyStaringLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph),
+      new Clyde(clydeStartingLocation, pacManStartingLocation, this.pacMan.direction, this.mapGraph)
     ];
+    this.moveEntitiesToStartingLocation();
     this.score = 0;
   }
 
@@ -166,6 +175,11 @@ class Board extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.keyboardListener.attach(document);
+    this.pacMan.mount();
+    for (const ghost of this.ghosts) {
+      ghost.mount();
+    }
     if (this.props.active) {
      if (!this.state.resourcesLoaded) {
         const resourcesLoadedPromise = new Promise((resolve, reject) => {
@@ -200,7 +214,7 @@ class Board extends React.Component<Props, State> {
           this.setState({
             resourcesLoaded: true
           });
-          this.resetBoard();
+          this.buildBoard();
           window.requestAnimationFrame((currentTime) => this.updateGameState(currentTime));
         });
       } else {
@@ -218,9 +232,14 @@ class Board extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
+    this.pacMan.unmount();
+    for (const ghost of this.ghosts) {
+      ghost.unmount();
+    }
+    this.keyboardListener.detach();
   }
 
-  resetBoard(): void {
+  buildBoard(): void {
     this.pelletsEaten = 0;
     this.pelletsToEat = 0;
 
@@ -282,17 +301,20 @@ class Board extends React.Component<Props, State> {
       }
     }
 
+    this.mapGraph = new MazeMapGraph(this.stationaryEntities, List(pacManStartingLocation));
     this.moveEntitiesToStartingLocation();
+
+    for (const ghost of this.ghosts) {
+      ghost.boardGraph = this.mapGraph;
+    }
   }
 
   moveEntitiesToStartingLocation(): void {
-    this.pacMan.logicalLocation = [14, 19];
-    this.ghosts = [
-      new Blinky([14, 13]),
-      new Inky([12, 16]),
-      new Pinky([14, 16]),
-      new Clyde([15, 16])
-    ];
+    this.pacMan.logicalLocation = pacManStartingLocation;
+    this.ghosts[0].logicalLocation = blinkyStartingLocation;
+    this.ghosts[1].logicalLocation = inkyStartingLocation;
+    this.ghosts[2].logicalLocation = pinkyStaringLocation;
+    this.ghosts[3].logicalLocation = clydeStartingLocation;
   }
 
   // TODO: Add time-since-last-update-parameter
@@ -302,33 +324,35 @@ class Board extends React.Component<Props, State> {
 
       this.pacMan.move(elapsedTime, this.stationaryEntities);
       for (let ghost of this.ghosts) {
+        ghost.pacManLocation = this.pacMan.logicalLocation;
+        ghost.pacManDirection = this.pacMan.direction;
         ghost.move(elapsedTime, this.stationaryEntities);
       }
 
       this.detectCollisions();
-      this.repaintCanvas();
       // TODO: Determine when the game has ended
     }
+    this.repaintCanvas();
     this.timeOfLastUpdate = currentTime;
     if (this.gameFinished) {
       this.props.onGameFinish();
     } else if (this.props.active) {
       if (this.pelletsEaten === this.pelletsToEat) {
         this.level++;
-        this.resetBoard();
+        this.buildBoard();
       }
       window.requestAnimationFrame((time) => this.updateGameState(time));
     }
   }
 
   detectCollisions(): void {
-    let [x, y] = this.pacMan.getLogicalLocation();
+    let [x, y] = this.pacMan.logicalLocation;
 
     let stationaryItem = this.stationaryEntities[x] ? this.stationaryEntities[x][y] : undefined;
     let scoreIncrement = 0;
     if (stationaryItem instanceof Wall) {
       // TODO: Add correction logic
-      throw 'pacMan is on a wall';
+      throw new Error('pacMan is on a wall');
     } else if (stationaryItem instanceof Pellet) {
       scoreIncrement += scoringTable.pellet;
       this.pelletsEaten++;
@@ -362,11 +386,10 @@ class Board extends React.Component<Props, State> {
     }
 
     for (let ghost of this.ghosts) {
-      let [ghostX, ghostY] = ghost.getLogicalLocation();
+      let [ghostX, ghostY] = ghost.logicalLocation;
       if (x === ghostX && y === ghostY) {
         if (ghost.isVunerable()) {
-          ghost.logicalLocation[0] = ghostRespawningPoint[0];
-          ghost.logicalLocation[1] = ghostRespawningPoint[1];
+          ghost.logicalLocation = ghostRespawningPoint;
           this.vulnerableGhosts = this.vulnerableGhosts.remove(ghost);
           ghost.makeDangerous();
           scoreIncrement += scoringTable.ghost;
