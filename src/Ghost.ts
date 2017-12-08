@@ -99,6 +99,7 @@ abstract class Ghost extends MovableEntity {
    */
   makeVulnerable(): void {
     this.state = VulnerabilityState.Vulnerable;
+    this.speed = 1.5;
   }
 
   /**
@@ -125,6 +126,7 @@ abstract class Ghost extends MovableEntity {
    */
   makeDangerous(): void {
     this.state = VulnerabilityState.Dangerous;
+    this.speed = 2.3;
   }
 
   /**
@@ -156,10 +158,6 @@ abstract class Ghost extends MovableEntity {
 
   chooseDirection(map: Drawable[][]): void {
     const options = Ghost.getMovementOptions(map, this.logicalLocation);
-    const slowSpeed = 1.5;
-    if (this.speed === slowSpeed) {
-      this.speed = 2.3;
-    }
 
     // Check to see whether Pac-Man is within sight
     const pacManLineSlope = slope(this._pacManLocation, this.logicalLocation);
@@ -209,7 +207,6 @@ abstract class Ghost extends MovableEntity {
     if (this.state === VulnerabilityState.Vulnerable ||
         this.state === VulnerabilityState.VulnerableBlinking) {
 
-      this.speed = slowSpeed;
       const options = Ghost.getMovementOptions(map, this.logicalLocation);
 
       // as long as there is no wall, go the opposite direction
