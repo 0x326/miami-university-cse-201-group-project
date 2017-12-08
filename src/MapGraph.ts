@@ -2,7 +2,7 @@ import UndirectedWeightedGraph from './UndirectedWeightedGraph';
 import { computeOrthogonalDistance, movePoint } from './lib';
 import { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
-import { Seq, List, Set, Stack, Map } from 'immutable';
+import { Seq, List, Set, Map } from 'immutable';
 import Wall from './Wall';
 
 type MazeMap = Drawable[][];
@@ -27,21 +27,19 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
   }
 
   private parseGraph(startingLocation: List<number>): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
+    const map = this.map;
+
     let vertices = Set<ImmutableLocation>();
     let edges = Set<[ImmutableLocation, ImmutableLocation, number]>();
 
-    // In the case of a prolonged edge (such as a long tunnel),
-    // keeps track of the last seen vertex so that when we see another vertex,
-    // we remember which vertex directed us to it.
-    let lastKnownVertex: ImmutableLocation | undefined = undefined;
+    // Breadth-first search
+    let vertexQueue = List<ImmutableLocation>([startingLocation]);
+    while (!vertexQueue.isEmpty()) {
+      const vertex = vertexQueue.first();
+      vertexQueue = vertexQueue.shift();
+      vertices = vertices.add(vertex);
 
-    // To save on computational time, only visit each location once
-    let visitedLocations = Stack<ImmutableLocation>();
-
-    const parseGraph = (location: ImmutableLocation): void => {
-
-      const map = this.map;
-      const [x, y] = location.toArray();
+      const [x, y] = vertex.toJS();
 
       if (x < 0 || map.length < x || y < 0 || Math.max(...map.map(arr => arr.length)) < y) {
         throw new Error('location of out bounds');
@@ -50,65 +48,36 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
       const leftColumn = map[x - 1];
       const middleColumn = map[x];
       const rightColumn = map[x + 1];
-      const north = List([x, y - 1]);
-      const west = List([x - 1, y]);
-      const east = List([x + 1, y]);
-      const south = List([x, y + 1]);
 
-      const movementOptions = Map<ImmutableLocation, boolean>([
-        [north, middleColumn && !(middleColumn[y - 1] instanceof Wall)],
-        [west, leftColumn && !(leftColumn[y] instanceof Wall)],
-        [east, rightColumn && !(rightColumn[y] instanceof Wall)],
-        [south, middleColumn && !(middleColumn[y + 1] instanceof Wall)],
+      const movementOptions = Map<Direction, boolean>([
+        [Direction.North, middleColumn && !(middleColumn[y - 1] instanceof Wall)],
+        [Direction.West, leftColumn && !(leftColumn[y] instanceof Wall)],
+        [Direction.East, rightColumn && !(rightColumn[y] instanceof Wall)],
+        [Direction.South, middleColumn && !(middleColumn[y + 1] instanceof Wall)],
       ]);
 
-      // Should this location be represented as a vertex in the graph?
-      // 0: Yes (but if this happens, it is likely an error)
-      // 1: Yes
-      // 2: No - it can be removed
-      // 3: Yes
-      // 4: Yes
-      if (this.isEdge([x, y])) {
-        vertices = vertices.add(location);
+      directionSeq.forEach(direction => {
+        if (direction !== undefined && movementOptions.get(direction) === true) {
+          const adajacentPoint = movePoint([x, y], direction);
+          const nextVertexLocation = MazeMapGraph.findUpcomingEntity(map, adajacentPoint, direction, (entity, entityLocation) => {
+            return entityLocation !== undefined && !this.isEdge(entityLocation);
+          });
 
-        const addEdgeFromCurrentLocation = (otherLocation: ImmutableLocation) => {
-          const orthogonalDistance = computeOrthogonalDistance(location.toJS(), otherLocation.toJS());
-          if (orthogonalDistance !== undefined) {
-            const cost = Math.abs(orthogonalDistance);
-            edges = edges.add([otherLocation, location, cost]);
-          }
-        };
+          if (nextVertexLocation !== undefined) {
+            const nextVertex = List(nextVertexLocation);
+            const [c, d] = nextVertexLocation;
 
-        if (lastKnownVertex !== undefined) {
-          // Add lastKnown in the case we came here via a prolonged edge
-          // Note: if we happened to come from an adajacent vertex, this will be redundant
-          addEdgeFromCurrentLocation(lastKnownVertex);
-        }
+            const cost = Math.abs(computeOrthogonalDistance([x, y], [c, d]) || 1);
+            edges = edges.add([vertex, nextVertex, cost]);
 
-        // Link adajacent vertices with an edge
-        // tslint:disable:no-any
-        for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-          if (isOpen === true && vertices.contains(adajacentLocation)) {
-            addEdgeFromCurrentLocation(adajacentLocation);
+            if (!vertexQueue.contains(nextVertex) && !vertices.contains(nextVertex)) {
+              vertexQueue = vertexQueue.push(nextVertex);
+            }
           }
         }
+      });
+    }
 
-        // Update lastKnownVertex for the next time we encounter a prolonged edge
-        lastKnownVertex = location;
-      }
-
-      // tslint:disable:no-any
-      for (const [adajacentLocation, isOpen] of movementOptions.entries() as any) {
-        if (isOpen && !visitedLocations.contains(adajacentLocation)) {
-          visitedLocations = visitedLocations.push(adajacentLocation);
-          parseGraph(adajacentLocation);
-        }
-      }
-
-      return;
-    };
-
-    parseGraph(startingLocation);
     return [vertices, edges];
   }
 
