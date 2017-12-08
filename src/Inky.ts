@@ -3,7 +3,6 @@ import Drawable from './Drawable';
 import { Direction, directionSeq } from './MovableEntity';
 import { Seq } from 'immutable';
 import MapGraph from './MapGraph';
-import MazeMapGraph from './MapGraph';
 
 const InkyImage = require('./Images/Inky.png');
 
@@ -40,7 +39,7 @@ class Inky extends Ghost {
     const stateDuration = 3000;
     this.timer = window.setInterval(() => {
       this.isRunningAway = !this.isRunningAway;
-    }, stateDuration);
+    },                              stateDuration);
   }
 
   unmount(): void {
@@ -48,7 +47,7 @@ class Inky extends Ghost {
   }
 
   chooseClosestPacManVertex(map: Drawable[][]) {
-    return MazeMapGraph.findClosestVertex(map, this.pacManLocation, Seq([-this.pacManDirection]));
+    return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 
   chooseDirection(map: Drawable[][]): void {

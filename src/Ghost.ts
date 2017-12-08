@@ -184,7 +184,7 @@ abstract class Ghost extends MovableEntity {
     }
 
     // Compute route
-    const ghostVertex = MazeMapGraph.findClosestVertex(map, this.logicalLocation);
+    const ghostVertex = this.boardGraph.findClosestVertex(this.logicalLocation);
     const pacManVertex = this.chooseClosestPacManVertex(map);
     const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
 

@@ -115,7 +115,7 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return [vertices, edges];
   }
 
-  static findUpcomingEntity(map: Drawable[][],
+  static findUpcomingEntity(map: MazeMap,
                             logicalLocation: [number, number],
                             direction: Direction,
                             criteria: (entity: Drawable, location?: [number, number]) => boolean): [number, number] | undefined {
@@ -135,18 +135,18 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return undefined;
   }
 
-  static findClosestVertex(map: Drawable[][], logicalLocation: [number, number], preferredDirections: Seq.Indexed<Direction> = Seq([])) {
-    const options = MazeMapGraph.getMovementOptions(map, logicalLocation);
+  findClosestVertex(logicalLocation: [number, number], preferredDirections: Seq.Indexed<Direction> = Seq([])) {
+    const options = this.getMovementOptions(logicalLocation);
 
     let closestVertexLocation = logicalLocation;
     // We are not a vertex if we only have two ways to go (ex: O--*--O)
-    if (MazeMapGraph.isEdge(map, logicalLocation)) {
+    if (this.isEdge(logicalLocation)) {
       const [x, y] = logicalLocation;
       let minimumDistance: number = Infinity;
 
       const updateMinimumDistance = (direction: Direction) => {
-        const nextVertex = MazeMapGraph.findUpcomingEntity(map, logicalLocation, direction,
-                                                           (entity, location) => location !== undefined && !MazeMapGraph.isEdge(map, location));
+        const nextVertex = MazeMapGraph.findUpcomingEntity(this.map, logicalLocation, direction,
+                                                           (entity, location) => location !== undefined && !this.isEdge(location));
         if (nextVertex === undefined) {
           return;
         }
@@ -183,8 +183,8 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return List(closestVertexLocation);
   }
 
-  private static isEdge(map: Drawable[][], logicalLocation: [number, number]) {
-    const options = MazeMapGraph.getMovementOptions(map, logicalLocation);
+  private isEdge(logicalLocation: [number, number]) {
+    const options = this.getMovementOptions(logicalLocation);
     // tslint:disable:no-any
     const optionsArray: [string, boolean][] = (Object as any).values(options).filter((val: boolean) => val === true);
     const numberOfOptions = optionsArray.length;
@@ -199,7 +199,8 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
    * Checks to see which adjacent cells this entity can legally move
    * @param map The grid of stationary entities
    */
-  private static getMovementOptions(map: Drawable[][], logicalLocation: [number, number]) {
+  private getMovementOptions(logicalLocation: [number, number]) {
+    const map = this.map;
     const leftColumn = map[logicalLocation[0] - 1];
     const middleColumn = map[logicalLocation[0]];
     const rightColumn = map[logicalLocation[0] + 1];
