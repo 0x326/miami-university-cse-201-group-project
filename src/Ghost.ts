@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import MovableEntity, { Direction } from './MovableEntity';
+import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
 import MapGraph from './MapGraph';
 import Wall from './Wall';
@@ -203,15 +203,19 @@ abstract class Ghost extends MovableEntity {
       // We still need to go to the first vertex
       this.direction = computeDirection(this.logicalLocation, [a, b]);
     }
+
     // if a PowerPellet is eaten, the ghosts flee from PacMan
     if (this.state === VulnerabilityState.Vulnerable ||
         this.state === VulnerabilityState.VulnerableBlinking) {
 
-      const options = Ghost.getMovementOptions(map, this.logicalLocation);
-
       // as long as there is no wall, go the opposite direction
       if (options[-this.direction] === true) {
         this.direction = -this.direction;
+      } else {
+        // Otherwise, go any other direction
+        this.direction = directionSeq.filter(direction => direction !== this.direction)
+          .filter(direction => direction !== undefined && options[direction] === true)
+          .first();
       }
     }
   }
