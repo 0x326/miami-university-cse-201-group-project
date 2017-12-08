@@ -100,7 +100,7 @@ class Clyde extends Ghost {
     }
   }
 
-  chooseClosestPacManVertex(map: Drawable[][]) {
+  chooseClosestPacManVertex() {
     return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }

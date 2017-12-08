@@ -185,7 +185,7 @@ abstract class Ghost extends MovableEntity {
 
     // Compute route
     const ghostVertex = this.boardGraph.findClosestVertex(this.logicalLocation);
-    const pacManVertex = this.chooseClosestPacManVertex(map);
+    const pacManVertex = this.chooseClosestPacManVertex();
     const routeVertices = this.boardGraph.computeShortestRoute(ghostVertex, pacManVertex);
 
     // Determine whether we are along the first edge (between routeVertices[0] and routeVertices[1])
@@ -204,7 +204,7 @@ abstract class Ghost extends MovableEntity {
 
   }
 
-  abstract chooseClosestPacManVertex(map: Drawable[][]): List<number>;
+  abstract chooseClosestPacManVertex(): List<number>;
 
 }
 

@@ -39,7 +39,7 @@ class Pinky extends Ghost {
     // Nothing to unmount
   }
 
-  chooseClosestPacManVertex(map: Drawable[][]) {
+  chooseClosestPacManVertex() {
     return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([this.pacManDirection]));
   }
 

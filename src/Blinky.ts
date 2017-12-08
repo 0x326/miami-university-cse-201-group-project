@@ -1,5 +1,4 @@
 import Ghost from './Ghost';
-import Drawable from './Drawable';
 import { Direction } from './MovableEntity';
 import { Seq } from 'immutable';
 import MapGraph from './MapGraph';
@@ -37,7 +36,7 @@ class Blinky extends Ghost {
     // Nothing to unmount
   }
 
-  chooseClosestPacManVertex(map: Drawable[][]) {
+  chooseClosestPacManVertex() {
     return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 }

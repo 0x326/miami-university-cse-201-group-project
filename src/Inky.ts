@@ -46,7 +46,7 @@ class Inky extends Ghost {
     window.clearInterval(this.timer);
   }
 
-  chooseClosestPacManVertex(map: Drawable[][]) {
+  chooseClosestPacManVertex() {
     return this.boardGraph.findClosestVertex(this.pacManLocation, Seq([-this.pacManDirection]));
   }
 
