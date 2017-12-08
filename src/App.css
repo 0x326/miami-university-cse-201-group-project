@@ -1,5 +1,37 @@
 .App {
   text-align: center;
+  background-color: black;
+  color: #f8f9ed;
+  font-family: "Phosphate", sans-serif;
+}
+
+.header {
+  color: #f5ff77;
+  padding-bottom: 5px;
+}
+
+.footer {
+  padding-top: 50px;
+}
+
+.title {
+  padding-top: 75px;
+  padding-bottom: 107px;
+  font-size: 60px;
+  font-family: "Phosphate", sans-serif;
+  background-color: #000526;
+}
+
+.gameOver, .listScores {
+  padding-top: 75px;
+  padding-bottom: 107px;
+  background-color: #000526;
+}
+
+.gameOver .header, .listScores .header {
+  padding-top: 79px;
+  padding-bottom: 77px;
+  font-size: 60px;
 }
 
 .scoreList {
