@@ -95,9 +95,7 @@ test('CSV file parsing', () => {
   for (const chunkPart in sampleCsvFiles) {
     if (sampleCsvFiles.hasOwnProperty(chunkPart)) {
       const csvFile = sampleCsvFiles[chunkPart];
-      console.log(`Map:\n${csvFile}`);
       const actualChunk = Board.parseMap(csvFile);
-      console.log(`Chunk:\n${actualChunk}`);
       expect(actualChunk).toBeDefined();
     }
   }
