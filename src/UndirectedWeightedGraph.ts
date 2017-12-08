@@ -85,12 +85,10 @@ class UndirectedWeightedGraph<Id> {
       });
 
       let currentVertex = from;
-      let reachableNonOptimalVertices = Infinity;
-      while (reachableNonOptimalVertices !== 0) {
+      while (costTable.some(calc => calc !== undefined && calc.isOptimal === false)) {
         const vertexEdges = this.vertices.get(currentVertex).edges;
         const costIncrement = costTable.get(currentVertex).cost;
 
-        reachableNonOptimalVertices = 0;
         // tslint:disable:no-any
         // Immutable.js Set objects are incorrectly typed in its index.d.ts
         // Use ``any`` to override type errors
@@ -106,8 +104,6 @@ class UndirectedWeightedGraph<Id> {
                 return cost;
               });
             }
-
-            reachableNonOptimalVertices++;
           }
         }
 
