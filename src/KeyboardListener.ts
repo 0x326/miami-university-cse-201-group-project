@@ -20,14 +20,14 @@ class KeyboardListener {
         keypressEvent.preventDefault();
         this.registeredKeys[key](true);
       }
-    }
+    };
     this.keyUpHandler = (keypressEvent: KeyboardEvent) => {
       let key = keypressEvent.key;
       if (this.registeredKeys[key]) {
         keypressEvent.preventDefault();
         this.registeredKeys[key](false);
       }
-    }
+    };
   }
 
   registerKey(key: string, callback: (isPressed: boolean) => void): void {
