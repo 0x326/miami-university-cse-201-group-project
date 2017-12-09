@@ -28,11 +28,11 @@ Features
 * Supports HiDPI displays
 * Looks like an authentic game of Pac-Man
 * Simple controls(using ASDW keys)
-* Displays running score 
+* Displays running score
 * Displays a list of all your scores
 * Ghosts have logic to do their desiged tasks
 * Pac_man's mouth open and closes as it moves eating pellets
-* Ghosts are smart enough to move away when Pac-Man eats a power pellet 
+* Ghosts are smart enough to move away when Pac-Man eats a power pellet
   and turns blue for a decreasing amount of time as levels progress
 * When Pac-Man dies you have the option to play another game or quit
 
@@ -51,7 +51,7 @@ Then, build the project::
 
 Finally, upload to a web server or start your own with Serve_::
 
-   serve build/
+   serve -s build
 
 Contributing
 ------------
