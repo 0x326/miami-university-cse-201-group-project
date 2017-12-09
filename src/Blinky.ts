@@ -6,20 +6,22 @@ import MapGraph from './MapGraph';
 const BlinkyImage = require('./Images/Blinky.png');
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * The Blinky ghost.
  *
- * CSE 201 Project
- *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @class Blinky
+ * @extends {Ghost}
  */
 class Blinky extends Ghost {
   protected normalSpriteURI: string = BlinkyImage;
 
   /**
-   * Creates a Blinky object
-   *
-   * @param initialLocation The starting location of this entity.
+   * Creates an instance of Blinky.
+   * @param {[number, number]} initialLocation The starting location
+   * @param {[number, number]} pacManLocation Pac-Man's current location
+   * @param {Direction} pacManDirection Pac-Man's current direction
+   * @param {MapGraph} boardGraph The currently loaded board
+   * @memberof Blinky
    */
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],

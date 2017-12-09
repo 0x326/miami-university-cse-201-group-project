@@ -17,7 +17,7 @@ interface Neighbors {
  *
  * CSE 201 Project
  *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
  */
 interface Drawable {
   /**
