@@ -25,12 +25,11 @@ const images = {
 const Closed = require('./Images/Pacman_closed.png');
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * Represents Pac-Man
  *
- * CSE 201 Project
- *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @class PacMan
+ * @extends {MovableEntity}
  */
 class PacMan extends MovableEntity {
 

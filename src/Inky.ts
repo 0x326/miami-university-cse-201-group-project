@@ -12,7 +12,7 @@ const InkyImage = require('./Images/Inky.png');
  *
  * CSE 201 Project
  *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
  */
 class Inky extends Ghost {
 
@@ -23,9 +23,12 @@ class Inky extends Ghost {
   private timeWhenStartedMoving: number = performance.now();
 
   /**
-   * Creates an Inky object
-   *
-   * @param initialLocation The starting location of this entity.
+   * Creates an instance of Inky.
+   * @param {[number, number]} initialLocation The starting location
+   * @param {[number, number]} pacManLocation Pac-Man's current location
+   * @param {Direction} pacManDirection Pac-Man's current direction
+   * @param {MapGraph} boardGraph The currently loaded board
+   * @memberof Inky
    */
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],

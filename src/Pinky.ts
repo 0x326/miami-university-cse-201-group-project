@@ -7,12 +7,11 @@ import MapGraph from './MapGraph';
 const PinkyImage = require('./Images/Pinky.png');
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * Represents Pinky
  *
- * CSE 201 Project
- *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @class Pinky
+ * @extends {Ghost}
  */
 class Pinky extends Ghost {
   protected normalSpriteURI: string = PinkyImage;
@@ -20,9 +19,12 @@ class Pinky extends Ghost {
   private timeWhenStartedMoving: number = performance.now();
 
   /**
-   * Creates an Pinky object
-   *
-   * @param initialLocation The starting location of this entity.
+   * Creates an instance of Pinky.
+   * @param {[number, number]} initialLocation The starting location
+   * @param {[number, number]} pacManLocation Pac-Man's current location
+   * @param {Direction} pacManDirection Pac-Man's current direction
+   * @param {MapGraph} boardGraph The currently loaded board
+   * @memberof Pinky
    */
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],

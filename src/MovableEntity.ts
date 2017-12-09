@@ -5,12 +5,11 @@ import { movePoint } from './lib';
 import MazeMapGraph from './MapGraph';
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * Represents a moving game object
  *
- * CSE 201 Project
- *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @abstract
+ * @class MovableEntity
  */
 abstract class MovableEntity {
 
@@ -36,9 +35,10 @@ abstract class MovableEntity {
   private lastUpcomingWall: [number, number];
 
   /**
-   * Creates a MovableEntity
-   * @param initialLocation The starting location of this entity.
-   * @param direction The initial direction that this entity is facing
+   * Creates an instance of MovableEntity.
+   * @param {[number, number]} initialLocation The starting location of this entity.
+   * @param {Direction} [direction=Direction.North] The initial direction that this entity is facing
+   * @memberof MovableEntity
    */
   constructor(initialLocation: [number, number], direction: Direction = Direction.North) {
     this.exactLocation = <[number, number]> initialLocation.slice();
@@ -49,6 +49,9 @@ abstract class MovableEntity {
    * Sets up any timers that may be used by the object.
    *
    * Analogous to React's `componentDidMount()`.
+   *
+   * @abstract
+   * @memberof MovableEntity
    */
   abstract mount(): void;
 
@@ -56,13 +59,16 @@ abstract class MovableEntity {
    * Tears down any timers that were setup in `mount()`
    *
    * Analogous to React's `componentWillUnmount()`.
+   *
+   * @abstract
+   * @memberof MovableEntity
    */
   abstract unmount(): void;
 
   /**
-   * Gets the current logical location of this MovableEntity.
+   * The current logical location of this MovableEntity.
    *
-   * @return The current location
+   * @memberof MovableEntity
    */
   get logicalLocation() {
     return <[number, number]> this.exactLocation.map(Math.round);
@@ -72,15 +78,25 @@ abstract class MovableEntity {
     this.exactLocation[1] = location[1];
   }
 
+  /**
+   * Chooses a direction based on the current game map
+   *
+   * @abstract
+   * @param {Drawable[][]} map The map off of which to choose
+   * @memberof MovableEntity
+   */
   abstract chooseDirection(map: Drawable[][]): void;
 
   /**
    * Gives this MovableEntity a chance to move.
+   *
    * The move should be proportional to the amount of time passed from the previous move.
    *
-   * @param timePassed The amount of elapsed time from the previous move in milliseconds.
-   *           This time may be subject to a maximum value at the discretion of the callee.
-   * @param map    The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
+   * @param {number} timePassed The amount of elapsed time from the previous move in milliseconds.
+   *                            This time may be subject to a maximum value at the discretion of the callee.
+   * @param {Drawable[][]} map The game board map.  It is not to be modified.  Use it to detect collision and honor boundaries.
+   * @returns {void}
+   * @memberof MovableEntity
    */
   move(timePassed: number, map: Drawable[][]): void {
     if (this.stopped) {
@@ -124,7 +140,12 @@ abstract class MovableEntity {
 
   /**
    * Checks to see which adjacent cells this entity can legally move
-   * @param map The grid of stationary entities
+   *
+   * @static
+   * @param {Drawable[][]} map The grid of stationary entities
+   * @param {[number, number]} logicalLocation The location to check
+   * @returns
+   * @memberof MovableEntity
    */
   static getMovementOptions(map: Drawable[][], logicalLocation: [number, number]) {
     const leftColumn = map[logicalLocation[0] - 1];
@@ -142,9 +163,10 @@ abstract class MovableEntity {
   /**
    * Draw this object on the graphic at the given location.
    *
-   * @param board         The graphic to draw on
-   * @param maxSize       The maximum size of the image.
-   *              The image drawn should be proportional to mazSize to support scaling.
+   * @param {CanvasRenderingContext2D} board The graphic to draw on
+   * @param {number} maxSize The maximum size of the image.
+   *                         The image drawn should be proportional to mazSize to support scaling.
+   * @memberof MovableEntity
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     // Top-left corner
