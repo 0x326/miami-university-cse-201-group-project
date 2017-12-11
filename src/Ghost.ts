@@ -1,3 +1,8 @@
+// Course: CSE 201 A
+// Instructor: Dr. Kiper
+// Date: 2017/12/08
+// Names: John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+
 import { List } from 'immutable';
 import MovableEntity, { Direction, directionSeq } from './MovableEntity';
 import Drawable from './Drawable';
