@@ -5,6 +5,7 @@
 .. _Immutable: https://facebook.github.io/immutable-js/
 .. _Request: https://github.com/request/request
 .. _Serve: https://www.npmjs.com/package/serve
+.. _fair use: https://en.wikipedia.org/wiki/Fair_use
 
 Pac-Man™ for the Web
 ====================
@@ -61,6 +62,15 @@ see `this guide <https://github.com/facebookincubator/create-react-app/blob/mast
 
 Make to have the correct Global ``.gitignore`` file for your IDE or text editor.
 See `here <https://github.com/github/gitignore/tree/master/Global>`_ for details.
+
+License
+^^^^^^^
+
+This project is released under the MIT license, except for the images located in
+``src/Images/``.  Such images are copyright 1980 of BANDAI NAMCO Entertainment Inc
+and constitute `fair use`_ under U.S. copyright law.
+However, should one contribute original images to replace these `fair use`_ images,
+the new images will be released under this project's license.
 
 Development Scripts
 ^^^^^^^^^^^^^^^^^^^
