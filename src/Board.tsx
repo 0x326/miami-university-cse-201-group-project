@@ -86,12 +86,13 @@ interface Props {
 }
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * Represents the game board.
  *
- * CSE 201 Project
+ * A bridge between React and our object-oriented design.
  *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @class Board
+ * @extends {React.Component<Props, State>}
  */
 class Board extends React.Component<Props, State> {
   // 27 X 31 board
@@ -239,6 +240,11 @@ class Board extends React.Component<Props, State> {
     this.keyboardListener.detach();
   }
 
+  /**
+   * Generates a pseudorandom board
+   *
+   * @memberof Board
+   */
   buildBoard(): void {
     this.pelletsEaten = 0;
     this.pelletsToEat = 0;
@@ -309,6 +315,11 @@ class Board extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Repositions MovableEntities to their staring locations
+   *
+   * @memberof Board
+   */
   moveEntitiesToStartingLocation(): void {
     this.pacMan.logicalLocation = pacManStartingLocation;
     this.ghosts[0].logicalLocation = blinkyStartingLocation;
@@ -317,7 +328,12 @@ class Board extends React.Component<Props, State> {
     this.ghosts[3].logicalLocation = clydeStartingLocation;
   }
 
-  // TODO: Add time-since-last-update-parameter
+  /**
+   * Updates the game state. Called on every frame
+   *
+   * @param {number} currentTime The current time
+   * @memberof Board
+   */
   updateGameState(currentTime: number): void {
     if (this.timeOfLastUpdate !== 0) {
       let elapsedTime = currentTime - this.timeOfLastUpdate;
@@ -345,6 +361,11 @@ class Board extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Perform collision detection
+   *
+   * @memberof Board
+   */
   detectCollisions(): void {
     let [x, y] = this.pacMan.logicalLocation;
 
@@ -407,6 +428,11 @@ class Board extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Render the game to the <canvas> element
+   *
+   * @memberof Board
+   */
   repaintCanvas(): void {
     let canvasWidth = this.canvasContext.canvas.width;
     let canvasHeight = this.canvasContext.canvas.height;
@@ -454,7 +480,10 @@ class Board extends React.Component<Props, State> {
   /**
    * Converts a map file (CSV format) to a Chunk representation.
    *
-   * @param fileContents The contents of the CSV map file
+   * @static
+   * @param {string} fileContents The contents of the CSV map file
+   * @returns {Chunk}
+   * @memberof Board
    */
   static parseMap(fileContents: string): Chunk {
     const chunk: Chunk = createMultiDimensionalArray([chunkColumns, chunkRows]);

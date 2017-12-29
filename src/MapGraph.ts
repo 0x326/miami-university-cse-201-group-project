@@ -8,9 +8,21 @@ import Wall from './Wall';
 type MazeMap = Drawable[][];
 type ImmutableLocation = List<number>;
 
+/**
+ * A special graph where edges are either horizontal or vertical
+ *
+ * @class MazeMapGraph
+ * @extends {UndirectedWeightedGraph<ImmutableLocation>}
+ */
 class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
   private map: MazeMap;
 
+  /**
+   * Creates an instance of MazeMapGraph.
+   * @param {MazeMap} map The map to parse
+   * @param {List<number>} startingLocation Pac-Man's starting location
+   * @memberof MazeMapGraph
+   */
   constructor(map: MazeMap, startingLocation: List<number>) {
     super();
     this.map = map;
@@ -26,6 +38,14 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     });
   }
 
+  /**
+   * Converts the map into a graph
+   *
+   * @private
+   * @param {List<number>} startingLocation Pac-Man's starting location
+   * @returns {[Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>]}
+   * @memberof MazeMapGraph
+   */
   private parseGraph(startingLocation: List<number>): [Set<ImmutableLocation>, Set<[ImmutableLocation, ImmutableLocation, number]>] {
     const map = this.map;
 
@@ -81,6 +101,17 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return [vertices, edges];
   }
 
+  /**
+   * Looks ahead to see the next entity that meets the given condition
+   *
+   * @static
+   * @param {MazeMap} map The map to search
+   * @param {[number, number]} logicalLocation The starting location
+   * @param {Direction} direction The direction to look
+   * @param {(entity: Drawable, location?: [number, number]) => boolean} criteria The condition
+   * @returns {([number, number] | undefined)} The matching entity, if found
+   * @memberof MazeMapGraph
+   */
   static findUpcomingEntity(map: MazeMap,
                             logicalLocation: [number, number],
                             direction: Direction,
@@ -101,6 +132,14 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return undefined;
   }
 
+  /**
+   * Given a location on a maze, finds the closest equivalent graph vertex
+   *
+   * @param {[number, number]} logicalLocation The location to represent
+   * @param {Seq.Indexed<Direction>} [preferredDirections=Seq([])] Preferred directions to look
+   * @returns The location of the closest vertex
+   * @memberof MazeMapGraph
+   */
   findClosestVertex(logicalLocation: [number, number], preferredDirections: Seq.Indexed<Direction> = Seq([])) {
     const options = this.getMovementOptions(logicalLocation);
 
@@ -149,6 +188,14 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
     return List(closestVertexLocation);
   }
 
+  /**
+   * Determines whether a point on a maze is represented as an edge.
+   *
+   * @private
+   * @param {[number, number]} logicalLocation The location to check
+   * @returns True if is edge
+   * @memberof MazeMapGraph
+   */
   private isEdge(logicalLocation: [number, number]) {
     const options = this.getMovementOptions(logicalLocation);
     // tslint:disable:no-any
@@ -163,7 +210,11 @@ class MazeMapGraph extends UndirectedWeightedGraph<ImmutableLocation> {
 
   /**
    * Checks to see which adjacent cells this entity can legally move
-   * @param map The grid of stationary entities
+   *
+   * @private
+   * @param {[number, number]} logicalLocation The location to check
+   * @returns
+   * @memberof MazeMapGraph
    */
   private getMovementOptions(logicalLocation: [number, number]) {
     const map = this.map;

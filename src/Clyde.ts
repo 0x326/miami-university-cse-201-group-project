@@ -12,7 +12,7 @@ const ClydeImage = require('./Images/Clyde.png');
  *
  * CSE 201 Project
  *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
  */
 class Clyde extends Ghost {
 
@@ -23,9 +23,12 @@ class Clyde extends Ghost {
   private timeWhenStartedMoving: number = performance.now();
 
   /**
-   * Creates an Clyde object
-   *
-   * @param initialLocation The starting location of this entity.
+   * Creates an instance of Clyde.
+   * @param {[number, number]} initialLocation The starting location
+   * @param {[number, number]} pacManLocation Pac-Man's current location
+   * @param {Direction} pacManDirection Pac-Man's current direction
+   * @param {MapGraph} boardGraph The currently loaded board
+   * @memberof Clyde
    */
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],

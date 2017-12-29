@@ -4,6 +4,9 @@ import { List, Set, Map } from 'immutable';
  * Represents a vertex in a graph.
  *
  * This is an aggregate of Graph.
+ *
+ * @class Vertex
+ * @template Id
  */
 class Vertex<Id> {
   readonly id: Id;
@@ -19,6 +22,9 @@ class Vertex<Id> {
  * Represents an edge in a graph.
  *
  * This is an aggregate of Graph.
+ *
+ * @class DirectedEdge
+ * @template Id
  */
 class DirectedEdge<Id> {
   readonly from: Vertex<Id>;
@@ -34,6 +40,9 @@ class DirectedEdge<Id> {
 
 /**
  * Represents a particular calculation in Dijkstra's algorithm.
+ *
+ * @class NetCost
+ * @template Id
  */
 class NetCost<Id> {
   cost: number = Infinity;
@@ -45,6 +54,9 @@ class NetCost<Id> {
  * An undirected, weighted graph.
  *
  * Internally stores the undirected graph as a directed graph.
+ *
+ * @class UndirectedWeightedGraph
+ * @template Id
  */
 class UndirectedWeightedGraph<Id> {
   private vertices: Map<Id, Vertex<Id>> = Map();
@@ -52,13 +64,14 @@ class UndirectedWeightedGraph<Id> {
   private previouslyComputedTables: Map<Id, Map<Id, NetCost<Id>>> = Map();
 
   /**
-   * Computes the shortest path between the given vertices.
-   *
-   * Uses Dijkstra's algorithm.
+   * Computes the shortest path between the given vertices using Dijkstra's algorithm.
    *
    * `O(n^2)`
-   * @param from The starting vertex
-   * @param to The goal vertex
+   *
+   * @param {Id} from The starting vertex
+   * @param {Id} to The goal vertex
+   * @returns {List<Id>} The route
+   * @memberof UndirectedWeightedGraph
    */
   computeShortestRoute(from: Id, to: Id): List<Id> {
     if (!this.hasVertex(from)) {
@@ -159,7 +172,10 @@ class UndirectedWeightedGraph<Id> {
    * Adds a vertex to the graph.
    *
    * `O(log32 N)`
-   * @param id An id for the vertex
+   *
+   * @param {Id} id An id for the vertex
+   * @returns {void}
+   * @memberof UndirectedWeightedGraph
    */
   addVertex(id: Id): void {
     if (this.hasVertex(id)) {
@@ -176,9 +192,12 @@ class UndirectedWeightedGraph<Id> {
    * Adds a undirected, weighted edge to the graph.
    *
    * `O(log32 N)`
-   * @param a The id of the first vertex
-   * @param b The id of the second vertex
-   * @param cost The cost of the edge
+   *
+   * @param {Id} a The id of the first vertex
+   * @param {Id} b The id of the second vertex
+   * @param {number} cost The cost of the edge
+   * @returns
+   * @memberof UndirectedWeightedGraph
    */
   addEdge(a: Id, b: Id, cost: number) {
     if (!this.hasVertex(a)) {

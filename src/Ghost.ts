@@ -10,12 +10,12 @@ const VulnerableImg = require('./Images/Vulnerable.png');
 const BlinkingImg = require('./Images/Blinking.png');
 
 /**
- * Course: CSE 201 A
- * Instructor: Dr. Kiper
+ * Represents a ghost
  *
- * CSE 201 Project
- *
- * @author Noah Dirig, Laurel Sexton, Gauthier Kelly, John Meyer
+ * @author John Meyer, Noah Dirig, Laurel Sexton, Goat Knox Kelly
+ * @abstract
+ * @class Ghost
+ * @extends {MovableEntity}
  */
 abstract class Ghost extends MovableEntity {
   state: VulnerabilityState = VulnerabilityState.Dangerous;
@@ -25,10 +25,16 @@ abstract class Ghost extends MovableEntity {
 
   /**
    * Used to enforce strict adherance to the grid
+   *
+   * @private
+   * @type {[number, number]}
+   * @memberof Ghost
    */
   private lastLogicalLocation: [number, number];
   /**
    * Time to switch from blue to white (or vice versa) in milliseconds.
+   *
+   * @memberof Ghost
    */
   readonly flashingInterval = 100;
   protected abstract normalSpriteURI: string;
@@ -36,9 +42,12 @@ abstract class Ghost extends MovableEntity {
   private isFlashingWhite = false;
 
   /**
-   * Creates a MovableEntity
-   *
-   * @param initialLocation The starting location of this entity.
+   * Creates an instance of Ghost.
+   * @param {[number, number]} initialLocation The starting location
+   * @param {[number, number]} pacManLocation Pac-Man's current location
+   * @param {Direction} pacManDirection Pac-Man's current direction
+   * @param {MapGraph} boardGraph The currently loaded board
+   * @memberof Ghost
    */
   constructor(initialLocation: [number, number],
               pacManLocation: [number, number],
@@ -81,21 +90,25 @@ abstract class Ghost extends MovableEntity {
   }
 
   /**
-   * @return Whether this Ghost is vulnerable
+   * @returns {boolean} Whether this Ghost is vulnerable
+   * @memberof Ghost
    */
   isVunerable(): boolean {
     return this.state !== VulnerabilityState.Dangerous;
   }
 
   /**
-  * @return Whether this Ghost is vulnerable and blinking
-  */
+   * @returns {boolean} Whether this Ghost is vulnerable and blinking
+   * @memberof Ghost
+   */
   isVulnerableBlinking(): boolean {
     return this.state === VulnerabilityState.VulnerableBlinking;
   }
 
   /**
    * Makes this Ghost vulnerable
+   *
+   * @memberof Ghost
    */
   makeVulnerable(): void {
     this.state = VulnerabilityState.Vulnerable;
@@ -104,6 +117,8 @@ abstract class Ghost extends MovableEntity {
   /**
    * Makes this Ghost start blinking.
    * If this method is called when the ghost is not vulnerable, an exception will be thrown.
+   *
+   * @memberof Ghost
    */
   startWarning(): void {
     if (this.state === VulnerabilityState.Vulnerable) {
@@ -122,6 +137,8 @@ abstract class Ghost extends MovableEntity {
 
   /**
    * Removes this Ghost from its vulnerable state.
+   *
+   * @memberof Ghost
    */
   makeDangerous(): void {
     this.state = VulnerabilityState.Dangerous;
@@ -130,9 +147,10 @@ abstract class Ghost extends MovableEntity {
   /**
    * Draw this object on the graphic at the given location.
    *
-   * @param board         The graphic to draw on
-   * @param maxSize       The maximum size of the image.
-   *              The image drawn should be proportional to maxSize to support scaling.
+   * @param {CanvasRenderingContext2D} board The graphic to draw on
+   * @param {number} maxSize The maximum size of the image.
+   *                         The image drawn should be proportional to maxSize to support scaling.
+   * @memberof Ghost
    */
   draw(board: CanvasRenderingContext2D, maxSize: number) {
     switch (this.state) {
@@ -154,6 +172,12 @@ abstract class Ghost extends MovableEntity {
     super.draw(board, maxSize);
   }
 
+  /**
+   * Chooses a direction based on the current game map
+   *
+   * @param {Drawable[][]} map The map off of which to choose
+   * @memberof MovableEntity
+   */
   chooseDirection(map: Drawable[][]): void {
     const options = Ghost.getMovementOptions(map, this.logicalLocation);
 
@@ -204,6 +228,13 @@ abstract class Ghost extends MovableEntity {
 
   }
 
+  /**
+   * Chooses the vertex closest to Pac-Man.
+   *
+   * @abstract
+   * @returns {List<number>}
+   * @memberof Ghost
+   */
   abstract chooseClosestPacManVertex(): List<number>;
 
 }
